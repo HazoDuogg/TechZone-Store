@@ -1,0 +1,38 @@
+# compiled output
+/dist
+/build
+/node_modules
+*.tsbuildinfo
+
+# logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# tests
+/coverage
+/.nyc_output
+
+# IDE
+/.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# môi trường (chứa mật khẩu và khóa bí mật)
+.env
+.env.*
+!.env.example
+
+# temp
+.temp
+.tmp
