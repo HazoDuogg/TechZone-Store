@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { TieuDeTrang } from '../../components/BoCuc'
-import { Nhan, Nut, TruongNhap, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
+import { Nhan, Nut, TruongNhap, VungNhap, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
 import { dsSanPham, tonKho } from '../../data/duLieuMau'
 import { NhanTonKho } from './SanPhamVaTonKho'
@@ -21,6 +21,7 @@ function BieuMauNhapXuat({ type }: { type: 'Nhập' | 'Xuất' }) {
           {dsSanPham.map((p) => <option key={p.id} value={p.id}>{p.name} (tồn {tonKho[p.id] ?? 0})</option>)}
         </OChon>
         <TruongNhap type="number" min={1} defaultValue={1} label="Số lượng" />
+        {type === 'Nhập' && <VungNhap label="Số serial từng chiếc" placeholder="Mỗi dòng một serial, số dòng bằng số lượng nhập" />}
         <TruongNhap label="Ghi chú" placeholder={type === 'Nhập' ? 'Số phiếu nhập, nhà cung cấp' : 'Lý do xuất'} />
         <Nut className="w-full">{type} kho</Nut>
       </form>

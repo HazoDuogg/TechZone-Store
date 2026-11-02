@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Nut, TrangTrong, NutLienKet } from '../../components/GiaoDienCoBan'
 import { td } from '../../lib/lopCss'
-import { GiaSanPham, TheSanPham, AnhSanPham, GhiChuTonKho } from '../../components/SanPham'
+import { GiaSanPham, TheSanPham, GhiChuTonKho } from '../../components/SanPham'
+import ThuVienAnh from '../../components/ThuVienAnh'
 import { dsSanPham } from '../../data/duLieuMau'
 import { useTroLy } from '../../store/troLy'
 
@@ -28,7 +29,7 @@ export default function ChiTietSanPham() {
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <AnhSanPham product={p} className="aspect-square rounded-xl p-8 sm:p-12 [&_span:nth-child(2)]:text-[clamp(3rem,10vw,6rem)]" />
+        <ThuVienAnh key={p.id} product={p} />
         <div>
           <p className="font-semibold text-brand">{p.brand}</p>
           <h1 className="mt-1 text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl">{p.name}</h1>

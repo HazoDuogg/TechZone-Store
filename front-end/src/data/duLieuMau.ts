@@ -19,7 +19,7 @@ export type ThongTinDonHang = {
   items: { id: string; qty: number }[]
   discount: number
   shipping: number
-  payment: 'COD' | 'Chuyển khoản' | 'Ví điện tử'
+  payment: 'COD'
   status: TrangThaiDon
   createdAt: string
 }
@@ -103,12 +103,12 @@ export const dsMaGiamGia: PhieuGiamGia[] = [
 ]
 
 export const dsDonHang: ThongTinDonHang[] = [
-  { code: 'TZ240001', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'cpu-7600', qty: 1 }, { id: 'mb-b650m', qty: 1 }, { id: 'ram-d5-32', qty: 1 }], discount: 0, shipping: 0, payment: 'Chuyển khoản', status: 'Hoàn tất', createdAt: '2026-10-02T09:14:00' },
+  { code: 'TZ240001', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'cpu-7600', qty: 1 }, { id: 'mb-b650m', qty: 1 }, { id: 'ram-d5-32', qty: 1 }], discount: 0, shipping: 0, payment: 'COD', status: 'Hoàn tất', createdAt: '2026-10-02T09:14:00' },
   { code: 'TZ240002', customer: 'Trần Thu Hà', phone: '0912345678', email: 'ha.tran@mail.com', address: '45 Nguyễn Trãi, Thanh Xuân, Hà Nội', items: [{ id: 'vga-4060', qty: 1 }, { id: 'psu-rm750', qty: 1 }], discount: 200000, shipping: 0, payment: 'COD', status: 'Đang giao', createdAt: '2026-10-19T14:40:00' },
   { code: 'TZ240003', customer: 'Lê Quốc Bảo', phone: '0987654321', email: 'bao.le@mail.com', address: '7 Hai Bà Trưng, Hải Châu, Đà Nẵng', items: [{ id: 'mon-lg24', qty: 2 }, { id: 'mouse-g102', qty: 2 }], discount: 0, shipping: 30000, payment: 'COD', status: 'Chờ xác nhận', createdAt: '2026-10-24T20:05:00' },
-  { code: 'TZ240004', customer: 'Phạm Gia Hân', phone: '0933222111', email: 'han.pham@mail.com', address: '88 Cách Mạng Tháng 8, Quận 3, TP.HCM', items: [{ id: 'ssd-980pro', qty: 1 }], discount: 0, shipping: 30000, payment: 'Ví điện tử', status: 'Chờ xác nhận', createdAt: '2026-10-25T08:30:00' },
+  { code: 'TZ240004', customer: 'Phạm Gia Hân', phone: '0933222111', email: 'han.pham@mail.com', address: '88 Cách Mạng Tháng 8, Quận 3, TP.HCM', items: [{ id: 'ssd-980pro', qty: 1 }], discount: 0, shipping: 30000, payment: 'COD', status: 'Chờ xác nhận', createdAt: '2026-10-25T08:30:00' },
   { code: 'TZ240005', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'mouse-da3', qty: 1 }], discount: 0, shipping: 30000, payment: 'COD', status: 'Đã xác nhận', createdAt: '2026-10-23T16:20:00' },
-  { code: 'TZ240006', customer: 'Võ Thanh Tùng', phone: '0977000111', email: 'tung.vo@mail.com', address: '21 Trần Phú, Nha Trang, Khánh Hòa', items: [{ id: 'cpu-13400f', qty: 1 }, { id: 'mb-b760m', qty: 1 }], discount: 0, shipping: 0, payment: 'Chuyển khoản', status: 'Đã hủy', createdAt: '2026-10-11T11:00:00' },
+  { code: 'TZ240006', customer: 'Võ Thanh Tùng', phone: '0977000111', email: 'tung.vo@mail.com', address: '21 Trần Phú, Nha Trang, Khánh Hòa', items: [{ id: 'cpu-13400f', qty: 1 }, { id: 'mb-b760m', qty: 1 }], discount: 0, shipping: 0, payment: 'COD', status: 'Đã hủy', createdAt: '2026-10-11T11:00:00' },
 ]
 
 export const dsKhachHang = [

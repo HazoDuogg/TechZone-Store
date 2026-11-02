@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { NutLienKet } from '../../components/GiaoDienCoBan'
-import { TheSanPham, AnhSanPham } from '../../components/SanPham'
+import { TheSanPham } from '../../components/SanPham'
 import { dsDanhMuc, dsSanPham } from '../../data/duLieuMau'
+import { ANH_BANNER, duongDanAnhDanhMuc } from '../../lib/duongDanAnh'
 import { useTroLy } from '../../store/troLy'
 
 const policies = [
@@ -13,7 +14,6 @@ const policies = [
 
 export default function TrangChu() {
   const show = useTroLy((s) => s.show)
-  const hero = dsSanPham.find((p) => p.id === 'vga-4060') ?? dsSanPham[0]
   const sale = dsSanPham.filter((p) => p.oldPrice).slice(0, 4)
   const fresh = dsSanPham.filter((p) => ['cpu-7600', 'ram-d5-32', 'ssd-980pro', 'mon-dell27'].includes(p.id))
 
@@ -32,26 +32,38 @@ export default function TrangChu() {
             <NutLienKet to="/san-pham" size="lg" variant="soft">Xem sản phẩm</NutLienKet>
           </div>
         </div>
-        <Link to={`/san-pham/${hero.id}`} className="rise block overflow-hidden rounded-xl" style={{ animationDelay: '90ms' }} aria-label={hero.name}>
-          <AnhSanPham product={hero} className="aspect-5/4 p-8 sm:p-10 [&_span:nth-child(2)]:text-[clamp(3rem,9vw,6.5rem)]" />
+        <Link to="/san-pham" className="rise block overflow-hidden rounded-xl bg-surface" style={{ animationDelay: '90ms' }}>
+          <img src={ANH_BANNER} alt="Linh kiện máy tính chính hãng tại TechZone" className="aspect-5/4 w-full object-cover" />
         </Link>
       </section>
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="cats">
         <h2 id="cats" className="text-3xl font-extrabold tracking-tight sm:text-4xl">Danh mục</h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {dsDanhMuc.map((c) => (
             <Link
               key={c}
               to="/san-pham"
-              className="group flex min-h-28 flex-col justify-between rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white"
+              className="group flex items-center justify-between gap-4 rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white"
             >
-              <span className="text-xl font-bold">{c}</span>
-              <span className="text-sm text-muted group-hover:text-white/80">{dsSanPham.filter((p) => p.category === c).length} sản phẩm</span>
+              <span className="flex flex-col">
+                <span className="text-xl font-bold">{c}</span>
+                <span className="text-sm text-muted group-hover:text-white/80">{dsSanPham.filter((p) => p.category === c).length} sản phẩm</span>
+              </span>
+              <img
+                src={duongDanAnhDanhMuc(c)}
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (img.src.endsWith('webp')) {
+                    img.src = duongDanAnhDanhMuc(c, 'png');
+                  }
+                }}
+                alt="" loading="lazy" className="size-20 shrink-0 rounded-md object-cover sm:size-24"
+              />
             </Link>
           ))}
         </div>
-      </section>
+      </section >
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="sale">
         <div className="flex items-end justify-between gap-4">

@@ -2,9 +2,32 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { TieuDeTrang } from '../../components/BoCuc'
 import { NoiDungDonHang } from '../../components/HienThiDonHang'
-import { Nut, TrangTrong, HopThoai } from '../../components/GiaoDienCoBan'
-import { dsDonHang } from '../../data/duLieuMau'
+import { Nut, TrangTrong, HopThoai, TruongNhap } from '../../components/GiaoDienCoBan'
+import { dsDonHang, type ThongTinDonHang } from '../../data/duLieuMau'
+import { timSanPham } from '../../lib/dinhDang'
 import { useGocQuanLy } from '../../lib/gocQuanLy'
+
+function GanSerial({ items }: { items: ThongTinDonHang['items'] }) {
+  return (
+    <section className="mt-6 rounded-xl bg-white p-5" aria-labelledby="serial">
+      <h2 id="serial" className="font-bold">Số serial từng chiếc</h2>
+      <p className="mt-1 text-sm text-muted">Nhập serial của từng chiếc giao cho khách để tra cứu bảo hành về sau.</p>
+      <div className="mt-4 space-y-5">
+        {items.map((it) => (
+          <div key={it.id}>
+            <div className="mb-2 font-semibold">{timSanPham(it.id)?.name} <span className="font-normal text-muted">× {it.qty}</span></div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {Array.from({ length: it.qty }, (_, k) => (
+                <TruongNhap key={k} label={`Chiếc ${k + 1}`} placeholder="Ví dụ: SN-RTX4060-77120" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-5"><Nut>Lưu serial</Nut></div>
+    </section>
+  )
+}
 
 export default function ChiTietDonHangNhanVien() {
   const { code } = useParams()
@@ -28,6 +51,7 @@ export default function ChiTietDonHangNhanVien() {
         }
       />
       <NoiDungDonHang order={order} staff />
+      {['Đã xác nhận', 'Đang giao', 'Hoàn tất'].includes(order.status) && <GanSerial items={order.items} />}
 
       {confirmCancel && (
         <HopThoai title="Hủy đơn hàng" onClose={() => setConfirmCancel(false)}>

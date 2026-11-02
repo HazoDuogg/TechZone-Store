@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { tonKho, type ThongTinSanPham } from '../data/duLieuMau'
+import { duongDanAnhSanPham } from '../lib/duongDanAnh'
 import { cx } from '../lib/lopCss'
 import { tienVND } from '../lib/dinhDang'
 
@@ -21,6 +23,22 @@ const shortName = (p: ThongTinSanPham) => {
 }
 
 export function AnhSanPham({ product, className }: { product: ThongTinSanPham; className?: string }) {
+  const [loi, setLoi] = useState(false)
+  if (loi) return <KhungSanPham product={product} className={className} />
+  return (
+    <div className={cx('flex aspect-square items-center justify-center overflow-hidden bg-white', className)}>
+      <img
+        src={duongDanAnhSanPham(product, 1)}
+        alt={product.name}
+        loading="lazy"
+        onError={() => setLoi(true)}
+        className="h-full w-full object-contain"
+      />
+    </div>
+  )
+}
+
+export function KhungSanPham({ product, className }: { product: ThongTinSanPham; className?: string }) {
   return (
     <div
       className={cx('flex aspect-square flex-col justify-between p-5', tints[product.category] ?? 'bg-surface', className)}

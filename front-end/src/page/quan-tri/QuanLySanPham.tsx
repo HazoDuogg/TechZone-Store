@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { TieuDeTrang } from '../../components/BoCuc'
-import { Nut, TruongNhap, HopThoai, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
+import { Nut, TruongNhap, VungNhap, HopThoai, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
 import { dsDanhMuc, dsSanPham, tonKho, type ThongTinSanPham } from '../../data/duLieuMau'
 import { tienVND } from '../../lib/dinhDang'
 import { NhanTonKho } from '../nhan-vien/SanPhamVaTonKho'
 import VungTaiAnh from '../../components/VungTaiAnh'
+import { AnhSanPham } from '../../components/SanPham'
+import { duongDanAnhDanhMuc } from '../../lib/duongDanAnh'
 
 const tabs = ['Sản phẩm', 'Danh mục'] as const
 
@@ -29,7 +31,12 @@ function TabSanPham() {
           <tbody>
             {dsSanPham.map((p) => (
               <tr key={p.id}>
-                <td className={cx(td, 'min-w-64')}><div className="font-semibold">{p.name}</div><div className="text-sm text-muted">{p.brand}</div></td>
+                <td className={cx(td, 'min-w-64')}>
+                  <div className="flex items-center gap-3">
+                    <AnhSanPham product={p} className="size-12 shrink-0 rounded-md p-1 [&_span]:hidden" />
+                    <div><div className="font-semibold">{p.name}</div><div className="text-sm text-muted">{p.brand}</div></div>
+                  </div>
+                </td>
                 <td className={td}>{p.category}</td>
                 <td className={cx(td, 'whitespace-nowrap')}>{tienVND(p.price)}{p.oldPrice && <div className="text-sm text-muted line-through">{tienVND(p.oldPrice)}</div>}</td>
                 <td className={td}><span className="mr-2 font-bold tabular-nums">{tonKho[p.id] ?? 0}</span><NhanTonKho n={tonKho[p.id] ?? 0} /></td>
@@ -52,7 +59,16 @@ function TabSanPham() {
               <OChon label="Danh mục" defaultValue={cur?.category}>{dsDanhMuc.map((c) => <option key={c}>{c}</option>)}</OChon>
               <TruongNhap type="number" label="Giá bán (₫)" defaultValue={cur?.price} />
               <TruongNhap type="number" label="Giá niêm yết (₫)" defaultValue={cur?.oldPrice} hint="Để trống nếu không giảm giá" />
+              <TruongNhap type="number" min={0} label="Bảo hành (tháng)" defaultValue={cur ? 36 : undefined} />
+              <TruongNhap type="number" min={0} label="Ngưỡng cảnh báo sắp hết" defaultValue={cur ? 5 : undefined} hint="Cảnh báo khi tồn kho thấp hơn số này" />
+              <OChon label="Trạng thái"><option>Đang bán</option><option>Ẩn</option></OChon>
             </div>
+            <VungNhap label="Mô tả" />
+            <VungNhap
+              label="Thông số kỹ thuật"
+              placeholder="Mỗi dòng một thông số, ví dụ: Socket: AM5"
+              defaultValue={cur ? Object.entries(cur.specs).map(([k, v]) => `${k}: ${v}`).join('\n') : undefined}
+            />
             <VungTaiAnh label="Ảnh sản phẩm" multiple max={8} hint="Ảnh WebP, JPG hoặc PNG, khổ vuông 1200×1200, tối đa 8 ảnh. Ảnh đầu tiên là ảnh chính hiện ở danh sách." />
             <div className="flex justify-end gap-2 pt-2"><Nut type="button" variant="soft" onClick={() => setEdit(null)}>Hủy</Nut><Nut>Lưu</Nut></div>
           </form>
@@ -81,7 +97,7 @@ function TabDanhMuc() {
         {dsDanhMuc.map((c) => (
           <li key={c} className="flex items-center justify-between gap-3 rounded-lg bg-white p-3">
             <span className="flex min-w-0 items-center gap-3">
-              <span className="grid size-12 shrink-0 place-items-center rounded-md bg-surface text-xs font-semibold text-muted">Chưa có ảnh</span>
+              <img src={duongDanAnhDanhMuc(c)} alt="" className="size-12 shrink-0 rounded-md bg-surface object-cover" />
               <span className="font-semibold">{c} <span className="font-normal text-muted">· {dsSanPham.filter((p) => p.category === c).length} sản phẩm</span></span>
             </span>
             <span className="flex gap-1">
