@@ -31,5 +31,3 @@ dist-ssr
 # build phụ
 *.tsbuildinfo
 coverage
-
-src/assets/images/*
