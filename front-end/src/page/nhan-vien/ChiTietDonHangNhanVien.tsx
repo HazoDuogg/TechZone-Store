@@ -2,29 +2,65 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { TieuDeTrang } from '../../components/BoCuc'
 import { NoiDungDonHang } from '../../components/HienThiDonHang'
-import { Nut, TrangTrong, HopThoai, TruongNhap } from '../../components/GiaoDienCoBan'
+import { Nhan, Nut, TrangTrong, HopThoai, TruongNhap } from '../../components/GiaoDienCoBan'
 import { dsDonHang, type ThongTinDonHang } from '../../data/duLieuMau'
+import { cx } from '../../lib/lopCss'
 import { timSanPham } from '../../lib/dinhDang'
 import { useGocQuanLy } from '../../lib/gocQuanLy'
 
 function GanSerial({ items }: { items: ThongTinDonHang['items'] }) {
+  const [edit, setEdit] = useState(false)
+  const chuanHoa = () => items.map((it) => ({ ...it, serials: Array.from({ length: it.qty }, (_, k) => it.serials[k] ?? '') }))
+  const [daLuu, setDaLuu] = useState(chuanHoa)
+  const [dsItems, setDsItems] = useState(daLuu)
+
+  const capNhatSerial = (id: string, index: number, serial: string) =>
+    setDsItems((d) =>
+      d.map((it) =>
+        it.id === id ? { ...it, serials: it.serials.map((s, k) => (k === index ? serial : s)) } : it))
+
+  const daDoi = JSON.stringify(dsItems) !== JSON.stringify(daLuu)
+  const huy = () => { setDsItems(daLuu); setEdit(false) }
+  const luu = () => { setDaLuu(dsItems); setEdit(false) }
+
   return (
-    <section className="mt-6 rounded-xl bg-white p-5" aria-labelledby="serial">
-      <h2 id="serial" className="font-bold">Số serial từng chiếc</h2>
-      <p className="mt-1 text-sm text-muted">Nhập serial của từng chiếc giao cho khách để tra cứu bảo hành về sau.</p>
+    <section className={cx('mt-6 rounded-xl bg-white p-5', edit && 'ring-2 ring-brand/30')} aria-labelledby="serial">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 id="serial" className="flex flex-wrap items-center gap-2 font-bold">
+            Số serial từng chiếc
+            {edit && <Nhan tone="blue">Đang chỉnh sửa</Nhan>}
+          </h2>
+          <p className="mt-1 text-sm text-muted">Serial được hệ thống chọn khi xác nhận đơn. Đổi nếu chiếc đó không còn hoặc lấy nhầm.</p>
+        </div>
+        <div className="flex gap-2">
+          {edit ? (
+            <>
+              <Nut size="sm" variant="soft" onClick={huy}>Hủy</Nut>
+              <Nut size="sm" disabled={!daDoi} onClick={luu}>Lưu</Nut>
+            </>
+          ) : (
+            <Nut size="sm" variant="soft" onClick={() => setEdit(true)}>Đổi serial</Nut>
+          )}
+        </div>
+      </div>
       <div className="mt-4 space-y-5">
-        {items.map((it) => (
+        {dsItems.map((it) => (
           <div key={it.id}>
             <div className="mb-2 font-semibold">{timSanPham(it.id)?.name} <span className="font-normal text-muted">× {it.qty}</span></div>
             <div className="grid gap-3 sm:grid-cols-2">
-              {Array.from({ length: it.qty }, (_, k) => (
-                <TruongNhap key={k} label={`Chiếc ${k + 1}`} placeholder="Ví dụ: SN-RTX4060-77120" />
+              {it.serials.map((s, k) => (
+                <TruongNhap
+                  key={k}
+                  label={`Chiếc ${k + 1}`}
+                  value={s}
+                  onChange={(e) => capNhatSerial(it.id, k, e.currentTarget.value)}
+                  disabled={!edit} />
               ))}
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-5"><Nut>Lưu serial</Nut></div>
     </section>
   )
 }

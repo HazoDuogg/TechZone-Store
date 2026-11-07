@@ -32,4 +32,4 @@ dist-ssr
 *.tsbuildinfo
 coverage
 
-public/images/*
+src/assets/images/*

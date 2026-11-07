@@ -41,7 +41,7 @@ export function TruongNhap({
   return (
     <label className={cx('block', className)}>
       <span className="mb-1.5 block text-sm font-semibold">{label}</span>
-      <input {...p} className={cx(control, 'h-11 border border-surface-2 bg-white')} />
+      <input {...p} className={cx(control, 'h-11 border border-surface-2 bg-white disabled:cursor-not-allowed disabled:bg-surface disabled:text-muted')} />
       {hint && <span className="mt-1 block text-sm text-muted">{hint}</span>}
     </label>
   )
@@ -51,7 +51,7 @@ export function VungNhap({ label, className, ...p }: TextareaHTMLAttributes<HTML
   return (
     <label className={cx('block', className)}>
       <span className="mb-1.5 block text-sm font-semibold">{label}</span>
-      <textarea {...p} className={cx(control, 'py-2.5 min-h-24')} />
+      <textarea {...p} className={cx(control, 'min-h-24 border border-surface-2 bg-white py-2.5')} />
     </label>
   )
 }

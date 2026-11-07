@@ -18,7 +18,7 @@ const defaults: Record<string, string[]> = {
 
 function TabNhanVien() {
   const [edit, setEdit] = useState<Staff | 'new' | null>(null)
-  const cur = edit && edit !== 'new' ? edit : undefined
+  const cur = (edit && edit !== 'new') ? edit : undefined
 
   return (
     <>
@@ -47,7 +47,8 @@ function TabNhanVien() {
           <form onSubmit={(e) => { e.preventDefault(); setEdit(null) }} className="space-y-4">
             <TruongNhap label="Họ và tên" defaultValue={cur?.name} />
             <TruongNhap type="email" label="Email đăng nhập" defaultValue={cur?.email} />
-            <OChon label="Vai trò" defaultValue={cur?.role}>{roles.map((r) => <option key={r}>{r}</option>)}</OChon>
+            {!cur && <TruongNhap type="password" label="Mật khẩu" />}
+            <OChon label="Vị trí" defaultValue={cur?.role}>{roles.map((r) => <option key={r}>{r}</option>)}</OChon>
             <div className="flex justify-end gap-2 pt-2"><Nut type="button" variant="soft" onClick={() => setEdit(null)}>Hủy</Nut><Nut>Lưu</Nut></div>
           </form>
         </HopThoai>

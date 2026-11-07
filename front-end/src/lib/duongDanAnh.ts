@@ -15,8 +15,8 @@ const thuMuc: Record<string, string> = {
 }
 
 
-export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number) => `/images/san-pham/${thuMuc[p.category]}/${p.id}-${goc}.webp`
+export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number) => `src/assets/images/san-pham/${thuMuc[p.category]}/${p.id}-${goc}.webp`
 
-export const duongDanAnhDanhMuc = (ten: string, duoiFile: 'webp' | 'png' = 'webp') => `/images/danh-muc/cat-${thuMuc[ten]}.${duoiFile} `
+export const duongDanAnhDanhMuc = (ten: string, duoiFile: 'webp' | 'png' = 'webp') => `src/assets/images/danh-muc/cat-${thuMuc[ten]}.${duoiFile} `
 
-export const ANH_BANNER = '/images/banner/cat-chu.webp'
+export const ANH_BANNER = 'src/assets/images/banner/cat-chu.webp'

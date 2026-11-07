@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { TieuDeTrang } from '../../components/BoCuc'
 import { Nut, TruongNhap, VungNhap, HopThoai, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
-import { dsDanhMuc, dsSanPham, tonKho, type ThongTinSanPham } from '../../data/duLieuMau'
+import { dsDanhMuc, dsHangChoMoBan, dsSanPham, tonKho, type ThongTinSanPham } from '../../data/duLieuMau'
 import { tienVND } from '../../lib/dinhDang'
 import { NhanTonKho } from '../nhan-vien/SanPhamVaTonKho'
 import VungTaiAnh from '../../components/VungTaiAnh'
+import OChonTimKiem from '../../components/OChonTimKiem'
 import { AnhSanPham } from '../../components/SanPham'
 import { duongDanAnhDanhMuc } from '../../lib/duongDanAnh'
 
@@ -14,7 +15,11 @@ const tabs = ['Sản phẩm', 'Danh mục'] as const
 function TabSanPham() {
   const [edit, setEdit] = useState<ThongTinSanPham | 'new' | null>(null)
   const [del, setDel] = useState<ThongTinSanPham | null>(null)
+  const [chon, setChon] = useState<string | null>(null)
+  const [daMo, setDaMo] = useState<string[]>([])
   const cur = edit && edit !== 'new' ? edit : undefined
+  const hangCho = dsHangChoMoBan.filter((h) => !daMo.includes(h.id))
+  const hang = hangCho.find((h) => h.id === chon)
 
   return (
     <>
@@ -22,7 +27,7 @@ function TabSanPham() {
         <input placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm" className="h-11 w-full rounded-md bg-white px-3 focus:outline-2 focus:outline-brand sm:w-80" />
         <div className="flex gap-2">
           <Nut variant="soft">Đồng bộ kho</Nut>
-          <Nut onClick={() => setEdit('new')}>Thêm sản phẩm</Nut>
+          <Nut onClick={() => { setChon(null); setEdit('new') }}>Mở bán sản phẩm mới</Nut>
         </div>
       </div>
       <div className={cx(tableWrap, 'bg-white')}>
@@ -51,12 +56,40 @@ function TabSanPham() {
       </div>
 
       {edit && (
-        <HopThoai title={cur ? 'Sửa sản phẩm' : 'Thêm sản phẩm'} onClose={() => setEdit(null)} wide>
-          <form onSubmit={(e) => { e.preventDefault(); setEdit(null) }} className="space-y-4">
-            <TruongNhap label="Tên sản phẩm" defaultValue={cur?.name} />
+        <HopThoai title={cur ? 'Sửa sản phẩm' : 'Mở bán sản phẩm mới'} onClose={() => setEdit(null)} wide>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (!cur && chon) setDaMo((d) => [...d, chon])
+              setEdit(null)
+            }}
+            className="space-y-4"
+          >
+            {cur ? (
+              <TruongNhap label="Tên sản phẩm" defaultValue={cur.name} />
+            ) : (
+              <OChonTimKiem
+                label="Sản phẩm đã nhập kho"
+                options={hangCho.map((h) => ({ value: h.id, label: h.name, hint: `${h.brand} · ${h.category} · ${h.soLuongKho} chiếc trong kho` }))}
+                value={chon}
+                onChange={setChon}
+                placeholder="Gõ tên để tìm sản phẩm"
+                emptyText="Chưa có sản phẩm chờ mở bán. Nhờ nhân viên kho nhập hàng trước."
+                hint="Chỉ hiện hàng đã nhập kho và chưa mở bán."
+              />
+            )}
             <div className="grid gap-4 sm:grid-cols-2">
-              <TruongNhap label="Thương hiệu" defaultValue={cur?.brand} />
-              <OChon label="Danh mục" defaultValue={cur?.category}>{dsDanhMuc.map((c) => <option key={c}>{c}</option>)}</OChon>
+              {cur ? (
+                <>
+                  <TruongNhap label="Thương hiệu" defaultValue={cur.brand} />
+                  <OChon label="Danh mục" defaultValue={cur.category}>{dsDanhMuc.map((c) => <option key={c}>{c}</option>)}</OChon>
+                </>
+              ) : (
+                <>
+                  <TruongNhap label="Thương hiệu" value={hang?.brand ?? ''} disabled placeholder="Tự điền khi chọn sản phẩm" />
+                  <TruongNhap label="Danh mục" value={hang?.category ?? ''} disabled placeholder="Tự điền khi chọn sản phẩm" />
+                </>
+              )}
               <TruongNhap type="number" label="Giá bán (₫)" defaultValue={cur?.price} />
               <TruongNhap type="number" label="Giá niêm yết (₫)" defaultValue={cur?.oldPrice} hint="Để trống nếu không giảm giá" />
               <TruongNhap type="number" min={0} label="Bảo hành (tháng)" defaultValue={cur ? 36 : undefined} />
@@ -70,7 +103,7 @@ function TabSanPham() {
               defaultValue={cur ? Object.entries(cur.specs).map(([k, v]) => `${k}: ${v}`).join('\n') : undefined}
             />
             <VungTaiAnh label="Ảnh sản phẩm" multiple max={8} hint="Ảnh WebP, JPG hoặc PNG, khổ vuông 1200×1200, tối đa 8 ảnh. Ảnh đầu tiên là ảnh chính hiện ở danh sách." />
-            <div className="flex justify-end gap-2 pt-2"><Nut type="button" variant="soft" onClick={() => setEdit(null)}>Hủy</Nut><Nut>Lưu</Nut></div>
+            <div className="flex justify-end gap-2 pt-2"><Nut type="button" variant="soft" onClick={() => setEdit(null)}>Hủy</Nut><Nut disabled={!cur && !chon}>Lưu</Nut></div>
           </form>
         </HopThoai>
       )}

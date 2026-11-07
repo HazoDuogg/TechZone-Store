@@ -16,7 +16,7 @@ export type ThongTinDonHang = {
   phone: string
   email: string
   address: string
-  items: { id: string; qty: number }[]
+  items: { id: string; qty: number; serials: string[] }[]
   discount: number
   shipping: number
   payment: 'COD'
@@ -96,6 +96,22 @@ export const tonKho: Record<string, number> = Object.fromEntries(
   dsSanPham.map((x, i) => [x.id, [14, 3, 22, 0, 9, 31, 4, 18, 2][i % 9]])
 )
 
+export type HangChoMoBan = {
+  id: string
+  name: string
+  brand: string
+  category: string
+  soLuongKho: number
+}
+
+export const dsHangChoMoBan: HangChoMoBan[] = [
+  { id: 'cho-4070tis', name: 'ASUS TUF Gaming GeForce RTX 4070 Ti SUPER 16GB', brand: 'ASUS', category: 'VGA', soLuongKho: 6 },
+  { id: 'cho-14900k', name: 'Intel Core i9-14900K', brand: 'Intel', category: 'CPU', soLuongKho: 4 },
+  { id: 'cho-990evo', name: 'Samsung 990 EVO 1TB NVMe', brand: 'Samsung', category: 'SSD', soLuongKho: 12 },
+  { id: 'cho-d5-32r', name: 'Kingston Fury Renegade 32GB (2x16GB) DDR5 6000', brand: 'Kingston', category: 'RAM', soLuongKho: 8 },
+  { id: 'cho-4000d', name: 'Corsair 4000D Airflow', brand: 'Corsair', category: 'Case', soLuongKho: 5 },
+]
+
 export const dsMaGiamGia: PhieuGiamGia[] = [
   { code: 'TECH10', kind: 'percent', value: 10, minOrder: 2000000, expires: '2026-12-31', active: true },
   { code: 'GIAM200K', kind: 'amount', value: 200000, minOrder: 3000000, expires: '2026-11-30', active: true },
@@ -103,12 +119,12 @@ export const dsMaGiamGia: PhieuGiamGia[] = [
 ]
 
 export const dsDonHang: ThongTinDonHang[] = [
-  { code: 'TZ240001', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'cpu-7600', qty: 1 }, { id: 'mb-b650m', qty: 1 }, { id: 'ram-d5-32', qty: 1 }], discount: 0, shipping: 0, payment: 'COD', status: 'Hoàn tất', createdAt: '2026-10-02T09:14:00' },
-  { code: 'TZ240002', customer: 'Trần Thu Hà', phone: '0912345678', email: 'ha.tran@mail.com', address: '45 Nguyễn Trãi, Thanh Xuân, Hà Nội', items: [{ id: 'vga-4060', qty: 1 }, { id: 'psu-rm750', qty: 1 }], discount: 200000, shipping: 0, payment: 'COD', status: 'Đang giao', createdAt: '2026-10-19T14:40:00' },
-  { code: 'TZ240003', customer: 'Lê Quốc Bảo', phone: '0987654321', email: 'bao.le@mail.com', address: '7 Hai Bà Trưng, Hải Châu, Đà Nẵng', items: [{ id: 'mon-lg24', qty: 2 }, { id: 'mouse-g102', qty: 2 }], discount: 0, shipping: 30000, payment: 'COD', status: 'Chờ xác nhận', createdAt: '2026-10-24T20:05:00' },
-  { code: 'TZ240004', customer: 'Phạm Gia Hân', phone: '0933222111', email: 'han.pham@mail.com', address: '88 Cách Mạng Tháng 8, Quận 3, TP.HCM', items: [{ id: 'ssd-980pro', qty: 1 }], discount: 0, shipping: 30000, payment: 'COD', status: 'Chờ xác nhận', createdAt: '2026-10-25T08:30:00' },
-  { code: 'TZ240005', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'mouse-da3', qty: 1 }], discount: 0, shipping: 30000, payment: 'COD', status: 'Đã xác nhận', createdAt: '2026-10-23T16:20:00' },
-  { code: 'TZ240006', customer: 'Võ Thanh Tùng', phone: '0977000111', email: 'tung.vo@mail.com', address: '21 Trần Phú, Nha Trang, Khánh Hòa', items: [{ id: 'cpu-13400f', qty: 1 }, { id: 'mb-b760m', qty: 1 }], discount: 0, shipping: 0, payment: 'COD', status: 'Đã hủy', createdAt: '2026-10-11T11:00:00' },
+  { code: 'TZ240001', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'cpu-7600', qty: 1, serials: ['SN-R57600-10211'] }, { id: 'mb-b650m', qty: 1, serials: ['SN-B650MK-44021'] }, { id: 'ram-d5-32', qty: 1, serials: ['SN-CVD532-90871'] }], discount: 0, shipping: 0, payment: 'COD', status: 'Hoàn tất', createdAt: '2026-10-02T09:14:00' },
+  { code: 'TZ240002', customer: 'Trần Thu Hà', phone: '0912345678', email: 'ha.tran@mail.com', address: '45 Nguyễn Trãi, Thanh Xuân, Hà Nội', items: [{ id: 'vga-4060', qty: 1, serials: ['SN-RTX4060-77120'] }, { id: 'psu-rm750', qty: 1, serials: ['SN-RM750E-23318'] }], discount: 200000, shipping: 0, payment: 'COD', status: 'Đang giao', createdAt: '2026-10-19T14:40:00' },
+  { code: 'TZ240003', customer: 'Lê Quốc Bảo', phone: '0987654321', email: 'bao.le@mail.com', address: '7 Hai Bà Trưng, Hải Châu, Đà Nẵng', items: [{ id: 'mon-lg24', qty: 2, serials: [] }, { id: 'mouse-g102', qty: 2, serials: [] }], discount: 0, shipping: 30000, payment: 'COD', status: 'Chờ xác nhận', createdAt: '2026-10-24T20:05:00' },
+  { code: 'TZ240004', customer: 'Phạm Gia Hân', phone: '0933222111', email: 'han.pham@mail.com', address: '88 Cách Mạng Tháng 8, Quận 3, TP.HCM', items: [{ id: 'ssd-980pro', qty: 1, serials: [] }], discount: 0, shipping: 30000, payment: 'COD', status: 'Chờ xác nhận', createdAt: '2026-10-25T08:30:00' },
+  { code: 'TZ240005', customer: 'Nguyễn Minh Khoa', phone: '0901234567', email: 'khachhang@techzone.vn', address: '12 Lê Lợi, Quận 1, TP.HCM', items: [{ id: 'mouse-da3', qty: 1, serials: ['SN-DA3-88114'] }], discount: 0, shipping: 30000, payment: 'COD', status: 'Đã xác nhận', createdAt: '2026-10-23T16:20:00' },
+  { code: 'TZ240006', customer: 'Võ Thanh Tùng', phone: '0977000111', email: 'tung.vo@mail.com', address: '21 Trần Phú, Nha Trang, Khánh Hòa', items: [{ id: 'cpu-13400f', qty: 1, serials: [] }, { id: 'mb-b760m', qty: 1, serials: [] }], discount: 0, shipping: 0, payment: 'COD', status: 'Đã hủy', createdAt: '2026-10-11T11:00:00' },
 ]
 
 export const dsKhachHang = [
@@ -119,11 +135,46 @@ export const dsKhachHang = [
   { id: 5, name: 'Võ Thanh Tùng', phone: '0977000111', email: 'tung.vo@mail.com', address: '21 Trần Phú, Nha Trang, Khánh Hòa', note: 'Hay hỏi về bảo hành' },
 ]
 
-export const dsSerial = [
-  { serial: 'SN-RTX4060-77120', productId: 'vga-4060', customer: 'Trần Thu Hà', purchasedAt: '2026-10-19', warrantyUntil: '2029-10-19' },
-  { serial: 'SN-SSD980-30415', productId: 'ssd-980pro', customer: 'Phạm Gia Hân', purchasedAt: '2023-03-08', warrantyUntil: '2026-03-08' },
-  { serial: 'SN-LG24-55091', productId: 'mon-lg24', customer: 'Lê Quốc Bảo', purchasedAt: '2025-06-14', warrantyUntil: '2028-06-14' },
-  { serial: 'SN-DA3-88002', productId: 'mouse-da3', customer: 'Nguyễn Minh Khoa', purchasedAt: '2025-12-01', warrantyUntil: '2027-12-01' },
+export type TrangThaiSerial = 'trong_kho' | 'da_ban'
+
+export type ThongTinSerial = {
+  serial: string
+  productId: string
+  status: TrangThaiSerial
+  importedAt: string
+  orderCode?: string
+  customer?: string
+  purchasedAt?: string
+  warrantyUntil?: string
+}
+
+export const dsSerial: ThongTinSerial[] = [
+  // Đã bán và đã có phiếu bảo hành
+  { serial: 'SN-RTX4060-77120', productId: 'vga-4060', status: 'da_ban', importedAt: '2026-09-28', orderCode: 'TZ240002', customer: 'Trần Thu Hà', purchasedAt: '2026-10-19', warrantyUntil: '2029-10-19' },
+  { serial: 'SN-SSD980-30415', productId: 'ssd-980pro', status: 'da_ban', importedAt: '2023-02-20', customer: 'Phạm Gia Hân', purchasedAt: '2023-03-08', warrantyUntil: '2026-03-08' },
+  { serial: 'SN-LG24-55091', productId: 'mon-lg24', status: 'da_ban', importedAt: '2025-05-30', customer: 'Lê Quốc Bảo', purchasedAt: '2025-06-14', warrantyUntil: '2028-06-14' },
+  { serial: 'SN-DA3-88002', productId: 'mouse-da3', status: 'da_ban', importedAt: '2025-11-18', customer: 'Nguyễn Minh Khoa', purchasedAt: '2025-12-01', warrantyUntil: '2027-12-01' },
+
+  // Đã gán cho các đơn hiện có
+  { serial: 'SN-R57600-10211', productId: 'cpu-7600', status: 'da_ban', importedAt: '2026-09-15', orderCode: 'TZ240001', customer: 'Nguyễn Minh Khoa', purchasedAt: '2026-10-05' },
+  { serial: 'SN-B650MK-44021', productId: 'mb-b650m', status: 'da_ban', importedAt: '2026-09-15', orderCode: 'TZ240001', customer: 'Nguyễn Minh Khoa', purchasedAt: '2026-10-05' },
+  { serial: 'SN-CVD532-90871', productId: 'ram-d5-32', status: 'da_ban', importedAt: '2026-09-20', orderCode: 'TZ240001', customer: 'Nguyễn Minh Khoa', purchasedAt: '2026-10-05' },
+  { serial: 'SN-RM750E-23318', productId: 'psu-rm750', status: 'da_ban', importedAt: '2026-09-28', orderCode: 'TZ240002', customer: 'Trần Thu Hà', purchasedAt: '2026-10-19' },
+  { serial: 'SN-DA3-88114', productId: 'mouse-da3', status: 'da_ban', importedAt: '2026-10-10', orderCode: 'TZ240005', customer: 'Nguyễn Minh Khoa' },
+
+  // Còn trong kho, hệ thống chọn từ đây khi xác nhận đơn
+  { serial: 'SN-LG24-55231', productId: 'mon-lg24', status: 'trong_kho', importedAt: '2026-10-01' },
+  { serial: 'SN-LG24-55232', productId: 'mon-lg24', status: 'trong_kho', importedAt: '2026-10-01' },
+  { serial: 'SN-LG24-55233', productId: 'mon-lg24', status: 'trong_kho', importedAt: '2026-10-12' },
+  { serial: 'SN-G102-70011', productId: 'mouse-g102', status: 'trong_kho', importedAt: '2026-10-03' },
+  { serial: 'SN-G102-70012', productId: 'mouse-g102', status: 'trong_kho', importedAt: '2026-10-03' },
+  { serial: 'SN-G102-70013', productId: 'mouse-g102', status: 'trong_kho', importedAt: '2026-10-03' },
+  { serial: 'SN-SSD980-30502', productId: 'ssd-980pro', status: 'trong_kho', importedAt: '2026-10-08' },
+  { serial: 'SN-SSD980-30503', productId: 'ssd-980pro', status: 'trong_kho', importedAt: '2026-10-08' },
+  { serial: 'SN-RTX4060-77125', productId: 'vga-4060', status: 'trong_kho', importedAt: '2026-10-14' },
+  { serial: 'SN-RTX4060-77126', productId: 'vga-4060', status: 'trong_kho', importedAt: '2026-10-14' },
+  { serial: 'SN-R57600-10305', productId: 'cpu-7600', status: 'trong_kho', importedAt: '2026-10-16' },
+  { serial: 'SN-CVD532-90902', productId: 'ram-d5-32', status: 'trong_kho', importedAt: '2026-10-16' },
 ]
 
 export const dsPhieuBaoHanh = [
@@ -134,11 +185,11 @@ export const dsPhieuBaoHanh = [
 ]
 
 export const dsNhanVien = [
-  { id: 1, name: 'Đặng Hoàng Nam', email: 'nam.dang@techzone.vn', role: 'Quản lý', locked: false },
-  { id: 2, name: 'Bùi Thị Lan', email: 'lan.bui@techzone.vn', role: 'Bán hàng', locked: false },
-  { id: 3, name: 'Hồ Minh Tuấn', email: 'tuan.ho@techzone.vn', role: 'Kỹ thuật', locked: false },
-  { id: 4, name: 'Ngô Thị Mai', email: 'mai.ngo@techzone.vn', role: 'Kho', locked: false },
-  { id: 5, name: 'Đinh Văn Hải', email: 'hai.dinh@techzone.vn', role: 'Bán hàng', locked: true },
+  { id: 1, name: 'Đặng Hoàng Nam', email: 'nam.dang@techzone.vn', password: 123, role: 'Quản lý', locked: false },
+  { id: 2, name: 'Bùi Thị Lan', email: 'lan.bui@techzone.vn', password: 123, role: 'Bán hàng', locked: false },
+  { id: 3, name: 'Hồ Minh Tuấn', email: 'tuan.ho@techzone.vn', password: 123, role: 'Kỹ thuật', locked: false },
+  { id: 4, name: 'Ngô Thị Mai', email: 'mai.ngo@techzone.vn', password: 123, role: 'Kho', locked: false },
+  { id: 5, name: 'Đinh Văn Hải', email: 'hai.dinh@techzone.vn', password: 123, role: 'Bán hàng', locked: true },
 ]
 
 export const doanhThu12Thang = [
