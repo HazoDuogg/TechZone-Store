@@ -29,9 +29,16 @@ export function AnhSanPham({ product, className }: { product: ThongTinSanPham; c
     <div className={cx('flex aspect-square items-center justify-center overflow-hidden bg-white', className)}>
       <img
         src={duongDanAnhSanPham(product, 1)}
+        onError={(e) => {
+          const img = e.currentTarget
+          if (img.src.endsWith('.webp')) {
+            img.src = duongDanAnhSanPham(product, 1, 'png')
+          } else {
+            setLoi(true)
+          }
+        }}
         alt={product.name}
         loading="lazy"
-        onError={() => setLoi(true)}
         className="h-full w-full object-contain"
       />
     </div>

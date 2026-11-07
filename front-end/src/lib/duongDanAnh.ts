@@ -14,9 +14,24 @@ const thuMuc: Record<string, string> = {
   Chuột: 'chuot',
 }
 
+const anh = import.meta.glob<string>('../assets/images/**/*.{webp,png}', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+})
 
-export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number) => `src/assets/images/san-pham/${thuMuc[p.category]}/${p.id}-${goc}.webp`
+const tim = (duong: string, duoi?: 'webp' | 'png') => {
+  for (const d of duoi ? [duoi] : ['webp', 'png']) {
+    const url = anh[`../assets/images/${duong}.${d}`]
+    if (url) return url
+  }
+  return '/khong-co-anh'
+}
 
-export const duongDanAnhDanhMuc = (ten: string, duoiFile: 'webp' | 'png' = 'webp') => `src/assets/images/danh-muc/cat-${thuMuc[ten]}.${duoiFile} `
+export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number, duoiFile?: 'webp' | 'png') =>
+  tim(`san-pham/${thuMuc[p.category]}/${p.id}-${goc}`, duoiFile)
 
-export const ANH_BANNER = 'src/assets/images/banner/cat-chu.webp'
+export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') =>
+  tim(`danh-muc/cat-${thuMuc[ten]}`, duoiFile)
+
+export const ANH_BANNER = tim('banner/cat-chu')

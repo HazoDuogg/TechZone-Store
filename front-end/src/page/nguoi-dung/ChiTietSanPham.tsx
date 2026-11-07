@@ -13,6 +13,7 @@ export default function ChiTietSanPham() {
   const [qty, setQty] = useState(1)
 
   const p = dsSanPham.find((x) => x.id === id)
+
   if (!p)
     return (
       <div className="mx-auto max-w-3xl px-4 py-16">
