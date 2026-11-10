@@ -1,6 +1,10 @@
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Module } from '@nestjs/common';
+import { TaiKhoanService } from './modules/tai-khoan/tai-khoan.service';
+import { TaiKhoanController } from './modules/tai-khoan/tai-khoan.controller';
+import { TaiKhoanModule } from './modules/tai-khoan/tai-khoan.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -17,10 +21,12 @@ import { Module } from '@nestjs/common';
         autoLoadEntities: true,
         synchronize: false
       }),
-    })
+    }),
+    TaiKhoanModule,
+    AuthModule
   ],
-  controllers: [],
-  providers: [],
+  controllers: [TaiKhoanController],
+  providers: [TaiKhoanService],
 })
 
 export class AppModule { }
