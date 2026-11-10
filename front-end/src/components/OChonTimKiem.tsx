@@ -50,7 +50,9 @@ export default function OChonTimKiem({ label, options, value, onChange, placehol
 
   return (
     <div className={cx('relative', className)}>
-      <label htmlFor={`${id}-input`} className="mb-1.5 block text-sm font-semibold">{label}</label>
+      <label htmlFor={`${id}-input`} className="mb-1.5 block text-sm font-semibold">
+        {label}
+      </label>
       <div className="relative">
         <input
           id={`${id}-input`}
@@ -61,15 +63,31 @@ export default function OChonTimKiem({ label, options, value, onChange, placehol
           aria-activedescendant={open && ds[active] ? `${id}-${active}` : undefined}
           autoComplete="off"
           placeholder={placeholder}
-          value={open ? query : chon?.label ?? ''}
-          onFocus={() => { setOpen(true); setQuery(''); setActive(0) }}
-          onClick={() => { if (!open) { setOpen(true); setQuery(''); setActive(0) } }}
+          value={open ? query : (chon?.label ?? '')}
+          onFocus={() => {
+            setOpen(true)
+            setQuery('')
+            setActive(0)
+          }}
+          onClick={() => {
+            if (!open) {
+              setOpen(true)
+              setQuery('')
+              setActive(0)
+            }
+          }}
           onBlur={() => setOpen(false)}
-          onChange={(e) => { setQuery(e.target.value); setOpen(true); setActive(0) }}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setOpen(true)
+            setActive(0)
+          }}
           onKeyDown={onKeyDown}
           className="h-11 w-full rounded-md border border-surface-2 bg-white px-3 pr-9 text-[15px] text-ink placeholder:text-muted/70 focus:outline-2 focus:outline-brand"
         />
-        <span aria-hidden className="pointer-events-none absolute inset-y-0 right-3 grid place-items-center text-muted">▾</span>
+        <span aria-hidden className="pointer-events-none absolute inset-y-0 right-3 grid place-items-center text-muted">
+          ▾
+        </span>
       </div>
       {open && (
         <ul id={`${id}-list`} role="listbox" className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-lg border border-surface-2 bg-white p-1 shadow-lg">
@@ -80,7 +98,10 @@ export default function OChonTimKiem({ label, options, value, onChange, placehol
               id={`${id}-${i}`}
               role="option"
               aria-selected={o.value === value}
-              onMouseDown={(e) => { e.preventDefault(); pick(o) }}
+              onMouseDown={(e) => {
+                e.preventDefault()
+                pick(o)
+              }}
               onMouseEnter={() => setActive(i)}
               className={cx('cursor-pointer rounded-md px-3 py-2', i === active && 'bg-brand-soft', o.value === value && 'font-semibold')}
             >

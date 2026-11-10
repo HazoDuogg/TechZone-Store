@@ -1,0 +1,5 @@
+export type { ThongTinSanPham, HangChoMoBan, TrangThaiSerial, ThongTinSerial } from './sanPham'
+export type { TrangThaiDon, DongDonHang, ThongTinDonHang } from './donHang'
+export type { PhieuGiamGia } from './maGiamGia'
+export type { TrangThaiBaoHanh, PhieuBaoHanh } from './baoHanh'
+export type { ThongTinNhanVien, ThongTinKhachHang } from './nguoiDung'

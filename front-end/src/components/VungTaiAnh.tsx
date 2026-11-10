@@ -51,15 +51,17 @@ export default function VungTaiAnh({ label, hint, multiple, max = 1, className }
               <li key={a.id} className="min-w-0">
                 <div className="relative aspect-square overflow-hidden rounded-md bg-surface">
                   <img src={a.url} alt={a.ten} className="h-full w-full object-cover" />
-                  {multiple && i === 0 && (
-                    <span className="absolute top-1 left-1 rounded bg-brand px-1.5 py-0.5 text-xs font-semibold text-white">Ảnh chính</span>
-                  )}
+                  {multiple && i === 0 && <span className="absolute top-1 left-1 rounded bg-brand px-1.5 py-0.5 text-xs font-semibold text-white">Ảnh chính</span>}
                 </div>
                 <div className="mt-1.5 flex flex-wrap gap-x-3 text-sm">
                   {multiple && i > 0 && (
-                    <button type="button" onClick={() => datAnhChinh(a.id)} className="font-semibold text-brand hover:underline">Làm ảnh chính</button>
+                    <button type="button" onClick={() => datAnhChinh(a.id)} className="font-semibold text-brand hover:underline">
+                      Làm ảnh chính
+                    </button>
                   )}
-                  <button type="button" onClick={() => xoa(a.id)} className="font-semibold text-danger hover:underline">Xóa</button>
+                  <button type="button" onClick={() => xoa(a.id)} className="font-semibold text-danger hover:underline">
+                    Xóa
+                  </button>
                 </div>
               </li>
             ))}
@@ -68,7 +70,7 @@ export default function VungTaiAnh({ label, hint, multiple, max = 1, className }
         <label
           className={cx(
             'flex min-h-20 flex-col items-center justify-center rounded-md bg-surface px-4 py-4 text-center transition-colors focus-within:outline-2 focus-within:outline-brand',
-            day ? 'opacity-50' : 'hover:bg-surface-2'
+            day ? 'opacity-50' : 'hover:bg-surface-2',
           )}
         >
           <input type="file" accept="image/webp,image/jpeg,image/png" multiple={multiple} disabled={day} onChange={chon} className="sr-only" />

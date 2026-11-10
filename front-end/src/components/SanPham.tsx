@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { tonKho, type ThongTinSanPham } from '../data/duLieuMau'
+import { tonKho } from '../data/duLieuMau'
+import type { ThongTinSanPham } from '../types'
 import { duongDanAnhSanPham } from '../lib/duongDanAnh'
 import { cx } from '../lib/lopCss'
 import { tienVND } from '../lib/dinhDang'
@@ -47,10 +48,7 @@ export function AnhSanPham({ product, className }: { product: ThongTinSanPham; c
 
 export function KhungSanPham({ product, className }: { product: ThongTinSanPham; className?: string }) {
   return (
-    <div
-      className={cx('flex aspect-square flex-col justify-between p-5', tints[product.category] ?? 'bg-surface', className)}
-      aria-hidden="true"
-    >
+    <div className={cx('flex aspect-square flex-col justify-between p-5', tints[product.category] ?? 'bg-surface', className)} aria-hidden="true">
       <span className="text-sm font-semibold opacity-80">{product.category}</span>
       <span className="text-[clamp(1.5rem,4.2vw,2.6rem)] leading-[0.95] font-extrabold tracking-tight">{shortName(product)}</span>
       <span className="text-sm font-semibold opacity-80">{product.brand}</span>

@@ -4,28 +4,29 @@ import { TieuDeTrang } from '../../components/BoCuc'
 import { NhanTrangThai } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
 import { dsDonHang } from '../../data/duLieuMau'
+import { CAC_TRANG_THAI_DON } from '../../constants'
 import { ngayGioVN, tienVND, tongTienDon } from '../../lib/dinhDang'
 import { useGocQuanLy } from '../../lib/gocQuanLy'
 
-const filters = ['Tất cả', 'Chờ xác nhận', 'Đã xác nhận', 'Đang giao', 'Hoàn tất', 'Đã hủy']
+const BO_LOC_TRANG_THAI = ['Tất cả', ...CAC_TRANG_THAI_DON]
 
 export default function DonHangCanXuLy() {
-  const nav = useNavigate()
+  const chuyenTrang = useNavigate()
   const goc = useGocQuanLy()
-  const [f, setF] = useState('Chờ xác nhận')
+  const [trangThaiLoc, setTrangThaiLoc] = useState('Chờ xác nhận')
 
   return (
     <>
       <TieuDeTrang title="Đơn hàng cần xử lý" desc="Tiếp nhận, xác nhận và theo dõi đơn của khách hàng." />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
-          {filters.map((s) => (
+          {BO_LOC_TRANG_THAI.map((trangThai) => (
             <button
-              key={s}
-              onClick={() => setF(s)}
-              className={cx('rounded-md px-3 py-2 text-sm font-semibold transition-colors', f === s ? 'bg-ink text-white' : 'bg-white hover:bg-surface-2')}
+              key={trangThai}
+              onClick={() => setTrangThaiLoc(trangThai)}
+              className={cx('rounded-md px-3 py-2 text-sm font-semibold transition-colors', trangThaiLoc === trangThai ? 'bg-ink text-white' : 'bg-white hover:bg-surface-2')}
             >
-              {s}
+              {trangThai}
             </button>
           ))}
         </div>
@@ -39,17 +40,33 @@ export default function DonHangCanXuLy() {
       <div className={cx(tableWrap, 'bg-white')}>
         <table className="w-full">
           <thead>
-            <tr><th className={th}>Mã đơn</th><th className={th}>Khách hàng</th><th className={th}>Thời gian</th><th className={th}>Thanh toán</th><th className={th}>Tổng tiền</th><th className={th}>Trạng thái</th></tr>
+            <tr>
+              <th className={th}>Mã đơn</th>
+              <th className={th}>Khách hàng</th>
+              <th className={th}>Thời gian</th>
+              <th className={th}>Thanh toán</th>
+              <th className={th}>Tổng tiền</th>
+              <th className={th}>Trạng thái</th>
+            </tr>
           </thead>
           <tbody>
-            {dsDonHang.map((o) => (
-              <tr key={o.code} onClick={() => nav(`${goc}/don-hang/${o.code}`)} className="cursor-pointer hover:bg-surface">
-                <td className={cx(td, 'font-bold')}><Link to={`${goc}/don-hang/${o.code}`} className="text-brand">{o.code}</Link></td>
-                <td className={td}>{o.customer}<div className="text-sm text-muted">{o.phone}</div></td>
-                <td className={cx(td, 'whitespace-nowrap')}>{ngayGioVN(o.createdAt)}</td>
-                <td className={td}>{o.payment}</td>
-                <td className={cx(td, 'font-semibold whitespace-nowrap')}>{tienVND(tongTienDon(o))}</td>
-                <td className={td}><NhanTrangThai status={o.status} /></td>
+            {dsDonHang.map((don) => (
+              <tr key={don.code} onClick={() => chuyenTrang(`${goc}/don-hang/${don.code}`)} className="cursor-pointer hover:bg-surface">
+                <td className={cx(td, 'font-bold')}>
+                  <Link to={`${goc}/don-hang/${don.code}`} className="text-brand">
+                    {don.code}
+                  </Link>
+                </td>
+                <td className={td}>
+                  {don.customer}
+                  <div className="text-sm text-muted">{don.phone}</div>
+                </td>
+                <td className={cx(td, 'whitespace-nowrap')}>{ngayGioVN(don.createdAt)}</td>
+                <td className={td}>{don.payment}</td>
+                <td className={cx(td, 'font-semibold whitespace-nowrap')}>{tienVND(tongTienDon(don))}</td>
+                <td className={td}>
+                  <NhanTrangThai status={don.status} />
+                </td>
               </tr>
             ))}
           </tbody>

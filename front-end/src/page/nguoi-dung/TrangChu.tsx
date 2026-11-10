@@ -21,15 +21,17 @@ export default function TrangChu() {
     <>
       <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 pt-10 pb-4 sm:px-6 sm:pt-16 lg:grid-cols-[1.1fr_1fr]">
         <div className="rise">
-          <h1 className="text-[clamp(2.4rem,6vw,4.75rem)] leading-[1.02] font-extrabold tracking-tight">
-            Chọn đúng linh kiện, lắp đúng cấu hình.
-          </h1>
+          <h1 className="text-[clamp(2.4rem,6vw,4.75rem)] leading-[1.02] font-extrabold tracking-tight">Chọn đúng linh kiện, lắp đúng cấu hình.</h1>
           <p className="mt-6 max-w-xl text-lg text-muted">
             TechZone bán linh kiện máy tính chính hãng. Nhập ngân sách, trợ lý của chúng tôi chọn sẵn bộ linh kiện tương thích với nhau và báo tổng tiền ngay.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <NutLienKet to="/build-pc" size="lg">Build PC theo ngân sách</NutLienKet>
-            <NutLienKet to="/san-pham" size="lg" variant="soft">Xem sản phẩm</NutLienKet>
+            <NutLienKet to="/build-pc" size="lg">
+              Build PC theo ngân sách
+            </NutLienKet>
+            <NutLienKet to="/san-pham" size="lg" variant="soft">
+              Xem sản phẩm
+            </NutLienKet>
           </div>
         </div>
         <Link to="/san-pham" className="rise block overflow-hidden rounded-xl bg-surface" style={{ animationDelay: '90ms' }}>
@@ -38,14 +40,12 @@ export default function TrangChu() {
       </section>
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="cats">
-        <h2 id="cats" className="text-3xl font-extrabold tracking-tight sm:text-4xl">Danh mục</h2>
+        <h2 id="cats" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Danh mục
+        </h2>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {dsDanhMuc.map((c) => (
-            <Link
-              key={c}
-              to="/san-pham"
-              className="group flex items-center justify-between gap-4 rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white"
-            >
+            <Link key={c} to="/san-pham" className="group flex items-center justify-between gap-4 rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white">
               <span className="flex flex-col">
                 <span className="text-xl font-bold">{c}</span>
                 <span className="text-sm text-muted group-hover:text-white/80">{dsSanPham.filter((p) => p.category === c).length} sản phẩm</span>
@@ -53,25 +53,33 @@ export default function TrangChu() {
               <img
                 src={duongDanAnhDanhMuc(c)}
                 onError={(e) => {
-                  const img = e.currentTarget;
+                  const img = e.currentTarget
                   if (img.src.endsWith('webp')) {
-                    img.src = duongDanAnhDanhMuc(c, 'png');
+                    img.src = duongDanAnhDanhMuc(c, 'png')
                   }
                 }}
-                alt="" loading="lazy" className="size-20 shrink-0 rounded-md object-cover sm:size-24"
+                alt=""
+                loading="lazy"
+                className="size-20 shrink-0 rounded-md object-cover sm:size-24"
               />
             </Link>
           ))}
         </div>
-      </section >
+      </section>
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="sale">
         <div className="flex items-end justify-between gap-4">
-          <h2 id="sale" className="text-3xl font-extrabold tracking-tight sm:text-4xl">Đang giảm giá</h2>
-          <Link to="/san-pham" className="font-semibold text-brand hover:underline">Xem tất cả</Link>
+          <h2 id="sale" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Đang giảm giá
+          </h2>
+          <Link to="/san-pham" className="font-semibold text-brand hover:underline">
+            Xem tất cả
+          </Link>
         </div>
         <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-          {sale.map((p) => <TheSanPham key={p.id} product={p} />)}
+          {sale.map((p) => (
+            <TheSanPham key={p.id} product={p} />
+          ))}
         </div>
       </section>
 
@@ -97,14 +105,20 @@ export default function TrangChu() {
       </section>
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="fresh">
-        <h2 id="fresh" className="text-3xl font-extrabold tracking-tight sm:text-4xl">Được chọn nhiều</h2>
+        <h2 id="fresh" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Được chọn nhiều
+        </h2>
         <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-          {fresh.map((p) => <TheSanPham key={p.id} product={p} />)}
+          {fresh.map((p) => (
+            <TheSanPham key={p.id} product={p} />
+          ))}
         </div>
       </section>
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="policy">
-        <h2 id="policy" className="text-3xl font-extrabold tracking-tight sm:text-4xl">Mua sắm yên tâm</h2>
+        <h2 id="policy" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Mua sắm yên tâm
+        </h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {policies.map(([t, d]) => (
             <div key={t} className="rounded-lg bg-surface p-6">

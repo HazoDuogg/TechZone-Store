@@ -18,7 +18,7 @@ const btnClass = ({ variant = 'primary', size = 'md' }: Look, extra?: string) =>
     'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors duration-150 active:translate-y-px disabled:opacity-50 disabled:pointer-events-none',
     variants[variant],
     sizes[size],
-    extra
+    extra,
   )
 
 export function Nut({ variant, size, className, ...p }: ButtonHTMLAttributes<HTMLButtonElement> & Look) {
@@ -29,15 +29,9 @@ export function NutLienKet({ variant, size, className, ...p }: LinkProps & Look)
   return <Link {...p} className={btnClass({ variant, size }, className)} />
 }
 
-const control =
-  'w-full rounded-md bg-surface px-3 text-[15px] text-ink placeholder:text-muted/70 transition-colors focus:bg-white focus:outline-2 focus:outline-brand'
+const control = 'w-full rounded-md bg-surface px-3 text-[15px] text-ink placeholder:text-muted/70 transition-colors focus:bg-white focus:outline-2 focus:outline-brand'
 
-export function TruongNhap({
-  label,
-  hint,
-  className,
-  ...p
-}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string }) {
+export function TruongNhap({ label, hint, className, ...p }: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string }) {
   return (
     <label className={cx('block', className)}>
       <span className="mb-1.5 block text-sm font-semibold">{label}</span>
@@ -56,12 +50,7 @@ export function VungNhap({ label, className, ...p }: TextareaHTMLAttributes<HTML
   )
 }
 
-export function OChon({
-  label,
-  className,
-  children,
-  ...p
-}: SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
+export function OChon({ label, className, children, ...p }: SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
   return (
     <label className={cx('block', className)}>
       {label && <span className="mb-1.5 block text-sm font-semibold">{label}</span>}
@@ -99,17 +88,7 @@ const statusTone: Record<string, keyof typeof tones> = {
 
 export const NhanTrangThai = ({ status }: { status: string }) => <Nhan tone={statusTone[status] ?? 'gray'}>{status}</Nhan>
 
-export function HopThoai({
-  title,
-  onClose,
-  children,
-  wide,
-}: {
-  title: string
-  onClose: () => void
-  children: ReactNode
-  wide?: boolean
-}) {
+export function HopThoai({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
@@ -150,10 +129,7 @@ export function ThanhTab<T extends string>({ value, onChange, items }: { value: 
           role="tab"
           aria-selected={value === t}
           onClick={() => onChange(t)}
-          className={cx(
-            'rounded-md px-4 py-2 text-sm font-semibold transition-colors',
-            value === t ? 'bg-white text-ink shadow-sm' : 'text-muted hover:text-ink'
-          )}
+          className={cx('rounded-md px-4 py-2 text-sm font-semibold transition-colors', value === t ? 'bg-white text-ink shadow-sm' : 'text-muted hover:text-ink')}
         >
           {t}
         </button>

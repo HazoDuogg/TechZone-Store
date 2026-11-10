@@ -11,14 +11,19 @@ export default function ChiTietDonHang() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
         <TrangTrong>
-          Không tìm thấy đơn hàng. <Link to="/don-hang" className="font-semibold text-brand">Tra cứu lại</Link>
+          Không tìm thấy đơn hàng.{' '}
+          <Link to="/don-hang" className="font-semibold text-brand">
+            Tra cứu lại
+          </Link>
         </TrangTrong>
       </div>
     )
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <Link to="/don-hang" className="text-sm font-semibold text-brand hover:underline">← Đơn hàng</Link>
+      <Link to="/don-hang" className="text-sm font-semibold text-brand hover:underline">
+        ← Đơn hàng
+      </Link>
       <h1 className="mt-2 mb-6 text-3xl font-extrabold tracking-tight">Chi tiết đơn hàng</h1>
       <NoiDungDonHang order={order} />
       {order.status === 'Chờ xác nhận' && (

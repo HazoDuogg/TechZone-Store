@@ -3,18 +3,17 @@ import { TieuDeTrang } from '../../components/BoCuc'
 import { Nut, TruongNhap, HopThoai, VungNhap } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
 import { dsKhachHang } from '../../data/duLieuMau'
-
-type Customer = (typeof dsKhachHang)[number]
+import type { ThongTinKhachHang } from '../../types'
 
 export default function KhachHang() {
-  const [edit, setEdit] = useState<Customer | null>(null)
+  const [khachHangDangSua, setKhachHangDangSua] = useState<ThongTinKhachHang | null>(null)
 
   return (
     <>
       <TieuDeTrang
         title="Thông tin khách hàng"
         desc="Lưu liên hệ và ghi chú chăm sóc khách."
-        action={<Nut onClick={() => setEdit({ id: 0, name: '', phone: '', email: '', address: '', note: '' })}>Thêm khách hàng</Nut>}
+        action={<Nut onClick={() => setKhachHangDangSua({ id: 0, name: '', phone: '', email: '', address: '', note: '' })}>Thêm khách hàng</Nut>}
       />
       <input
         placeholder="Tìm theo tên, số điện thoại, email"
@@ -24,39 +23,58 @@ export default function KhachHang() {
       <div className={cx(tableWrap, 'bg-white')}>
         <table className="w-full">
           <thead>
-            <tr><th className={th}>Khách hàng</th><th className={th}>Liên hệ</th><th className={th}>Ghi chú</th><th className={th}><span className="sr-only">Thao tác</span></th></tr>
+            <tr>
+              <th className={th}>Khách hàng</th>
+              <th className={th}>Liên hệ</th>
+              <th className={th}>Ghi chú</th>
+              <th className={th}>
+                <span className="sr-only">Thao tác</span>
+              </th>
+            </tr>
           </thead>
           <tbody>
-            {dsKhachHang.map((c) => (
-              <tr key={c.id}>
-                <td className={td}><div className="font-semibold">{c.name}</div><div className="max-w-64 text-sm text-muted">{c.address}</div></td>
-                <td className={td}>{c.phone}<div className="text-sm text-muted">{c.email}</div></td>
-                <td className={cx(td, 'max-w-56 text-muted')}>{c.note || '—'}</td>
-                <td className={td}><Nut size="sm" variant="soft" onClick={() => setEdit(c)}>Sửa</Nut></td>
+            {dsKhachHang.map((kh) => (
+              <tr key={kh.id}>
+                <td className={td}>
+                  <div className="font-semibold">{kh.name}</div>
+                  <div className="max-w-64 text-sm text-muted">{kh.address}</div>
+                </td>
+                <td className={td}>
+                  {kh.phone}
+                  <div className="text-sm text-muted">{kh.email}</div>
+                </td>
+                <td className={cx(td, 'max-w-56 text-muted')}>{kh.note || '—'}</td>
+                <td className={td}>
+                  <Nut size="sm" variant="soft" onClick={() => setKhachHangDangSua(kh)}>
+                    Sửa
+                  </Nut>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {edit && (
-        <HopThoai title={edit.id ? 'Sửa thông tin khách hàng' : 'Thêm khách hàng'} onClose={() => setEdit(null)}>
+      {khachHangDangSua && (
+        <HopThoai title={khachHangDangSua.id ? 'Sửa thông tin khách hàng' : 'Thêm khách hàng'} onClose={() => setKhachHangDangSua(null)}>
           <form
             onSubmit={(e) => {
               e.preventDefault()
-              setEdit(null)
+              setKhachHangDangSua(null)
             }}
             className="space-y-4"
           >
-            <TruongNhap label="Họ và tên" defaultValue={edit.name} />
+            <TruongNhap label="Họ và tên" defaultValue={khachHangDangSua.name} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <TruongNhap label="Số điện thoại" defaultValue={edit.phone} />
-              <TruongNhap type="email" label="Email" defaultValue={edit.email} />
+              <TruongNhap label="Số điện thoại" defaultValue={khachHangDangSua.phone} />
+              <TruongNhap type="email" label="Email" defaultValue={khachHangDangSua.email} />
             </div>
-            <TruongNhap label="Địa chỉ" defaultValue={edit.address} />
-            <VungNhap label="Ghi chú" defaultValue={edit.note} />
+            <TruongNhap label="Địa chỉ" defaultValue={khachHangDangSua.address} />
+            <VungNhap label="Ghi chú" defaultValue={khachHangDangSua.note} />
             <div className="flex justify-end gap-2 pt-2">
-              <Nut type="button" variant="soft" onClick={() => setEdit(null)}>Hủy</Nut>
+              <Nut type="button" variant="soft" onClick={() => setKhachHangDangSua(null)}>
+                Hủy
+              </Nut>
               <Nut>Lưu</Nut>
             </div>
           </form>

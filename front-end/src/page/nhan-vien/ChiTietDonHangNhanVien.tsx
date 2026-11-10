@@ -3,59 +3,67 @@ import { Link, useParams } from 'react-router-dom'
 import { TieuDeTrang } from '../../components/BoCuc'
 import { NoiDungDonHang } from '../../components/HienThiDonHang'
 import { Nhan, Nut, TrangTrong, HopThoai, TruongNhap } from '../../components/GiaoDienCoBan'
-import { dsDonHang, type ThongTinDonHang } from '../../data/duLieuMau'
+import { dsDonHang } from '../../data/duLieuMau'
+import type { DongDonHang } from '../../types'
 import { cx } from '../../lib/lopCss'
 import { timSanPham } from '../../lib/dinhDang'
 import { useGocQuanLy } from '../../lib/gocQuanLy'
 
-function GanSerial({ items }: { items: ThongTinDonHang['items'] }) {
-  const [edit, setEdit] = useState(false)
-  const chuanHoa = () => items.map((it) => ({ ...it, serials: Array.from({ length: it.qty }, (_, k) => it.serials[k] ?? '') }))
+function GanSerial({ cacDong }: { cacDong: DongDonHang[] }) {
+  const [dangSua, setDangSua] = useState(false)
+  const chuanHoa = () => cacDong.map((dong) => ({ ...dong, serials: Array.from({ length: dong.qty }, (_, viTri) => dong.serials[viTri] ?? '') }))
   const [daLuu, setDaLuu] = useState(chuanHoa)
-  const [dsItems, setDsItems] = useState(daLuu)
+  const [cacDongDangSua, setCacDongDangSua] = useState(daLuu)
 
-  const capNhatSerial = (id: string, index: number, serial: string) =>
-    setDsItems((d) =>
-      d.map((it) =>
-        it.id === id ? { ...it, serials: it.serials.map((s, k) => (k === index ? serial : s)) } : it))
+  const capNhatSerial = (id: string, viTri: number, serial: string) =>
+    setCacDongDangSua((truoc) => truoc.map((dong) => (dong.id === id ? { ...dong, serials: dong.serials.map((soSerial, k) => (k === viTri ? serial : soSerial)) } : dong)))
 
-  const daDoi = JSON.stringify(dsItems) !== JSON.stringify(daLuu)
-  const huy = () => { setDsItems(daLuu); setEdit(false) }
-  const luu = () => { setDaLuu(dsItems); setEdit(false) }
+  const daDoi = JSON.stringify(cacDongDangSua) !== JSON.stringify(daLuu)
+  const huy = () => {
+    setCacDongDangSua(daLuu)
+    setDangSua(false)
+  }
+  const luu = () => {
+    setDaLuu(cacDongDangSua)
+    setDangSua(false)
+  }
 
   return (
-    <section className={cx('mt-6 rounded-xl bg-white p-5', edit && 'ring-2 ring-brand/30')} aria-labelledby="serial">
+    <section className={cx('mt-6 rounded-xl bg-white p-5', dangSua && 'ring-2 ring-brand/30')} aria-labelledby="serial">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 id="serial" className="flex flex-wrap items-center gap-2 font-bold">
             Số serial từng chiếc
-            {edit && <Nhan tone="blue">Đang chỉnh sửa</Nhan>}
+            {dangSua && <Nhan tone="blue">Đang chỉnh sửa</Nhan>}
           </h2>
           <p className="mt-1 text-sm text-muted">Serial được hệ thống chọn khi xác nhận đơn. Đổi nếu chiếc đó không còn hoặc lấy nhầm.</p>
         </div>
         <div className="flex gap-2">
-          {edit ? (
+          {dangSua ? (
             <>
-              <Nut size="sm" variant="soft" onClick={huy}>Hủy</Nut>
-              <Nut size="sm" disabled={!daDoi} onClick={luu}>Lưu</Nut>
+              <Nut size="sm" variant="soft" onClick={huy}>
+                Hủy
+              </Nut>
+              <Nut size="sm" disabled={!daDoi} onClick={luu}>
+                Lưu
+              </Nut>
             </>
           ) : (
-            <Nut size="sm" variant="soft" onClick={() => setEdit(true)}>Đổi serial</Nut>
+            <Nut size="sm" variant="soft" onClick={() => setDangSua(true)}>
+              Đổi serial
+            </Nut>
           )}
         </div>
       </div>
       <div className="mt-4 space-y-5">
-        {dsItems.map((it) => (
-          <div key={it.id}>
-            <div className="mb-2 font-semibold">{timSanPham(it.id)?.name} <span className="font-normal text-muted">× {it.qty}</span></div>
+        {cacDongDangSua.map((dong) => (
+          <div key={dong.id}>
+            <div className="mb-2 font-semibold">
+              {timSanPham(dong.id)?.name} <span className="font-normal text-muted">× {dong.qty}</span>
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              {it.serials.map((s, k) => (
-                <TruongNhap
-                  key={k}
-                  label={`Chiếc ${k + 1}`}
-                  value={s}
-                  onChange={(e) => capNhatSerial(it.id, k, e.currentTarget.value)}
-                  disabled={!edit} />
+              {dong.serials.map((soSerial, viTri) => (
+                <TruongNhap key={viTri} label={`Chiếc ${viTri + 1}`} value={soSerial} onChange={(e) => capNhatSerial(dong.id, viTri, e.currentTarget.value)} disabled={!dangSua} />
               ))}
             </div>
           </div>
@@ -68,33 +76,51 @@ function GanSerial({ items }: { items: ThongTinDonHang['items'] }) {
 export default function ChiTietDonHangNhanVien() {
   const { code } = useParams()
   const goc = useGocQuanLy()
-  const [confirmCancel, setConfirmCancel] = useState(false)
-  const order = dsDonHang.find((o) => o.code === code)
+  const [dangXacNhanHuy, setDangXacNhanHuy] = useState(false)
+  const don = dsDonHang.find((d) => d.code === code)
 
-  if (!order) return <TrangTrong>Không tìm thấy đơn hàng. <Link to={`${goc}/don-hang`} className="font-semibold text-brand">Quay lại danh sách</Link></TrangTrong>
+  if (!don)
+    return (
+      <TrangTrong>
+        Không tìm thấy đơn hàng.{' '}
+        <Link to={`${goc}/don-hang`} className="font-semibold text-brand">
+          Quay lại danh sách
+        </Link>
+      </TrangTrong>
+    )
 
   return (
     <>
-      <Link to={`${goc}/don-hang`} className="text-sm font-semibold text-brand hover:underline">← Danh sách đơn</Link>
+      <Link to={`${goc}/don-hang`} className="text-sm font-semibold text-brand hover:underline">
+        ← Danh sách đơn
+      </Link>
       <TieuDeTrang
-        title={`Đơn ${order.code}`}
-        desc={order.payment === 'COD' ? 'Đơn thanh toán khi nhận hàng. Gọi xác nhận với khách trước khi chuyển trạng thái.' : undefined}
+        title={`Đơn ${don.code}`}
+        desc={don.payment === 'COD' ? 'Đơn thanh toán khi nhận hàng. Gọi xác nhận với khách trước khi chuyển trạng thái.' : undefined}
         action={
           <div className="flex gap-2">
-            <Nut variant="danger" onClick={() => setConfirmCancel(true)}>Hủy đơn</Nut>
+            <Nut variant="danger" onClick={() => setDangXacNhanHuy(true)}>
+              Hủy đơn
+            </Nut>
             <Nut>Xác nhận đơn</Nut>
           </div>
         }
       />
-      <NoiDungDonHang order={order} staff />
-      {['Đã xác nhận', 'Đang giao', 'Hoàn tất'].includes(order.status) && <GanSerial items={order.items} />}
+      <NoiDungDonHang order={don} staff />
+      {['Đã xác nhận', 'Đang giao', 'Hoàn tất'].includes(don.status) && <GanSerial cacDong={don.items} />}
 
-      {confirmCancel && (
-        <HopThoai title="Hủy đơn hàng" onClose={() => setConfirmCancel(false)}>
-          <p>Bạn chắc chắn muốn hủy đơn <b>{order.code}</b> của {order.customer}?</p>
+      {dangXacNhanHuy && (
+        <HopThoai title="Hủy đơn hàng" onClose={() => setDangXacNhanHuy(false)}>
+          <p>
+            Bạn chắc chắn muốn hủy đơn <b>{don.code}</b> của {don.customer}?
+          </p>
           <div className="mt-6 flex justify-end gap-2">
-            <Nut variant="soft" onClick={() => setConfirmCancel(false)}>Giữ đơn</Nut>
-            <Nut variant="danger" onClick={() => setConfirmCancel(false)}>Hủy đơn</Nut>
+            <Nut variant="soft" onClick={() => setDangXacNhanHuy(false)}>
+              Giữ đơn
+            </Nut>
+            <Nut variant="danger" onClick={() => setDangXacNhanHuy(false)}>
+              Hủy đơn
+            </Nut>
           </div>
         </HopThoai>
       )}

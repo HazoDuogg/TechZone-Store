@@ -14,7 +14,7 @@ const parts = cauHinhMau.flatMap((id) => {
 })
 
 export default function BuildPC() {
-  const [budget, setBudget] = useState(20_000_000)
+  const [nganSach, setNganSach] = useState(20_000_000)
   const show = useTroLy((s) => s.show)
   const total = parts.reduce((s, p) => s + p.price, 0)
 
@@ -27,25 +27,27 @@ export default function BuildPC() {
         <section className="h-fit space-y-6 rounded-xl bg-surface p-6 lg:sticky lg:top-24" aria-label="Thiết lập">
           <div>
             <div className="flex items-baseline justify-between">
-              <label htmlFor="budget" className="font-semibold">Ngân sách</label>
-              <output className="text-2xl font-extrabold text-brand">{tienVND(budget)}</output>
+              <label htmlFor="nganSach" className="font-semibold">
+                Ngân sách
+              </label>
+              <output className="text-2xl font-extrabold text-brand">{tienVND(nganSach)}</output>
             </div>
             <input
-              id="budget"
+              id="nganSach"
               type="range"
               min={8_000_000}
               max={60_000_000}
               step={500_000}
-              value={budget}
-              onChange={(e) => setBudget(Number(e.target.value))}
+              value={nganSach}
+              onChange={(e) => setNganSach(Number(e.target.value))}
               className="mt-3 h-2 w-full accent-brand"
             />
             <div className="mt-3 flex flex-wrap gap-2">
               {presets.map((m) => (
                 <button
                   key={m}
-                  onClick={() => setBudget(m * 1_000_000)}
-                  className={cx('rounded-md px-3 py-1.5 text-sm font-semibold', budget === m * 1_000_000 ? 'bg-brand text-white' : 'bg-white hover:bg-surface-2')}
+                  onClick={() => setNganSach(m * 1_000_000)}
+                  className={cx('rounded-md px-3 py-1.5 text-sm font-semibold', nganSach === m * 1_000_000 ? 'bg-brand text-white' : 'bg-white hover:bg-surface-2')}
                 >
                   {m} triệu
                 </button>
@@ -71,7 +73,9 @@ export default function BuildPC() {
                 </Link>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold text-muted">{p.category}</div>
-                  <Link to={`/san-pham/${p.id}`} className="font-semibold hover:text-brand">{p.name}</Link>
+                  <Link to={`/san-pham/${p.id}`} className="font-semibold hover:text-brand">
+                    {p.name}
+                  </Link>
                 </div>
                 <span className="font-bold whitespace-nowrap">{tienVND(p.price)}</span>
               </li>
@@ -82,7 +86,9 @@ export default function BuildPC() {
               <div className="text-white/70">Tổng cấu hình</div>
               <div className="text-3xl font-extrabold">{tienVND(total)}</div>
             </div>
-            <NutLienKet to="/gio-hang" size="lg">Thêm cả bộ vào giỏ</NutLienKet>
+            <NutLienKet to="/gio-hang" size="lg">
+              Thêm cả bộ vào giỏ
+            </NutLienKet>
           </div>
         </section>
       </div>

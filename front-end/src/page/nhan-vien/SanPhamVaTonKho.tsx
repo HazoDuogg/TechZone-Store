@@ -22,13 +22,22 @@ export default function SanPhamVaTonKho() {
         />
         <OChon aria-label="Danh mục" className="w-48 [&_select]:bg-white">
           <option>Mọi danh mục</option>
-          {dsDanhMuc.map((c) => <option key={c}>{c}</option>)}
+          {dsDanhMuc.map((c) => (
+            <option key={c}>{c}</option>
+          ))}
         </OChon>
       </div>
       <div className={cx(tableWrap, 'bg-white')}>
         <table className="w-full">
           <thead>
-            <tr><th className={th}>Mã</th><th className={th}>Sản phẩm</th><th className={th}>Danh mục</th><th className={th}>Giá bán</th><th className={th}>Tồn</th><th className={th}>Tình trạng</th></tr>
+            <tr>
+              <th className={th}>Mã</th>
+              <th className={th}>Sản phẩm</th>
+              <th className={th}>Danh mục</th>
+              <th className={th}>Giá bán</th>
+              <th className={th}>Tồn</th>
+              <th className={th}>Tình trạng</th>
+            </tr>
           </thead>
           <tbody>
             {dsSanPham.map((p) => (
@@ -38,7 +47,9 @@ export default function SanPhamVaTonKho() {
                 <td className={td}>{p.category}</td>
                 <td className={cx(td, 'whitespace-nowrap')}>{tienVND(p.price)}</td>
                 <td className={cx(td, 'font-bold tabular-nums')}>{tonKho[p.id] ?? 0}</td>
-                <td className={td}><NhanTonKho n={tonKho[p.id] ?? 0} /></td>
+                <td className={td}>
+                  <NhanTonKho n={tonKho[p.id] ?? 0} />
+                </td>
               </tr>
             ))}
           </tbody>

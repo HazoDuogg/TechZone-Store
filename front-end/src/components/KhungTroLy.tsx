@@ -3,7 +3,10 @@ import remarkGfm from 'remark-gfm'
 import { useTroLy } from '../store/troLy'
 
 const sample = [
-  { from: 'bot', text: 'Chào bạn, mình là trợ lý TechZone. Mình có thể **tư vấn linh kiện**, **so sánh sản phẩm**, gợi ý **cấu hình theo ngân sách** hoặc **viết mô tả** cho sản phẩm.' },
+  {
+    from: 'bot',
+    text: 'Chào bạn, mình là trợ lý TechZone. Mình có thể **tư vấn linh kiện**, **so sánh sản phẩm**, gợi ý **cấu hình theo ngân sách** hoặc **viết mô tả** cho sản phẩm.',
+  },
   { from: 'me', text: 'So sánh RTX 4060 và RX 7600 giúp mình.' },
   {
     from: 'bot',
@@ -45,9 +48,7 @@ export default function KhungTroLy() {
           <div key={i} className={m.from === 'me' ? 'flex justify-end' : 'flex'}>
             <div
               className={
-                m.from === 'me'
-                  ? 'max-w-[85%] rounded-lg bg-brand px-3 py-2 text-[15px] text-white'
-                  : 'prose prose-sm max-w-[92%] overflow-x-auto rounded-lg bg-white px-3 py-2'
+                m.from === 'me' ? 'max-w-[85%] rounded-lg bg-brand px-3 py-2 text-[15px] text-white' : 'prose prose-sm max-w-[92%] overflow-x-auto rounded-lg bg-white px-3 py-2'
               }
             >
               {m.from === 'me' ? m.text : <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.text}</ReactMarkdown>}

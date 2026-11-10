@@ -20,33 +20,60 @@ function KhungXacThuc({ title, desc, children, foot }: { title: string; desc?: s
 }
 
 export function DangNhap() {
-  const nav = useNavigate()
+  const chuyenTrang = useNavigate()
   return (
-    <KhungXacThuc title="Đăng nhập" desc="Dùng chung cho khách hàng và nhân viên." foot={<>Chưa có tài khoản? <Link to="/dang-ky" className="font-semibold text-brand">Đăng ký</Link></>}>
+    <KhungXacThuc
+      title="Đăng nhập"
+      desc="Dùng chung cho khách hàng và nhân viên."
+      foot={
+        <>
+          Chưa có tài khoản?{' '}
+          <Link to="/dang-ky" className="font-semibold text-brand">
+            Đăng ký
+          </Link>
+        </>
+      }
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          nav('/')
+          chuyenTrang('/')
         }}
         className="space-y-4"
       >
         <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" />
         <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="current-password" />
-        <div className="text-right"><Link to="/quen-mat-khau" className="text-sm font-semibold text-brand">Quên mật khẩu?</Link></div>
-        <Nut size="lg" className="w-full">Đăng nhập</Nut>
+        <div className="text-right">
+          <Link to="/quen-mat-khau" className="text-sm font-semibold text-brand">
+            Quên mật khẩu?
+          </Link>
+        </div>
+        <Nut size="lg" className="w-full">
+          Đăng nhập
+        </Nut>
       </form>
     </KhungXacThuc>
   )
 }
 
 export function DangKy() {
-  const nav = useNavigate()
+  const chuyenTrang = useNavigate()
   return (
-    <KhungXacThuc title="Tạo tài khoản" foot={<>Đã có tài khoản? <Link to="/dang-nhap" className="font-semibold text-brand">Đăng nhập</Link></>}>
+    <KhungXacThuc
+      title="Tạo tài khoản"
+      foot={
+        <>
+          Đã có tài khoản?{' '}
+          <Link to="/dang-nhap" className="font-semibold text-brand">
+            Đăng nhập
+          </Link>
+        </>
+      }
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          nav('/dang-nhap')
+          chuyenTrang('/dang-nhap')
         }}
         className="space-y-4"
       >
@@ -54,32 +81,46 @@ export function DangKy() {
         <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" />
         <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="new-password" hint="Tối thiểu 6 ký tự" />
         <TruongNhap type="password" label="Nhập lại mật khẩu" placeholder="*********" autoComplete="new-password" />
-        <Nut size="lg" className="w-full">Đăng ký</Nut>
+        <Nut size="lg" className="w-full">
+          Đăng ký
+        </Nut>
       </form>
     </KhungXacThuc>
   )
 }
 
 export function QuenMatKhau() {
-  const [sent, setSent] = useState(false)
+  const [daGui, setDaGui] = useState(false)
   return (
-    <KhungXacThuc title="Quên mật khẩu" desc="Nhập email đã đăng ký. Chúng tôi gửi liên kết đặt lại mật khẩu cho bạn." foot={<Link to="/dang-nhap" className="font-semibold text-brand">← Quay lại đăng nhập</Link>}>
-      {sent ? (
+    <KhungXacThuc
+      title="Quên mật khẩu"
+      desc="Nhập email đã đăng ký. Chúng tôi gửi liên kết đặt lại mật khẩu cho bạn."
+      foot={
+        <Link to="/dang-nhap" className="font-semibold text-brand">
+          ← Quay lại đăng nhập
+        </Link>
+      }
+    >
+      {daGui ? (
         <div className="rise rounded-lg bg-ok/10 p-5">
           <p className="font-bold">Đã gửi email hướng dẫn</p>
           <p className="mt-1 text-[15px]">Kiểm tra hộp thư của bạn. Liên kết có hiệu lực trong 30 phút.</p>
-          <Link to="/dat-lai-mat-khau" className="mt-3 inline-block text-sm font-semibold text-brand">Mở trang đặt lại mật khẩu</Link>
+          <Link to="/dat-lai-mat-khau" className="mt-3 inline-block text-sm font-semibold text-brand">
+            Mở trang đặt lại mật khẩu
+          </Link>
         </div>
       ) : (
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            setSent(true)
+            setDaGui(true)
           }}
           className="space-y-4"
         >
           <TruongNhap type="email" label="Email" />
-          <Nut size="lg" className="w-full">Gửi liên kết đặt lại</Nut>
+          <Nut size="lg" className="w-full">
+            Gửi liên kết đặt lại
+          </Nut>
         </form>
       )}
     </KhungXacThuc>
@@ -87,19 +128,21 @@ export function QuenMatKhau() {
 }
 
 export function DatLaiMatKhau() {
-  const nav = useNavigate()
+  const chuyenTrang = useNavigate()
   return (
     <KhungXacThuc title="Đặt lại mật khẩu" desc="Chọn mật khẩu mới cho tài khoản của bạn.">
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          nav('/dang-nhap')
+          chuyenTrang('/dang-nhap')
         }}
         className="space-y-4"
       >
         <TruongNhap type="password" label="Mật khẩu mới" autoComplete="new-password" />
         <TruongNhap type="password" label="Nhập lại mật khẩu mới" autoComplete="new-password" />
-        <Nut size="lg" className="w-full">Cập nhật mật khẩu</Nut>
+        <Nut size="lg" className="w-full">
+          Cập nhật mật khẩu
+        </Nut>
       </form>
     </KhungXacThuc>
   )

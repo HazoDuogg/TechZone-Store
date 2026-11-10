@@ -5,14 +5,13 @@ import { TheSanPham } from '../../components/SanPham'
 import { dsDanhMuc, dsSanPham } from '../../data/duLieuMau'
 
 export default function DanhSachSanPham() {
-  const [cat, setCat] = useState('')
+  const [danhMucDangChon, setDanhMucDangChon] = useState('')
 
-  const chip = (active: boolean) =>
-    cx('rounded-md px-3 py-2 text-left text-[15px] font-medium transition-colors', active ? 'bg-brand text-white' : 'bg-surface hover:bg-surface-2')
+  const chip = (active: boolean) => cx('rounded-md px-3 py-2 text-left text-[15px] font-medium transition-colors', active ? 'bg-brand text-white' : 'bg-surface hover:bg-surface-2')
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{cat || 'Tất cả sản phẩm'}</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{danhMucDangChon || 'Tất cả sản phẩm'}</h1>
       <p className="mt-1 text-muted">{dsSanPham.length} sản phẩm</p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[16rem_1fr]">
@@ -20,9 +19,13 @@ export default function DanhSachSanPham() {
           <div>
             <h2 className="mb-2 font-bold">Danh mục</h2>
             <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-              <button className={chip(!cat)} onClick={() => setCat('')}>Tất cả</button>
+              <button className={chip(!danhMucDangChon)} onClick={() => setDanhMucDangChon('')}>
+                Tất cả
+              </button>
               {dsDanhMuc.map((c) => (
-                <button key={c} className={chip(cat === c)} onClick={() => setCat(c)}>{c}</button>
+                <button key={c} className={chip(danhMucDangChon === c)} onClick={() => setDanhMucDangChon(c)}>
+                  {c}
+                </button>
               ))}
             </div>
           </div>
@@ -57,7 +60,9 @@ export default function DanhSachSanPham() {
             </OChon>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">
-            {dsSanPham.map((p) => <TheSanPham key={p.id} product={p} />)}
+            {dsSanPham.map((p) => (
+              <TheSanPham key={p.id} product={p} />
+            ))}
           </div>
         </div>
       </div>

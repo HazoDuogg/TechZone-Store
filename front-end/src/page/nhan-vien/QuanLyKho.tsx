@@ -8,90 +8,121 @@ import { dsDanhMuc, dsHangChoMoBan, dsSanPham, tonKho } from '../../data/duLieuM
 import { boDau, ngayGioVN } from '../../lib/dinhDang'
 import { NhanTonKho } from './SanPhamVaTonKho'
 
-const tabs = ['Nhập kho', 'Xuất kho', 'Kiểm kê'] as const
+const CAC_TAB = ['Nhập kho', 'Xuất kho', 'Kiểm kê'] as const
 
-type DongLichSu = { at: string; name: string; qty: number; note: string }
+type DongLichSu = { thoiGian: string; tenSanPham: string; soLuong: number; ghiChu: string }
 
-const tenSanPham = (id: string) => dsSanPham.find((p) => p.id === id)?.name ?? id
+const layTenSanPham = (id: string) => dsSanPham.find((sp) => sp.id === id)?.name ?? id
 
-const lichSuMau: DongLichSu[] = [
-  { at: '25/10/2026 09:10', name: tenSanPham('ram-d5-32'), qty: 10, note: 'Phiếu nhập PN-0231' },
-  { at: '24/10/2026 15:42', name: tenSanPham('ssd-980pro'), qty: 5, note: 'Phiếu nhập PN-0230' },
-  { at: '22/10/2026 11:05', name: tenSanPham('cpu-7600'), qty: 8, note: 'Phiếu nhập PN-0229' },
+const LICH_SU_MAU: DongLichSu[] = [
+  { thoiGian: '25/10/2026 09:10', tenSanPham: layTenSanPham('ram-d5-32'), soLuong: 10, ghiChu: 'Phiếu nhập PN-0231' },
+  { thoiGian: '24/10/2026 15:42', tenSanPham: layTenSanPham('ssd-980pro'), soLuong: 5, ghiChu: 'Phiếu nhập PN-0230' },
+  { thoiGian: '22/10/2026 11:05', tenSanPham: layTenSanPham('cpu-7600'), soLuong: 8, ghiChu: 'Phiếu nhập PN-0229' },
 ]
 
 const SAN_PHAM_MOI = 'moi'
-const tatCaTen = [...dsSanPham.map((p) => p.name), ...dsHangChoMoBan.map((h) => h.name)]
+const TEN_CAC_SAN_PHAM = [...dsSanPham.map((sp) => sp.name), ...dsHangChoMoBan.map((hang) => hang.name)]
 
-type BieuMauProps = { type: 'Nhập' | 'Xuất'; dong: DongLichSu[]; onThem: (d: DongLichSu) => void }
+type BieuMauProps = { loai: 'Nhập' | 'Xuất'; lichSu: DongLichSu[]; khiThem: (dong: DongLichSu) => void }
 
-function BieuMauNhapXuat({ type, dong, onThem }: BieuMauProps) {
-  const nhap = type === 'Nhập'
-  const [chon, setChon] = useState<string | null>(null)
-  const [ten, setTen] = useState('')
+function BieuMauNhapXuat({ loai, lichSu, khiThem }: BieuMauProps) {
+  const laNhap = loai === 'Nhập'
+  const [sanPhamDuocChon, setSanPhamDuocChon] = useState<string | null>(null)
+  const [tenSanPhamMoi, setTenSanPhamMoi] = useState('')
   const [thongBao, setThongBao] = useState('')
-  const moi = chon === SAN_PHAM_MOI
+  const laSanPhamMoi = sanPhamDuocChon === SAN_PHAM_MOI
 
-  const luaChon = [
-    ...(nhap ? [{ value: SAN_PHAM_MOI, label: '＋ Sản phẩm mới', hint: 'Chưa có trong hệ thống' }] : []),
-    ...dsHangChoMoBan.map((h) => ({ value: h.id, label: h.name, hint: `Chờ mở bán · tồn ${h.soLuongKho}` })),
-    ...dsSanPham.map((p) => ({ value: p.id, label: p.name, hint: `${p.category} · tồn ${tonKho[p.id] ?? 0}` })),
+  const cacLuaChon = [
+    ...(laNhap ? [{ value: SAN_PHAM_MOI, label: '＋ Sản phẩm mới', hint: 'Chưa có trong hệ thống' }] : []),
+    ...dsHangChoMoBan.map((hang) => ({ value: hang.id, label: hang.name, hint: `Chờ mở bán · tồn ${hang.soLuongKho}` })),
+    ...dsSanPham.map((sp) => ({ value: sp.id, label: sp.name, hint: `${sp.category} · tồn ${tonKho[sp.id] ?? 0}` })),
   ]
 
-  const tenGo = boDau(ten.trim())
-  const giong = moi && tenGo.length >= 3 ? tatCaTen.filter((n) => boDau(n).includes(tenGo)).slice(0, 3) : []
+  const tenDangGo = boDau(tenSanPhamMoi.trim())
+  const cacTenTuongTu = laSanPhamMoi && tenDangGo.length >= 3 ? TEN_CAC_SAN_PHAM.filter((ten) => boDau(ten).includes(tenDangGo)).slice(0, 3) : []
 
-  const gui = (e: SyntheticEvent<HTMLFormElement>) => {
+  const xuLyGui = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const f = new FormData(e.currentTarget)
-    const qty = Number(f.get('soLuong')) || 1
-    const ghiChu = String(f.get('ghiChu') ?? '').trim()
-    const ma = `${nhap ? 'PN' : 'PX'}-${String(229 + dong.length).padStart(4, '0')}`
-    const name = moi ? ten.trim() : luaChon.find((o) => o.value === chon)?.label ?? ''
-    onThem({ at: ngayGioVN(new Date().toISOString()), name, qty, note: `Phiếu ${nhap ? 'nhập' : 'xuất'} ${ma}${ghiChu ? ` · ${ghiChu}` : ''}` })
+    const duLieuForm = new FormData(e.currentTarget)
+    const soLuong = Number(duLieuForm.get('soLuong')) || 1
+    const ghiChu = String(duLieuForm.get('ghiChu') ?? '').trim()
+    const maPhieu = `${laNhap ? 'PN' : 'PX'}-${String(229 + lichSu.length).padStart(4, '0')}`
+    const tenSanPham = laSanPhamMoi ? tenSanPhamMoi.trim() : (cacLuaChon.find((luaChon) => luaChon.value === sanPhamDuocChon)?.label ?? '')
+    khiThem({
+      thoiGian: ngayGioVN(new Date().toISOString()),
+      tenSanPham,
+      soLuong,
+      ghiChu: `Phiếu ${laNhap ? 'nhập' : 'xuất'} ${maPhieu}${ghiChu ? ` · ${ghiChu}` : ''}`,
+    })
     e.currentTarget.reset()
-    setChon(null)
-    setTen('')
-    setThongBao(`Đã ${nhap ? 'nhập' : 'xuất'} ${qty} sản phẩm, ${ma}`)
+    setSanPhamDuocChon(null)
+    setTenSanPhamMoi('')
+    setThongBao(`Đã ${laNhap ? 'nhập' : 'xuất'} ${soLuong} sản phẩm, ${maPhieu}`)
   }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[22rem_1fr]">
-      <form onSubmit={gui} onChange={() => thongBao && setThongBao('')} className="h-fit space-y-4 rounded-xl bg-white p-5">
-        <OChonTimKiem label="Sản phẩm" options={luaChon} value={chon} onChange={setChon} placeholder="Gõ tên để tìm sản phẩm" />
-        {moi && (
+      <form onSubmit={xuLyGui} onChange={() => thongBao && setThongBao('')} className="h-fit space-y-4 rounded-xl bg-white p-5">
+        <OChonTimKiem label="Sản phẩm" options={cacLuaChon} value={sanPhamDuocChon} onChange={setSanPhamDuocChon} placeholder="Gõ tên để tìm sản phẩm" />
+        {laSanPhamMoi && (
           <>
-            <TruongNhap label="Tên sản phẩm mới" value={ten} onChange={(e) => setTen(e.target.value)} required placeholder="Ví dụ: ASUS TUF RTX 4070 Ti SUPER 16GB" />
-            {giong.length > 0 && (
+            <TruongNhap
+              label="Tên sản phẩm mới"
+              value={tenSanPhamMoi}
+              onChange={(e) => setTenSanPhamMoi(e.target.value)}
+              required
+              placeholder="Ví dụ: ASUS TUF RTX 4070 Ti SUPER 16GB"
+            />
+            {cacTenTuongTu.length > 0 && (
               <div role="status" className="rounded-md bg-warn/12 px-3 py-2 text-sm text-warn">
-                Đã có sản phẩm tương tự: {giong.join('; ')}. Hãy chọn sản phẩm đã có nếu là cùng một mặt hàng.
+                Đã có sản phẩm tương tự: {cacTenTuongTu.join('; ')}. Hãy chọn sản phẩm đã có nếu là cùng một mặt hàng.
               </div>
             )}
             <TruongNhap name="thuongHieu" label="Thương hiệu" required />
             <OChon name="danhMuc" label="Danh mục" required defaultValue="">
-              <option value="" disabled>Chọn danh mục</option>
-              {dsDanhMuc.map((c) => <option key={c}>{c}</option>)}
+              <option value="" disabled>
+                Chọn danh mục
+              </option>
+              {dsDanhMuc.map((danhMuc) => (
+                <option key={danhMuc}>{danhMuc}</option>
+              ))}
             </OChon>
           </>
         )}
         <TruongNhap name="soLuong" type="number" min={1} defaultValue={1} label="Số lượng" />
-        {nhap && <VungNhap name="serial" label="Số serial từng chiếc" placeholder="Mỗi dòng một serial, số dòng bằng số lượng nhập" />}
-        <TruongNhap name="ghiChu" label="Ghi chú" placeholder={nhap ? 'Số phiếu nhập, nhà cung cấp' : 'Lý do xuất'} />
-        {thongBao && <p role="status" className="rounded-md bg-ok/12 px-3 py-2 text-sm font-semibold text-ok">{thongBao}</p>}
-        <Nut className="w-full" disabled={!chon}>{type} kho</Nut>
+        {laNhap && <VungNhap name="serial" label="Số serial từng chiếc" placeholder="Mỗi dòng một serial, số dòng bằng số lượng nhập" />}
+        <TruongNhap name="ghiChu" label="Ghi chú" placeholder={laNhap ? 'Số phiếu nhập, nhà cung cấp' : 'Lý do xuất'} />
+        {thongBao && (
+          <p role="status" className="rounded-md bg-ok/12 px-3 py-2 text-sm font-semibold text-ok">
+            {thongBao}
+          </p>
+        )}
+        <Nut className="w-full" disabled={!sanPhamDuocChon}>
+          {loai} kho
+        </Nut>
       </form>
       <div>
-        <h2 className="mb-3 font-bold">Lịch sử {type.toLowerCase()} kho</h2>
+        <h2 className="mb-3 font-bold">Lịch sử {loai.toLowerCase()} kho</h2>
         <div className={cx(tableWrap, 'bg-white')}>
           <table className="w-full">
-            <thead><tr><th className={th}>Thời gian</th><th className={th}>Sản phẩm</th><th className={th}>SL</th><th className={th}>Ghi chú</th></tr></thead>
+            <thead>
+              <tr>
+                <th className={th}>Thời gian</th>
+                <th className={th}>Sản phẩm</th>
+                <th className={th}>SL</th>
+                <th className={th}>Ghi chú</th>
+              </tr>
+            </thead>
             <tbody>
-              {dong.map((m, i) => (
-                <tr key={`${m.at}-${i}`}>
-                  <td className={cx(td, 'whitespace-nowrap')}>{m.at}</td>
-                  <td className={td}>{m.name}</td>
-                  <td className={cx(td, 'font-bold tabular-nums')}>{nhap ? '+' : '−'}{m.qty}</td>
-                  <td className={cx(td, 'text-muted')}>{m.note}</td>
+              {lichSu.map((dong, viTri) => (
+                <tr key={`${dong.thoiGian}-${viTri}`}>
+                  <td className={cx(td, 'whitespace-nowrap')}>{dong.thoiGian}</td>
+                  <td className={td}>{dong.tenSanPham}</td>
+                  <td className={cx(td, 'font-bold tabular-nums')}>
+                    {laNhap ? '+' : '−'}
+                    {dong.soLuong}
+                  </td>
+                  <td className={cx(td, 'text-muted')}>{dong.ghiChu}</td>
                 </tr>
               ))}
             </tbody>
@@ -111,23 +142,33 @@ function KiemKe() {
       </div>
       <div className={cx(tableWrap, 'bg-white')}>
         <table className="w-full">
-          <thead><tr><th className={th}>Sản phẩm</th><th className={th}>Tồn hệ thống</th><th className={th}>Thực tế</th><th className={th}>Chênh lệch</th><th className={th}>Tình trạng</th></tr></thead>
+          <thead>
+            <tr>
+              <th className={th}>Sản phẩm</th>
+              <th className={th}>Tồn hệ thống</th>
+              <th className={th}>Thực tế</th>
+              <th className={th}>Chênh lệch</th>
+              <th className={th}>Tình trạng</th>
+            </tr>
+          </thead>
           <tbody>
-            {dsSanPham.slice(0, 10).map((p, i) => (
-              <tr key={p.id}>
-                <td className={cx(td, 'min-w-64 font-medium')}>{p.name}</td>
-                <td className={cx(td, 'tabular-nums')}>{tonKho[p.id] ?? 0}</td>
+            {dsSanPham.slice(0, 10).map((sp, viTri) => (
+              <tr key={sp.id}>
+                <td className={cx(td, 'min-w-64 font-medium')}>{sp.name}</td>
+                <td className={cx(td, 'tabular-nums')}>{tonKho[sp.id] ?? 0}</td>
                 <td className={td}>
                   <input
                     type="number"
                     min={0}
-                    defaultValue={i === 2 ? (tonKho[p.id] ?? 0) - 1 : ''}
-                    aria-label={`Số lượng thực tế của ${p.name}`}
+                    defaultValue={viTri === 2 ? (tonKho[sp.id] ?? 0) - 1 : ''}
+                    aria-label={`Số lượng thực tế của ${sp.name}`}
                     className="h-9 w-24 rounded-md bg-surface px-2 focus:bg-white focus:outline-2 focus:outline-brand"
                   />
                 </td>
-                <td className={td}>{i === 2 ? <Nhan tone="red">−1</Nhan> : '—'}</td>
-                <td className={td}><NhanTonKho n={tonKho[p.id] ?? 0} /></td>
+                <td className={td}>{viTri === 2 ? <Nhan tone="red">−1</Nhan> : '—'}</td>
+                <td className={td}>
+                  <NhanTonKho n={tonKho[sp.id] ?? 0} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -138,15 +179,17 @@ function KiemKe() {
 }
 
 export default function QuanLyKho() {
-  const [tab, setTab] = useState<(typeof tabs)[number]>('Nhập kho')
-  const [lichSuNhap, setLichSuNhap] = useState(lichSuMau)
-  const [lichSuXuat, setLichSuXuat] = useState(lichSuMau)
+  const [tab, setTab] = useState<(typeof CAC_TAB)[number]>('Nhập kho')
+  const [lichSuNhap, setLichSuNhap] = useState(LICH_SU_MAU)
+  const [lichSuXuat, setLichSuXuat] = useState(LICH_SU_MAU)
   return (
     <>
       <TieuDeTrang title="Quản lý kho" desc="Nhập hàng, xuất hàng và kiểm kê tồn kho trên cùng một màn hình." />
-      <div className="mb-6"><ThanhTab value={tab} onChange={setTab} items={tabs} /></div>
-      {tab === 'Nhập kho' && <BieuMauNhapXuat type="Nhập" dong={lichSuNhap} onThem={(d) => setLichSuNhap((x) => [d, ...x])} />}
-      {tab === 'Xuất kho' && <BieuMauNhapXuat type="Xuất" dong={lichSuXuat} onThem={(d) => setLichSuXuat((x) => [d, ...x])} />}
+      <div className="mb-6">
+        <ThanhTab value={tab} onChange={setTab} items={CAC_TAB} />
+      </div>
+      {tab === 'Nhập kho' && <BieuMauNhapXuat loai="Nhập" lichSu={lichSuNhap} khiThem={(dong) => setLichSuNhap((truoc) => [dong, ...truoc])} />}
+      {tab === 'Xuất kho' && <BieuMauNhapXuat loai="Xuất" lichSu={lichSuXuat} khiThem={(dong) => setLichSuXuat((truoc) => [dong, ...truoc])} />}
       {tab === 'Kiểm kê' && <KiemKe />}
     </>
   )

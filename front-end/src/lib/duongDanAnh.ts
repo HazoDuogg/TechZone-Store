@@ -1,4 +1,4 @@
-import type { ThongTinSanPham } from '../data/duLieuMau'
+import type { ThongTinSanPham } from '../types'
 
 export const SO_GOC_ANH = 4
 
@@ -28,10 +28,8 @@ const tim = (duong: string, duoi?: 'webp' | 'png') => {
   return '/khong-co-anh'
 }
 
-export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number, duoiFile?: 'webp' | 'png') =>
-  tim(`san-pham/${thuMuc[p.category]}/${p.id}-${goc}`, duoiFile)
+export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number, duoiFile?: 'webp' | 'png') => tim(`san-pham/${thuMuc[p.category]}/${p.id}-${goc}`, duoiFile)
 
-export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') =>
-  tim(`danh-muc/cat-${thuMuc[ten]}`, duoiFile)
+export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') => tim(`danh-muc/cat-${thuMuc[ten]}`, duoiFile)
 
 export const ANH_BANNER = tim('banner/cat-chu')

@@ -4,7 +4,7 @@ import { ThanhTab } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
 import { dsSanPham, doanhThu12Thang, tonKho } from '../../data/duLieuMau'
 
-const ranges = ['6 tháng', '12 tháng'] as const
+const CAC_KHOANG_THOI_GIAN = ['6 tháng', '12 tháng'] as const
 
 const top = [
   ['LG 24GN600 24" IPS 144Hz', 42],
@@ -22,14 +22,18 @@ const tiles = [
 ]
 
 export default function BaoCaoThongKe() {
-  const [range, setRange] = useState<(typeof ranges)[number]>('6 tháng')
-  const data = range === '6 tháng' ? doanhThu12Thang.slice(-6) : doanhThu12Thang
+  const [khoangThoiGian, setKhoangThoiGian] = useState<(typeof CAC_KHOANG_THOI_GIAN)[number]>('6 tháng')
+  const data = khoangThoiGian === '6 tháng' ? doanhThu12Thang.slice(-6) : doanhThu12Thang
   const max = Math.max(...data.map((d) => d[1]))
   const low = dsSanPham.filter((p) => (tonKho[p.id] ?? 0) < 5).slice(0, 6)
 
   return (
     <>
-      <TieuDeTrang title="Báo cáo thống kê" desc="Doanh thu, sản phẩm bán chạy và tình trạng tồn kho." action={<ThanhTab value={range} onChange={setRange} items={ranges} />} />
+      <TieuDeTrang
+        title="Báo cáo thống kê"
+        desc="Doanh thu, sản phẩm bán chạy và tình trạng tồn kho."
+        action={<ThanhTab value={khoangThoiGian} onChange={setKhoangThoiGian} items={CAC_KHOANG_THOI_GIAN} />}
+      />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {tiles.map(([k, v]) => (
@@ -41,7 +45,9 @@ export default function BaoCaoThongKe() {
       </div>
 
       <section className="mt-6 rounded-xl bg-white p-5 sm:p-6" aria-labelledby="rev">
-        <h2 id="rev" className="font-bold">Doanh thu theo tháng (triệu đồng)</h2>
+        <h2 id="rev" className="font-bold">
+          Doanh thu theo tháng (triệu đồng)
+        </h2>
         <div className="mt-6 flex h-64 items-end gap-2 sm:gap-3" role="img" aria-label="Biểu đồ cột doanh thu theo tháng">
           {data.map(([m, v], i) => (
             <div key={m} className="flex h-full min-w-0 flex-1 flex-col justify-end text-center">
@@ -55,26 +61,46 @@ export default function BaoCaoThongKe() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section aria-labelledby="top">
-          <h2 id="top" className="mb-3 font-bold">Sản phẩm bán chạy</h2>
+          <h2 id="top" className="mb-3 font-bold">
+            Sản phẩm bán chạy
+          </h2>
           <div className={cx(tableWrap, 'bg-white')}>
             <table className="w-full">
-              <thead><tr><th className={th}>Sản phẩm</th><th className={th}>Đã bán</th></tr></thead>
+              <thead>
+                <tr>
+                  <th className={th}>Sản phẩm</th>
+                  <th className={th}>Đã bán</th>
+                </tr>
+              </thead>
               <tbody>
-                {top.map(([name, qty]) => (
-                  <tr key={name}><td className={td}>{name}</td><td className={cx(td, 'font-bold tabular-nums')}>{qty}</td></tr>
+                {top.map(([ten, soLuong]) => (
+                  <tr key={ten}>
+                    <td className={td}>{ten}</td>
+                    <td className={cx(td, 'font-bold tabular-nums')}>{soLuong}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </section>
         <section aria-labelledby="low">
-          <h2 id="low" className="mb-3 font-bold">Cần nhập thêm</h2>
+          <h2 id="low" className="mb-3 font-bold">
+            Cần nhập thêm
+          </h2>
           <div className={cx(tableWrap, 'bg-white')}>
             <table className="w-full">
-              <thead><tr><th className={th}>Sản phẩm</th><th className={th}>Tồn</th></tr></thead>
+              <thead>
+                <tr>
+                  <th className={th}>Sản phẩm</th>
+                  <th className={th}>Tồn</th>
+                </tr>
+              </thead>
               <tbody>
                 {low.map((p) => (
-                  <tr key={p.id}><td className={td}>{p.name}</td><td className={cx(td, 'font-bold tabular-nums', (tonKho[p.id] ?? 0) === 0 ? 'text-danger' : 'text-warn')}>{tonKho[p.id] ?? 0}</td></tr>
+                  <tr key={p.id}>
+                    <td className={td}>{p.name}</td>
+                    <td className={cx(td, 'font-bold tabular-nums', (tonKho[p.id] ?? 0) === 0 ? 'text-danger' : 'text-warn')}>{tonKho[p.id] ?? 0}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
