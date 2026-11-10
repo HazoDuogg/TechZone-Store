@@ -9,7 +9,7 @@ const CAC_TAB = ['Lịch sử đơn hàng', 'Tra cứu đơn hàng'] as const
 export default function DonHang() {
   const chuyenTrang = useNavigate()
   const [tab, setTab] = useState<(typeof CAC_TAB)[number]>('Lịch sử đơn hàng')
-  const lichSuDon = dsDonHang.slice(0, 3)
+  const lichSuDon = dsDonHang
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
