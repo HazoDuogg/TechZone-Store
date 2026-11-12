@@ -5,7 +5,7 @@ export class DanhMuc {
     @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true })
     id: number
 
-    @Column({ name: 'ten', type: 'varchar', length: 100 })
+    @Column({ name: 'ten', type: 'varchar', length: 100, unique: true })
     ten: string
 
     @Column({ name: 'mo_ta', type: 'varchar', length: 255, nullable: true })

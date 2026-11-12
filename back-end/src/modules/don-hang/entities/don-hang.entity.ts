@@ -48,6 +48,6 @@ export class DonHang {
     @CreateDateColumn({ name: 'ngay_dat' })
     ngayDat: Date
 
-    @CreateDateColumn({ name: 'ngay_hoan_tat', nullable: true })
+    @Column({ name: 'ngay_hoan_tat', type: 'datetime', nullable: true })
     ngayHoanTat: Date | null
 }

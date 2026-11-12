@@ -17,7 +17,7 @@ export class KhachHang {
     soDienThoai: string
 
     @Column({ name: 'ghi_chu', type: 'varchar', length: 255, nullable: true })
-    ghiChu: string
+    ghiChu: string | null
 
     @CreateDateColumn({ name: 'ngay_tao' })
     ngayTao: Date
