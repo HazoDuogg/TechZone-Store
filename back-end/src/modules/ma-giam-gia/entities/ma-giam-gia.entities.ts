@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { LoaiMaGiamGia } from "../../../common/enums/loai-ma-giam-gia.enum";
+import { decimalTransformer } from "../../../common/transformers/decimal.transformer";
 
 @Entity('ma_giam_gia')
 export class MaGiamGia {
@@ -10,17 +11,17 @@ export class MaGiamGia {
     ma: string
 
     @Column({ name: 'loai', type: 'enum', enum: LoaiMaGiamGia })
-    loaiMa: string
+    loai: LoaiMaGiamGia
 
-    @Column({ name: 'gia_tri', type: 'decimal', precision: 12, scale: 0 })
+    @Column({ name: 'gia_tri', type: 'decimal', precision: 12, scale: 0, transformer: decimalTransformer })
     giaTri: number
 
-    @Column({ name: 'don_toi_thieu', type: 'decimal', precision: 12, scale: 0, default: 0 })
+    @Column({ name: 'don_toi_thieu', type: 'decimal', precision: 12, scale: 0, default: 0, transformer: decimalTransformer })
     donToiThieu: number
 
     @Column({ name: 'ngay_het_han', type: 'date', nullable: true })
-    ngayHetHan: Date | null
+    ngayHetHan: string | null
 
-    @Column({ name: 'hoat_dong', type: 'tinyint', default: 1 })
+    @Column({ name: 'hoat_dong', type: 'boolean', default: true })
     hoatDong: boolean
 }

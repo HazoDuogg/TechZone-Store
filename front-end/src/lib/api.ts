@@ -17,22 +17,15 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
     (response) => response,
-    async (error) => {
-        const originalRequest = error.config
-        if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
-            originalRequest._retry = true
-            try {
-                const res = await api.post('auth/refresh')
-                const newAccessToken = res.data.accessToken
-                useAuthStore.getState().setAccessToken(newAccessToken)
-                originalRequest.headers = originalRequest.headers || {}
-                originalRequest.headers.set('Authorization', 'newAccessToken')
-                return api(originalRequest)
-            } catch (refreshError) {
-                useAuthStore.getState().logout()
-                if (window.location.pathname !== '/dang-nhap' && window.location.pathname !== '/dang-ky')
-                    window.location.replace('/dang-nhap')
-                return Promise.reject(refreshError)
+    (error) => {
+        const url: string = error.config?.url ?? ''
+        const yeuCauXacThuc = url.startsWith('/auth')
+
+        if (error.response?.status === 401 && !yeuCauXacThuc) {
+            useAuthStore.getState().logout()
+            const duongDan = window.location.pathname
+            if (duongDan !== '/dang-nhap' && duongDan !== '/dang-ky') {
+                window.location.replace('/dang-nhap')
             }
         }
         return Promise.reject(error)

@@ -1,8 +1,6 @@
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Module } from '@nestjs/common';
-import { TaiKhoanService } from './modules/tai-khoan/tai-khoan.service';
-import { TaiKhoanController } from './modules/tai-khoan/tai-khoan.controller';
 import { TaiKhoanModule } from './modules/tai-khoan/tai-khoan.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DanhMucModule } from './modules/danh-muc/danh-muc.module';
@@ -10,10 +8,8 @@ import { MaGiamGiaModule } from './modules/ma-giam-gia/ma-giam-gia.module';
 import { BaoHanhModule } from './modules/bao-hanh/bao-hanh.module';
 import { DonHangModule } from './modules/don-hang/don-hang.module';
 import { KhachHangModule } from './modules/khach-hang/khach-hang.module';
-import { NguoiDungModule } from './modules/nguoi-dung/nguoi-dung.module';
 import { NhanVienModule } from './modules/nhan-vien/nhan-vien.module';
 import { PhieuKhoModule } from './modules/phieu-kho/phieu-kho.module';
-import { QuanTriModule } from './modules/quan-tri/quan-tri.module';
 import { SanPhamModule } from './modules/san-pham/san-pham.module';
 
 @Module({
@@ -39,14 +35,10 @@ import { SanPhamModule } from './modules/san-pham/san-pham.module';
     BaoHanhModule,
     DonHangModule,
     KhachHangModule,
-    NguoiDungModule,
     NhanVienModule,
     PhieuKhoModule,
-    QuanTriModule,
     SanPhamModule
   ],
-  controllers: [TaiKhoanController],
-  providers: [TaiKhoanService],
 })
 
 export class AppModule { }

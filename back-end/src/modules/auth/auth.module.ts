@@ -3,9 +3,11 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule, type JwtSignOptions } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config';
+import { TaiKhoanModule } from '../tai-khoan/tai-khoan.module';
 
 @Module({
   imports: [
+    TaiKhoanModule,
     JwtModule.registerAsync({
       global: true,
       inject: [ConfigService],

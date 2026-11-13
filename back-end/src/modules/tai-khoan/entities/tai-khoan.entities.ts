@@ -7,18 +7,15 @@ export class TaiKhoan {
     @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true })
     id: number
 
-    @Column({ name: 'username', type: 'varchar', length: 50 })
-    username: string
-
-    @Column({ name: 'email', type: 'varchar', length: 100 })
+    @Column({ name: 'email', type: 'varchar', length: 100, unique: true })
     email: string
 
     @Column({ name: 'mat_khau', type: 'varchar', length: 255 })
     password: string
 
-    @Column({ name: 'trang_thai', type: 'enum', enum: TrangThaiTaiKhoan })
-    trangThai: string
-
     @Column({ name: 'vai_tro', type: 'enum', enum: VaiTro })
-    vaiTro: VaiTro;
+    vaiTro: VaiTro
+
+    @Column({ name: 'trang_thai', type: 'enum', enum: TrangThaiTaiKhoan, default: TrangThaiTaiKhoan.HOAT_DONG })
+    trangThai: TrangThaiTaiKhoan
 }

@@ -1,4 +1,4 @@
 export enum TrangThaiTaiKhoan {
+    HOAT_DONG = 'hoat_dong',
     KHOA = 'khoa',
-    CHUA_KHOA = 'chua_khoa'
 }

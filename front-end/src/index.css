@@ -65,3 +65,32 @@ label {
 .rise {
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
+
+@keyframes truot-vao {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.truot-vao {
+  animation: truot-vao 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes thu-nho {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.thanh-dem {
+  transform-origin: left;
+  animation: thu-nho linear forwards;
+}

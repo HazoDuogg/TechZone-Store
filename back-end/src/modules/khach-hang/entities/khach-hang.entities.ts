@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
 import { TaiKhoan } from "../../tai-khoan/entities/tai-khoan.entities";
+import { DiaChiGiaoHang } from "./dia-chi.entities";
 
 @Entity('khach_hang')
 export class KhachHang {
@@ -8,7 +9,7 @@ export class KhachHang {
 
     @OneToOne(() => TaiKhoan)
     @JoinColumn({ name: 'id_tai_khoan' })
-    idTaiKhoan: Relation<TaiKhoan>
+    taiKhoan: Relation<TaiKhoan>
 
     @Column({ name: 'ho_ten', type: 'varchar', length: 100 })
     hoTen: string
@@ -21,4 +22,7 @@ export class KhachHang {
 
     @CreateDateColumn({ name: 'ngay_tao' })
     ngayTao: Date
+
+    @OneToMany(() => DiaChiGiaoHang, (dc) => dc.khachHang)
+    diaChiGiaoHang: Relation<DiaChiGiaoHang[]>
 }

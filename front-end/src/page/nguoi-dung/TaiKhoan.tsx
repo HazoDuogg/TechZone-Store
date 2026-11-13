@@ -1,6 +1,10 @@
 import { useState, type ReactNode } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Nut, TruongNhap } from '../../components/GiaoDienCoBan'
+import { useAuthStore } from '../../auth/auth';
+import { useThongBao } from '../../store/thongBao';
+import api from '../../lib/api';
+import axios from 'axios';
 
 function KhungXacThuc({ title, desc, children, foot }: { title: string; desc?: string; children: ReactNode; foot?: ReactNode }) {
   return (
@@ -21,6 +25,37 @@ function KhungXacThuc({ title, desc, children, foot }: { title: string; desc?: s
 
 export function DangNhap() {
   const chuyenTrang = useNavigate()
+  const viTri = useLocation()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const login = useAuthStore((s) => s.login)
+  const hienThongBao = useThongBao((s) => s.hien)
+
+  async function onSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    try {
+      const res = await api.post('/auth/dang-nhap', { email, password })
+      login({ accessToken: res.data.accessToken, user: res.data.taiKhoan })
+      hienThongBao(`Chào mừng, ${res.data.taiKhoan.hoTen ?? res.data.taiKhoan.email}!`, 'Đăng nhập thành công.')
+      const vaiTro = res.data.taiKhoan.vaiTro
+      const trangTruoc = (viTri.state as { tu?: string } | null)?.tu
+      chuyenTrang(trangTruoc ?? (vaiTro === 'admin' ? '/quan-tri' : vaiTro === 'nhan_vien' ? '/nhan-vien' : '/'))
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const msg = err.response?.data?.message
+        setError(Array.isArray(msg) ? msg.join(',') : (msg ?? 'Đăng nhập thất bại'))
+      }
+      else setError('Có lỗi xảy ra')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <KhungXacThuc
       title="Đăng nhập"
@@ -34,22 +69,17 @@ export function DangNhap() {
         </>
       }
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          chuyenTrang('/')
-        }}
-        className="space-y-4"
-      >
-        <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" />
-        <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="current-password" />
+      <form onSubmit={onSubmit} className="space-y-4">
+        {error && <p className="text-sm font-semibold text-danger">{error}</p>}
+        <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
+        <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
         <div className="text-right">
           <Link to="/quen-mat-khau" className="text-sm font-semibold text-brand">
             Quên mật khẩu?
           </Link>
         </div>
-        <Nut size="lg" className="w-full">
-          Đăng nhập
+        <Nut size="lg" className="w-full" disabled={loading}>
+          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </Nut>
       </form>
     </KhungXacThuc>
@@ -58,6 +88,43 @@ export function DangNhap() {
 
 export function DangKy() {
   const chuyenTrang = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPass, setConfirmPass] = useState('')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  async function onSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+
+    if (password !== confirmPass) {
+      setError('Mật khẩu không trùng khớp')
+      return
+    }
+
+    setLoading(true)
+    try {
+      await api.post('/auth/dang-ky', {
+        hoTen: name,
+        email,
+        password,
+        soDienThoai: phone
+      })
+      chuyenTrang('/dang-nhap')
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const msg = err.response?.data?.message
+        setError(Array.isArray(msg) ? msg.join(',') : (msg ?? 'Đăng ký thất bại'))
+      }
+      else setError('Có lỗi xảy ra')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <KhungXacThuc
       title="Tạo tài khoản"
@@ -70,19 +137,15 @@ export function DangKy() {
         </>
       }
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          chuyenTrang('/dang-nhap')
-        }}
-        className="space-y-4"
-      >
-        <TruongNhap label="Họ và tên" placeholder="Nguyễn Văn A" autoComplete="name" />
-        <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" />
-        <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="new-password" hint="Tối thiểu 6 ký tự" />
-        <TruongNhap type="password" label="Nhập lại mật khẩu" placeholder="*********" autoComplete="new-password" />
-        <Nut size="lg" className="w-full">
-          Đăng ký
+      <form onSubmit={onSubmit} className="space-y-4">
+        {error && <p className="text-sm font-semibold text-danger">{error}</p>}
+        <TruongNhap label="Họ và tên" placeholder="Nguyễn Văn A" autoComplete="name" value={name} onChange={(e) => setName(e.currentTarget.value)} />
+        <TruongNhap label="Số điện thoại" placeholder="0812312312" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.currentTarget.value)} />
+        <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
+        <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="new-password" hint="Tối thiểu 6 ký tự" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
+        <TruongNhap type="password" label="Nhập lại mật khẩu" placeholder="*********" autoComplete="new-password" value={confirmPass} onChange={(e) => setConfirmPass(e.currentTarget.value)} />
+        <Nut size="lg" className="w-full" disabled={loading}>
+          {loading ? 'Đang đăng ký...' : 'Đăng ký'}
         </Nut>
       </form>
     </KhungXacThuc>

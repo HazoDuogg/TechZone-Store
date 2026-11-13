@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { BoCucQuanLy, BoCucCuaHang, type MucMenu } from './components/BoCuc'
+import ThongBao from './components/ThongBao'
 import TrangChu from './page/nguoi-dung/TrangChu'
 import DanhSachSanPham from './page/nguoi-dung/DanhSachSanPham'
 import ChiTietSanPham from './page/nguoi-dung/ChiTietSanPham'
@@ -20,6 +21,7 @@ import BaoCaoThongKe from './page/quan-tri/BaoCaoThongKe'
 import QuanLySanPham from './page/quan-tri/QuanLySanPham'
 import QuanLyMaGiamGia from './page/quan-tri/QuanLyMaGiamGia'
 import QuanLyTaiKhoanNhanVien from './page/quan-tri/QuanLyTaiKhoanNhanVien'
+import XetVaiTro from './components/XetVaiTro'
 
 const staffNav: MucMenu[] = [
   { to: '/nhan-vien/don-hang', label: 'Đơn hàng', group: 'Bán hàng' },
@@ -50,6 +52,7 @@ export default function App() {
   return (
     <>
       <CuonLenDau />
+      <ThongBao />
       <Routes>
         <Route element={<BoCucCuaHang />}>
           <Route path="/" element={<TrangChu />} />
@@ -66,25 +69,29 @@ export default function App() {
           <Route path="dat-lai-mat-khau" element={<DatLaiMatKhau />} />
         </Route>
 
-        <Route path="nhan-vien" element={<BoCucQuanLy title="Nhân viên" items={staffNav} />}>
-          <Route index element={<Navigate to="don-hang" replace />} />
-          <Route path="don-hang" element={<DonHangCanXuLy />} />
-          <Route path="don-hang/:code" element={<ChiTietDonHangNhanVien />} />
-          <Route path="ton-kho" element={<SanPhamVaTonKho />} />
-          <Route path="khach-hang" element={<KhachHang />} />
-          <Route path="bao-hanh" element={<BaoHanh />} />
-          <Route path="kho" element={<QuanLyKho />} />
+        <Route element={<XetVaiTro vaiTroDuocPhep={['nhan_vien', 'admin']} />}>
+          <Route path="nhan-vien" element={<BoCucQuanLy title="Nhân viên" items={staffNav} />}>
+            <Route index element={<Navigate to="don-hang" replace />} />
+            <Route path="don-hang" element={<DonHangCanXuLy />} />
+            <Route path="don-hang/:code" element={<ChiTietDonHangNhanVien />} />
+            <Route path="ton-kho" element={<SanPhamVaTonKho />} />
+            <Route path="khach-hang" element={<KhachHang />} />
+            <Route path="bao-hanh" element={<BaoHanh />} />
+            <Route path="kho" element={<QuanLyKho />} />
+          </Route>
         </Route>
 
-        <Route path="quan-tri" element={<BoCucQuanLy title="Quản trị" items={adminNav} />}>
-          <Route index element={<Navigate to="bao-cao" replace />} />
-          <Route path="bao-cao" element={<BaoCaoThongKe />} />
-          <Route path="san-pham" element={<QuanLySanPham />} />
-          <Route path="ma-giam-gia" element={<QuanLyMaGiamGia />} />
-          <Route path="tai-khoan" element={<QuanLyTaiKhoanNhanVien />} />
-          <Route path="don-hang" element={<DonHangCanXuLy />} />
-          <Route path="don-hang/:code" element={<ChiTietDonHangNhanVien />} />
-          <Route path="kho" element={<QuanLyKho />} />
+        <Route element={<XetVaiTro vaiTroDuocPhep={['admin']} />}>
+          <Route path="quan-tri" element={<BoCucQuanLy title="Quản trị" items={adminNav} />}>
+            <Route index element={<Navigate to="bao-cao" replace />} />
+            <Route path="bao-cao" element={<BaoCaoThongKe />} />
+            <Route path="san-pham" element={<QuanLySanPham />} />
+            <Route path="ma-giam-gia" element={<QuanLyMaGiamGia />} />
+            <Route path="tai-khoan" element={<QuanLyTaiKhoanNhanVien />} />
+            <Route path="don-hang" element={<DonHangCanXuLy />} />
+            <Route path="don-hang/:code" element={<ChiTietDonHangNhanVien />} />
+            <Route path="kho" element={<QuanLyKho />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

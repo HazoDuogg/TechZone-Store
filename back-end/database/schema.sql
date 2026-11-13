@@ -3,13 +3,11 @@ USE techzone;
 
 CREATE TABLE tai_khoan (
   id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  username    VARCHAR(50)  NOT NULL,
   email       VARCHAR(100) NOT NULL,
   mat_khau    VARCHAR(255) NOT NULL,
   vai_tro     ENUM('khach_hang','nhan_vien','admin') NOT NULL,
   trang_thai  ENUM('hoat_dong','khoa') NOT NULL DEFAULT 'hoat_dong',
   PRIMARY KEY (id),
-  UNIQUE KEY uq_tai_khoan_username (username),
   UNIQUE KEY uq_tai_khoan_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

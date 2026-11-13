@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
-import { KhachHang } from "./khach-hang.entity";
+import { KhachHang } from "./khach-hang.entities";
 
 @Entity('dia_chi_giao_hang')
 export class DiaChiGiaoHang {
@@ -8,7 +8,7 @@ export class DiaChiGiaoHang {
 
     @ManyToOne(() => KhachHang)
     @JoinColumn({ name: 'id_khach_hang' })
-    idKhachHang: Relation<KhachHang>
+    khachHang: Relation<KhachHang>
 
     @Column({ name: 'ten_nguoi_nhan', type: 'varchar', length: 100 })
     tenNguoiNhan: string
@@ -19,7 +19,6 @@ export class DiaChiGiaoHang {
     @Column({ name: 'dia_chi', type: 'varchar', length: 255 })
     diaChi: string
 
-    @Column({ name: 'mac_dinh', type: 'tinyint', default: 0 })
-    macDinh: number
-
+    @Column({ name: 'mac_dinh', type: 'boolean', default: false })
+    macDinh: boolean
 }

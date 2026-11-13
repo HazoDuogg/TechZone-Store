@@ -1,3 +1,4 @@
 import { Reflector } from '@nestjs/core';
+import { VaiTro } from '../enums/vai-tro.enum';
 
-export const VaiTro = Reflector.createDecorator<string[]>();
+export const CanVaiTro = Reflector.createDecorator<VaiTro[]>();
