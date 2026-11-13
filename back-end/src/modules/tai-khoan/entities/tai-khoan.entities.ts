@@ -13,7 +13,7 @@ export class TaiKhoan {
     @Column({ name: 'email', type: 'varchar', length: 100 })
     email: string
 
-    @Column({ name: 'password', type: 'varchar', length: 255 })
+    @Column({ name: 'mat_khau', type: 'varchar', length: 255 })
     password: string
 
     @Column({ name: 'trang_thai', type: 'enum', enum: TrangThaiTaiKhoan })
