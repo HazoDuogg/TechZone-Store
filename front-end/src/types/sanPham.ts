@@ -6,6 +6,8 @@ export type ThongTinSanPham = {
   price: number
   oldPrice?: number
   specs: Record<string, string>
+  anh?: string[]
+  tonKho?: number
 }
 
 export type HangChoMoBan = {
