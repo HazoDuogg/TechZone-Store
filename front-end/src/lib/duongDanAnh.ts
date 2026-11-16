@@ -28,6 +28,8 @@ const tim = (duong: string, duoi?: 'webp' | 'png') => {
   return '/khong-co-anh'
 }
 
+export const anhTheoDuongDan = (duongDan: string) => tim(duongDan)
+
 export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number, duoiFile?: 'webp' | 'png') => p.anh?.[goc - 1] ? tim(p.anh?.[goc - 1], duoiFile) : tim(`san-pham/${thuMuc[p.category]}/${p.id}-${goc}`, duoiFile)
 
 export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') => tim(`danh-muc/cat-${thuMuc[ten]}`, duoiFile)

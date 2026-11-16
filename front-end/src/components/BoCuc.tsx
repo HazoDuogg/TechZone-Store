@@ -3,6 +3,9 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { cx } from '../lib/lopCss'
 import KhungTroLy from './KhungTroLy'
 import { useAuthStore } from '../auth/auth'
+import api from '../lib/api'
+import { anhTheoDuongDan } from '../lib/duongDanAnh'
+import { tienVND } from '../lib/dinhDang'
 
 const Logo = ({ light }: { light?: boolean }) => (
   <Link to="/" className={cx('text-2xl font-extrabold tracking-tight', light ? 'text-white' : 'text-ink')}>
@@ -107,8 +110,165 @@ function MenuNguoiDung() {
   )
 }
 
-export function BoCucCuaHang() {
+type GoiY = {
+  id: number
+  ten: string
+  gia: number
+  anh: string | null
+}
+
+export function TimKiem() {
   const chuyenTrang = useNavigate()
+  const [tuKhoa, setTuKhoa] = useState('')
+  const [dsGoiY, setDsGoiY] = useState<GoiY[]>([])
+  const [dangMo, setDangMo] = useState(false)
+  const [viTriChon, setViTriChon] = useState(-1)
+  const [loading, setLoading] = useState(false)
+  const khung = useRef<HTMLDivElement>(null)
+
+  const tuKhoaSach = tuKhoa.trim()
+  const hienKhung = dangMo && tuKhoaSach.length >= 2 && (loading || dsGoiY.length > 0)
+  const hienGoiY = hienKhung && !loading && dsGoiY.length > 0
+
+  useEffect(() => {
+    if (tuKhoaSach.length < 2) {
+      return
+    }
+    let huy = false
+    const hen = setTimeout(() => {
+      setLoading(true)
+      api.get<GoiY[]>('/san-pham/goi-y', { params: { query: tuKhoaSach } })
+        .then((res) => {
+          if (!huy) {
+            setDsGoiY(res.data)
+          }
+        })
+        .catch(() => {
+          if (!huy) {
+            setDsGoiY([])
+          }
+        })
+        .finally(() => {
+          if (!huy) {
+            setLoading(false)
+          }
+        })
+    }, 300)
+    return () => {
+      huy = true
+      clearTimeout(hen)
+    }
+  }, [tuKhoaSach])
+
+  useEffect(() => {
+    if (!dangMo) {
+      return
+    }
+    const khiBamNgoai = (e: MouseEvent) => {
+      if (!khung.current?.contains(e.target as Node)) {
+        setDangMo(false)
+      }
+    }
+    document.addEventListener('mousedown', khiBamNgoai)
+    return () => document.removeEventListener('mousedown', khiBamNgoai)
+  }, [dangMo])
+
+  function timKiem() {
+    if (!tuKhoaSach) {
+      return
+    }
+    setDangMo(false)
+    chuyenTrang('/san-pham?query=' + encodeURIComponent(tuKhoaSach))
+  }
+
+  function chonSanPham(id: number) {
+    setDangMo(false)
+    chuyenTrang('/san-pham/' + id)
+  }
+
+  function khiNhanPhim(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'ArrowDown' && hienGoiY) {
+      e.preventDefault()
+      setViTriChon((v: number) => (v + 1) % dsGoiY.length)
+    } else if (e.key === 'ArrowUp' && hienGoiY) {
+      e.preventDefault()
+      setViTriChon((v: number) => (v <= 0 ? dsGoiY.length - 1 : v - 1))
+    } else if (e.key === 'Escape') {
+      setDangMo(false)
+    } else if (e.key === 'Enter' && hienGoiY && viTriChon >= 0) {
+      e.preventDefault()
+      chonSanPham(dsGoiY[viTriChon].id)
+    }
+  }
+
+  function resetTimKiem() {
+    setDangMo(false)
+    setTuKhoa("")
+  }
+
+  return (
+    <div ref={khung} className="relative hidden flex-1 md:block">
+      <form
+        role="search"
+        onSubmit={(e) => {
+          e.preventDefault()
+          timKiem()
+          resetTimKiem()
+        }}
+      >
+        <input
+          aria-label="Tìm kiếm sản phẩm"
+          placeholder="Tìm CPU, VGA, RAM, màn hình…"
+          value={tuKhoa}
+          onChange={(e) => {
+            setTuKhoa(e.currentTarget.value)
+            setViTriChon(-1)
+            setDangMo(true)
+          }}
+          onFocus={() => setDangMo(true)}
+          onKeyDown={khiNhanPhim}
+          autoComplete="off"
+          className="h-11 w-full max-w-xl rounded-md bg-surface px-4 text-[15px] focus:bg-white focus:outline-2 focus:outline-brand"
+        />
+      </form>
+      {hienKhung && (
+        <ul role="listbox" className="absolute top-full left-0 z-40 mt-2 w-full max-w-xl overflow-hidden rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-black/10">
+          {loading ? (
+            <li className='px-3 py-3 text-sm text-muted'>Đang tìm kiếm...</li>
+          ) : (
+            <>
+              {dsGoiY.map((sp, i) => (
+                <li key={sp.id} role="option" aria-selected={i === viTriChon}>
+                  <button
+                    type="button"
+                    onClick={() => chonSanPham(sp.id)}
+                    onMouseEnter={() => setViTriChon(i)}
+                    className={cx('flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors', i === viTriChon ? 'bg-surface' : '')}
+                  >
+                    <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded bg-white">
+                      {sp.anh && <img src={anhTheoDuongDan(sp.anh)} alt="" className="h-full w-full object-contain" />}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[15px] font-medium">{sp.ten}</span>
+                      <span className="block text-sm font-semibold text-brand">{tienVND(sp.gia)}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button type="button" onClick={timKiem} className="w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-brand hover:bg-surface">
+                  Xem tất cả kết quả cho “{tuKhoaSach}”
+                </button>
+              </li>
+            </>
+          )}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+export function BoCucCuaHang() {
   const [dangMoMenu, setDangMoMenu] = useState(false)
   const user = useAuthStore((s) => s.user)
 
@@ -117,20 +277,7 @@ export function BoCucCuaHang() {
       <header className="sticky top-0 z-30 bg-white">
         <div className="mx-auto flex h-18 max-w-7xl items-center gap-3 px-4 sm:gap-6 sm:px-6">
           <Logo />
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              chuyenTrang('/san-pham')
-            }}
-            className="hidden flex-1 md:block"
-            role="search"
-          >
-            <input
-              aria-label="Tìm kiếm sản phẩm"
-              placeholder="Tìm CPU, VGA, RAM, màn hình…"
-              className="h-11 w-full max-w-xl rounded-md bg-surface px-4 text-[15px] focus:bg-white focus:outline-2 focus:outline-brand"
-            />
-          </form>
+          <TimKiem />
           <nav className="ml-auto hidden items-center gap-1 lg:flex">
             <NavLink to="/san-pham" className={navLink}>
               Sản phẩm
@@ -247,7 +394,7 @@ export function BoCucQuanLy({ title, items }: { title: string; items: MucMenu[] 
 
   const groups = items.reduce<Record<string, MucMenu[]>>((acc, it) => {
     const g = it.group ?? ''
-    ;(acc[g] ??= []).push(it)
+      ; (acc[g] ??= []).push(it)
     return acc
   }, {})
 

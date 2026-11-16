@@ -65,8 +65,8 @@ export function GiaSanPham({ product, big }: { product: ThongTinSanPham; big?: b
   )
 }
 
-export function GhiChuTonKho({ id, className }: { id: string; className?: string }) {
-  const n = tonKho[id] ?? 0
+export function GhiChuTonKho({ id, soLuong, className }: { id: string; soLuong?: number, className?: string }) {
+  const n = soLuong ?? tonKho[id] ?? 0
   if (n === 0) return <span className={cx('text-sm font-semibold text-danger', className)}>Hết hàng</span>
   if (n < 5) return <span className={cx('text-sm font-semibold text-warn', className)}>Chỉ còn {n} sản phẩm</span>
   return <span className={cx('text-sm font-semibold text-ok', className)}>Còn hàng</span>
@@ -85,7 +85,7 @@ export function TheSanPham({ product }: { product: ThongTinSanPham }) {
           {product.name}
         </Link>
         <GiaSanPham product={product} />
-        <GhiChuTonKho id={product.id} />
+        <GhiChuTonKho id={product.id} soLuong={product.tonKho} />
         <button type="button" className="mt-auto h-10 rounded-md bg-white text-sm font-semibold transition-colors hover:bg-brand hover:text-white">
           Thêm vào giỏ
         </button>

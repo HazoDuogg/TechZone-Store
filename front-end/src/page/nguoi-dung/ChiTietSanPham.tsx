@@ -12,6 +12,7 @@ export default function ChiTietSanPham() {
   const show = useTroLy((s) => s.show)
   const [soLuong, setSoLuong] = useState(1)
 
+
   const p = dsSanPham.find((x) => x.id === id)
   const dsRef = useRef<HTMLDivElement>(null)
   const cuongSanPham = (huong: 1 | -1) => {

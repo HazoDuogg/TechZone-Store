@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SanPham } from './entities/san-pham.entities';
 import { Repository } from 'typeorm';
@@ -24,7 +24,7 @@ export class SanPhamService {
 
     if (loc.danhMuc) query.andWhere('dm.id = :danhMuc', { danhMuc: loc.danhMuc })
     if (loc.thuongHieu) query.andWhere('sp.thuongHieu = :thuongHieu', { thuongHieu: loc.thuongHieu })
-    if (loc.query) query.andWhere('(sp.ten LIKE :q OR sp.thuongHieu LIKE :q)', { q: `%${loc.query}%` })
+    if (loc.query) query.andWhere('(sp.ten LIKE :q OR sp.thuongHieu LIKE :q OR dm.ten LIKE :q)', { q: `%${loc.query}%` })
     if (loc.giaTu !== undefined) query.andWhere('sp.gia >= :giaTu', { giaTu: loc.giaTu })
     if (loc.giaDen !== undefined) query.andWhere('sp.gia <= :giaDen', { giaDen: loc.giaDen })
     if (loc.conHang) {
@@ -94,5 +94,66 @@ export class SanPhamService {
 
     for (const d of dong) ketQua.set(d.idSanPham, Number(d.soLuong))
     return ketQua
+  }
+
+  async layTheoThuongHieu(danhMuc?: number) {
+    const query = this.sanhPhamRepo.createQueryBuilder('sp')
+      .select('DISTINCT sp.thuongHieu', 'thuongHieu')
+      .where("sp.trangThai = 'dang_ban'")
+      .andWhere('sp.thuongHieu IS NOT NULL')
+      .orderBy('sp.thuongHieu', 'ASC')
+
+    if (danhMuc) {
+      query.andWhere('sp.id_danh_muc = :danhMuc', { danhMuc })
+    }
+    const dong = await query.getRawMany<{ thuongHieu: string }>()
+    return dong.map((d) => d.thuongHieu)
+  }
+
+  async goiYTimKiem(tuKhoa: string) {
+    const dsSanPham = await this.sanhPhamRepo.createQueryBuilder('sp')
+      .innerJoin('sp.danhMuc', 'dm')
+      .where("sp.trangThai = 'dang_ban'")
+      .andWhere('(sp.ten LIKE :q OR sp.thuongHieu LIKE :q OR dm.ten LIKE :q)', { q: `%${tuKhoa}%` })
+      .orderBy('sp.ten', 'ASC')
+      .take(6)
+      .getMany()
+
+    const anhTheoSanPham = await this.layAnh(dsSanPham.map((sp) => sp.id))
+
+    return dsSanPham.map((sp) => ({
+      id: sp.id,
+      ten: sp.ten,
+      gia: sp.gia,
+      anh: anhTheoSanPham.get(sp.id)?.[0]?.duongDan ?? null,
+    }))
+  }
+
+  async timChiTietSanPham(id: number) {
+    const sanPham = await this.sanhPhamRepo.findOne({
+      where: { id, trangThai: 'dang_ban' },
+      relations: { danhMuc: true }
+    })
+
+    if (!sanPham) {
+      throw new NotFoundException('Không tìm thấy sản phẩm')
+    }
+
+    const anhTheoSanPham = await this.layAnh([sanPham.id])
+    const tonKhoTheoSanPham = await this.layTonKho([sanPham.id])
+
+    return {
+      id: sanPham.id,
+      ten: sanPham.ten,
+      thuongHieu: sanPham.thuongHieu,
+      gia: sanPham.gia,
+      giaNiemYet: sanPham.giaNiemYet,
+      moTa: sanPham.moTa,
+      thongSo: sanPham.thongSo,
+      soThangBaoHanh: sanPham.soThangBaoHanh,
+      danhMuc: { id: sanPham.danhMuc.id, ten: sanPham.danhMuc.ten },
+      anh: anhTheoSanPham.get(sanPham.id) ?? [],
+      tonKho: tonKhoTheoSanPham.get(sanPham.id) ?? 0,
+    }
   }
 }
