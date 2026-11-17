@@ -1,7 +1,7 @@
 export type TrangThaiDon = 'Chờ xác nhận' | 'Đã xác nhận' | 'Đang giao' | 'Hoàn tất' | 'Đã hủy'
 
 export type DongDonHang = {
-  id: string
+  id: number
   qty: number
   serials: string[]
 }

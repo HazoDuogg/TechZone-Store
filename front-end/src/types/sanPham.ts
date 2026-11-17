@@ -1,32 +1,37 @@
-export type ThongTinSanPham = {
-  id: string
-  name: string
-  brand: string
-  category: string
-  price: number
-  oldPrice?: number
-  specs: Record<string, string>
-  anh?: string[]
-  tonKho?: number
+export type DanhMuc = {
+  id: number
+  ten: string
+}
+
+export type SanPham = {
+  id: number
+  ten: string
+  thuongHieu: string | null
+  gia: number
+  giaNiemYet: number | null
+  thongSo: Record<string, string> | null
+  danhMuc: DanhMuc
+  anh: { duongDan: string }[]
+  tonKho: number
+}
+
+export type SanPhamChiTiet = SanPham & {
+  moTa: string | null
+  soThangBaoHanh: number
+}
+
+export type KetQuaDanhSachSanPham = {
+  duLieu: SanPham[]
+  tong: number
+  trang: number
+  soLuong: number
+  tongTrang: number
 }
 
 export type HangChoMoBan = {
   id: string
-  name: string
-  brand: string
-  category: string
+  ten: string
+  thuongHieu: string
+  danhMuc: string
   soLuongKho: number
-}
-
-export type TrangThaiSerial = 'trong_kho' | 'da_ban'
-
-export type ThongTinSerial = {
-  serial: string
-  productId: string
-  status: TrangThaiSerial
-  importedAt: string
-  orderCode?: string
-  customer?: string
-  purchasedAt?: string
-  warrantyUntil?: string
 }

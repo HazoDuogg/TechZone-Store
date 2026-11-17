@@ -14,8 +14,8 @@ const policies = [
 
 export default function TrangChu() {
   const show = useTroLy((s) => s.show)
-  const sale = dsSanPham.filter((p) => p.oldPrice).slice(0, 4)
-  const fresh = dsSanPham.filter((p) => ['cpu-7600', 'ram-d5-32', 'ssd-980pro', 'mon-dell27'].includes(p.id))
+  const sale = dsSanPham.filter((p) => p.giaNiemYet).slice(0, 4)
+  const fresh = dsSanPham.filter((p) => [3, 17, 25, 32].includes(p.id))
 
   return (
     <>
@@ -48,7 +48,7 @@ export default function TrangChu() {
             <Link key={c} to="/san-pham" className="group flex items-center justify-between gap-4 rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white">
               <span className="flex flex-col">
                 <span className="text-xl font-bold">{c}</span>
-                <span className="text-sm text-muted group-hover:text-white/80">{dsSanPham.filter((p) => p.category === c).length} sản phẩm</span>
+                <span className="text-sm text-muted group-hover:text-white/80">{dsSanPham.filter((p) => p.danhMuc.ten === c).length} sản phẩm</span>
               </span>
               <img
                 src={duongDanAnhDanhMuc(c)}

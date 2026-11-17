@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { TieuDeTrang } from '../../components/BoCuc'
 import { ThanhTab } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
-import { dsSanPham, doanhThu12Thang, tonKho } from '../../data/duLieuMau'
+import { dsSanPham, doanhThu12Thang } from '../../data/duLieuMau'
 
 const CAC_KHOANG_THOI_GIAN = ['6 tháng', '12 tháng'] as const
 
@@ -25,7 +25,7 @@ export default function BaoCaoThongKe() {
   const [khoangThoiGian, setKhoangThoiGian] = useState<(typeof CAC_KHOANG_THOI_GIAN)[number]>('6 tháng')
   const data = khoangThoiGian === '6 tháng' ? doanhThu12Thang.slice(-6) : doanhThu12Thang
   const max = Math.max(...data.map((d) => d[1]))
-  const low = dsSanPham.filter((p) => (tonKho[p.id] ?? 0) < 5).slice(0, 6)
+  const low = dsSanPham.filter((p) => p.tonKho < 5).slice(0, 6)
 
   return (
     <>
@@ -98,8 +98,8 @@ export default function BaoCaoThongKe() {
               <tbody>
                 {low.map((p) => (
                   <tr key={p.id}>
-                    <td className={td}>{p.name}</td>
-                    <td className={cx(td, 'font-bold tabular-nums', (tonKho[p.id] ?? 0) === 0 ? 'text-danger' : 'text-warn')}>{tonKho[p.id] ?? 0}</td>
+                    <td className={td}>{p.ten}</td>
+                    <td className={cx(td, 'font-bold tabular-nums', p.tonKho === 0 ? 'text-danger' : 'text-warn')}>{p.tonKho}</td>
                   </tr>
                 ))}
               </tbody>

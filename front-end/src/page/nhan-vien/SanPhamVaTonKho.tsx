@@ -1,7 +1,7 @@
 import { TieuDeTrang } from '../../components/BoCuc'
 import { Nhan, OChon } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
-import { dsDanhMuc, dsSanPham, tonKho } from '../../data/duLieuMau'
+import { dsDanhMuc, dsSanPham } from '../../data/duLieuMau'
 import { tienVND } from '../../lib/dinhDang'
 
 export function NhanTonKho({ n }: { n: number }) {
@@ -43,12 +43,12 @@ export default function SanPhamVaTonKho() {
             {dsSanPham.map((p) => (
               <tr key={p.id}>
                 <td className={cx(td, 'text-sm text-muted')}>{p.id}</td>
-                <td className={cx(td, 'min-w-64 font-medium')}>{p.name}</td>
-                <td className={td}>{p.category}</td>
-                <td className={cx(td, 'whitespace-nowrap')}>{tienVND(p.price)}</td>
-                <td className={cx(td, 'font-bold tabular-nums')}>{tonKho[p.id] ?? 0}</td>
+                <td className={cx(td, 'min-w-64 font-medium')}>{p.ten}</td>
+                <td className={td}>{p.danhMuc.ten}</td>
+                <td className={cx(td, 'whitespace-nowrap')}>{tienVND(p.gia)}</td>
+                <td className={cx(td, 'font-bold tabular-nums')}>{p.tonKho}</td>
                 <td className={td}>
-                  <NhanTonKho n={tonKho[p.id] ?? 0} />
+                  <NhanTonKho n={p.tonKho} />
                 </td>
               </tr>
             ))}

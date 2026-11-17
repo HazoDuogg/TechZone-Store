@@ -1,34 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { NhanVienService } from './nhan-vien.service';
-import { CreateNhanVienDto } from './dto/create-nhan-vien.dto';
-import { UpdateNhanVienDto } from './dto/update-nhan-vien.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { VaiTroGuard } from '../../common/guards/vai-tro.guard';
+import { CanVaiTro } from '../../common/decorators/vai-tro.decorator';
+import { VaiTro } from '../../common/enums/vai-tro.enum';
+import { TaoNhanVienDTO } from './dto/tao-nhan-vien.dto';
+import { CapNhanNhanVienDTO } from './dto/cap-nhat-nhan-vien.dto';
+import { DatLaiMatKhauDTO } from './dto/dat-lai-mat-khau.dto';
 
 @Controller('nhan-vien')
+@UseGuards(JwtAuthGuard, VaiTroGuard)
+@CanVaiTro([VaiTro.ADMIN])
 export class NhanVienController {
-  constructor(private readonly nhanVienService: NhanVienService) {}
-
-  @Post()
-  create(@Body() createNhanVienDto: CreateNhanVienDto) {
-    return this.nhanVienService.create(createNhanVienDto);
-  }
+  constructor(private readonly nhanVienService: NhanVienService) { }
 
   @Get()
-  findAll() {
-    return this.nhanVienService.findAll();
+  timTatCaNhanVien() {
+    return this.nhanVienService.timTatCaNhanVien()
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.nhanVienService.findOne(+id);
+  @Post()
+  taoNhanVien(@Body() dto: TaoNhanVienDTO) {
+    return this.nhanVienService.taoNhanVien(dto)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNhanVienDto: UpdateNhanVienDto) {
-    return this.nhanVienService.update(+id, updateNhanVienDto);
+  capNhatNhanVien(@Param('id', ParseIntPipe) id: number, @Body() dto: CapNhanNhanVienDTO) {
+    return this.nhanVienService.capNhatNhanVien(id, dto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.nhanVienService.remove(+id);
+  @Post(':id/dat-lai-mat-khau')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  datLaiMatKhau(@Param('id', ParseIntPipe) id: number, @Body() dto: DatLaiMatKhauDTO) {
+    return this.nhanVienService.datLaiMatKhau(id, dto)
   }
 }

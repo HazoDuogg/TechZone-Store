@@ -187,3 +187,15 @@ CREATE TABLE bao_hanh (
   FOREIGN KEY (id_chi_tiet_san_pham) REFERENCES chi_tiet_san_pham(id),
   FOREIGN KEY (id_nhan_vien) REFERENCES nhan_vien(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE ma_dat_lai_mat_khau (
+  id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  id_tai_khoan INT UNSIGNED NOT NULL,
+  ma_bam       VARCHAR(255) NOT NULL,
+  het_han      DATETIME NOT NULL,
+  so_lan_sai   TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  ngay_tao     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_ma_dat_lai_tai_khoan (id_tai_khoan),
+  FOREIGN KEY (id_tai_khoan) REFERENCES tai_khoan(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

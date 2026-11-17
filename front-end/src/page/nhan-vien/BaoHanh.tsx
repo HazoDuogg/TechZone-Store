@@ -94,7 +94,7 @@ export default function BaoHanh() {
             {cachTraCuu === 'Theo mã đơn hàng' && (
               <ul className="mt-3 divide-y divide-surface-2">
                 {DON_MAU.items.map((dong) => {
-                  const tenSanPham = timSanPham(dong.id)?.name ?? dong.id
+                  const tenSanPham = timSanPham(dong.id)?.ten ?? String(dong.id)
                   return (
                     <li key={dong.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
                       <span className="min-w-0">

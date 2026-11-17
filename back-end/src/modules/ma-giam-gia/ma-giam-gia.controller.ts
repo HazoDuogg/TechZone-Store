@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { MaGiamGiaService } from './ma-giam-gia.service';
-import { CreateMaGiamGiaDto } from './dto/create-ma-giam-gia.dto';
-import { UpdateMaGiamGiaDto } from './dto/update-ma-giam-gia.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { VaiTroGuard } from '../../common/guards/vai-tro.guard';
+import { CanVaiTro } from '../../common/decorators/vai-tro.decorator';
+import { VaiTro } from '../../common/enums/vai-tro.enum';
+import { TaoMaGiamGiaDTO } from './dto/tao-ma-giam-gia.dto';
+import { CapNhatMaGiamGiaDTO } from './dto/cap-nhat-ma-giam-gia.dto';
 
 @Controller('ma-giam-gia')
+@UseGuards(JwtAuthGuard, VaiTroGuard)
+@CanVaiTro([VaiTro.ADMIN])
 export class MaGiamGiaController {
-  constructor(private readonly maGiamGiaService: MaGiamGiaService) {}
-
-  @Post()
-  create(@Body() createMaGiamGiaDto: CreateMaGiamGiaDto) {
-    return this.maGiamGiaService.create(createMaGiamGiaDto);
-  }
+  constructor(private readonly maGiamGiaService: MaGiamGiaService) { }
 
   @Get()
-  findAll() {
-    return this.maGiamGiaService.findAll();
+  timTatCaMa() {
+    return this.maGiamGiaService.timTatCaMa()
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.maGiamGiaService.findOne(+id);
+  @Post()
+  taoMaGiamGia(@Body() dto: TaoMaGiamGiaDTO) {
+    return this.maGiamGiaService.taoMaGiamGia(dto)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMaGiamGiaDto: UpdateMaGiamGiaDto) {
-    return this.maGiamGiaService.update(+id, updateMaGiamGiaDto);
+  capNhatMaGiamGia(@Param('id', ParseIntPipe) id: number, @Body() dto: CapNhatMaGiamGiaDTO) {
+    return this.maGiamGiaService.capNhatMaGiamGia(id, dto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.maGiamGiaService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  xoaMaGiamGia(@Param('id', ParseIntPipe) id: number) {
+    return this.maGiamGiaService.xoaMaGiamGia(id)
   }
 }

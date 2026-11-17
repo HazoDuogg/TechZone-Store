@@ -84,12 +84,12 @@ export function NoiDungDonHang({ order, staff }: { order: ThongTinDonHang; staff
               <li key={i.id} className="flex items-start justify-between gap-4 text-[15px]">
                 {p ? (
                   <Link to={`/san-pham/${p.id}`} className="font-medium hover:text-brand">
-                    {p.name} <span className="text-muted">× {i.qty}</span>
+                    {p.ten} <span className="text-muted">× {i.qty}</span>
                   </Link>
                 ) : (
                   <span>Sản phẩm đã ngừng bán × {i.qty}</span>
                 )}
-                <span className="font-semibold whitespace-nowrap">{tienVND((p?.price ?? 0) * i.qty)}</span>
+                <span className="font-semibold whitespace-nowrap">{tienVND((p?.gia ?? 0) * i.qty)}</span>
               </li>
             )
           })}

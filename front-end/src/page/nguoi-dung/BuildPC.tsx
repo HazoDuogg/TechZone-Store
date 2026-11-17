@@ -16,7 +16,7 @@ const parts = cauHinhMau.flatMap((id) => {
 export default function BuildPC() {
   const [nganSach, setNganSach] = useState(20_000_000)
   const show = useTroLy((s) => s.show)
-  const total = parts.reduce((s, p) => s + p.price, 0)
+  const total = parts.reduce((s, p) => s + p.gia, 0)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -72,12 +72,12 @@ export default function BuildPC() {
                   <AnhSanPham product={p} className="p-2 [&_span]:text-[10px] [&_span:nth-child(2)]:text-sm" />
                 </Link>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-muted">{p.category}</div>
+                  <div className="text-sm font-semibold text-muted">{p.danhMuc.ten}</div>
                   <Link to={`/san-pham/${p.id}`} className="font-semibold hover:text-brand">
-                    {p.name}
+                    {p.ten}
                   </Link>
                 </div>
-                <span className="font-bold whitespace-nowrap">{tienVND(p.price)}</span>
+                <span className="font-bold whitespace-nowrap">{tienVND(p.gia)}</span>
               </li>
             ))}
           </ul>

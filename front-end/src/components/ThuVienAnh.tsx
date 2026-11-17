@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react'
 import type { KeyboardEvent, TouchEvent } from 'react'
-import type { ThongTinSanPham } from '../types'
+import type { SanPham } from '../types'
 import { duongDanAnhSanPham, SO_GOC_ANH } from '../lib/duongDanAnh'
 import { cx } from '../lib/lopCss'
 import { KhungSanPham } from './SanPham'
 
 const CAC_GOC = Array.from({ length: SO_GOC_ANH }, (_, viTri) => viTri + 1)
 
-export default function ThuVienAnh({ product }: { product: ThongTinSanPham }) {
+export default function ThuVienAnh({ product }: { product: SanPham }) {
   const [gocDangXem, setGocDangXem] = useState(0)
   const [gocLoi, setGocLoi] = useState<number[]>([])
   const xBatDau = useRef<number | null>(null)
@@ -40,7 +40,7 @@ export default function ThuVienAnh({ product }: { product: ThongTinSanPham }) {
               ) : (
                 <img
                   src={duongDanAnhSanPham(product, goc)}
-                  alt={`${product.name}, góc ${goc}`}
+                  alt={`${product.ten}, góc ${goc}`}
                   loading={goc === 1 ? 'eager' : 'lazy'}
                   onError={() => danhDauLoi(goc)}
                   className="h-full w-full object-contain"

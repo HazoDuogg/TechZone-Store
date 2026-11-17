@@ -8,5 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [TypeOrmModule.forFeature([MaGiamGia])],
   controllers: [MaGiamGiaController],
   providers: [MaGiamGiaService],
+  exports: [MaGiamGiaService]
 })
 export class MaGiamGiaModule { }

@@ -1,34 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { DonHangService } from './don-hang.service';
-import { CreateDonHangDto } from './dto/create-don-hang.dto';
-import { UpdateDonHangDto } from './dto/update-don-hang.dto';
+import { JwtTuyChonGuard } from '../../common/guards/jwt-tuy-chon.guard';
+import { DatHangDTO } from './dto/tao-don-hang.dto';
+import type { YeuCauDaXacThuc } from '../../common/guards/jwt-auth.guard';
+import { VaiTro } from '../../common/enums/vai-tro.enum';
 
 @Controller('don-hang')
 export class DonHangController {
-  constructor(private readonly donHangService: DonHangService) {}
+  constructor(private readonly donHangService: DonHangService) { }
 
   @Post()
-  create(@Body() createDonHangDto: CreateDonHangDto) {
-    return this.donHangService.create(createDonHangDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.donHangService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.donHangService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDonHangDto: UpdateDonHangDto) {
-    return this.donHangService.update(+id, updateDonHangDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.donHangService.remove(+id);
+  @UseGuards(JwtTuyChonGuard)
+  datHang(@Body() dto: DatHangDTO, @Req() yeuCau: YeuCauDaXacThuc) {
+    const idTaiKhoan = yeuCau.user?.vaiTro === VaiTro.KHACH_HANG ? yeuCau.user.sub : undefined
+    return this.donHangService.datHang(dto, idTaiKhoan)
   }
 }

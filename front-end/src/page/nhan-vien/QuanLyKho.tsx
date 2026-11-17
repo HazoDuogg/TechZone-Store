@@ -4,7 +4,7 @@ import { TieuDeTrang } from '../../components/BoCuc'
 import { Nhan, Nut, TruongNhap, VungNhap, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
 import OChonTimKiem from '../../components/OChonTimKiem'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
-import { dsDanhMuc, dsHangChoMoBan, dsSanPham, tonKho } from '../../data/duLieuMau'
+import { dsDanhMuc, dsHangChoMoBan, dsSanPham } from '../../data/duLieuMau'
 import { boDau, ngayGioVN } from '../../lib/dinhDang'
 import { NhanTonKho } from './SanPhamVaTonKho'
 
@@ -12,16 +12,16 @@ const CAC_TAB = ['Nhập kho', 'Xuất kho', 'Kiểm kê'] as const
 
 type DongLichSu = { thoiGian: string; tenSanPham: string; soLuong: number; ghiChu: string }
 
-const layTenSanPham = (id: string) => dsSanPham.find((sp) => sp.id === id)?.name ?? id
+const layTenSanPham = (id: number) => dsSanPham.find((sp) => sp.id === id)?.ten ?? String(id)
 
 const LICH_SU_MAU: DongLichSu[] = [
-  { thoiGian: '25/10/2026 09:10', tenSanPham: layTenSanPham('ram-d5-32'), soLuong: 10, ghiChu: 'Phiếu nhập PN-0231' },
-  { thoiGian: '24/10/2026 15:42', tenSanPham: layTenSanPham('ssd-980pro'), soLuong: 5, ghiChu: 'Phiếu nhập PN-0230' },
-  { thoiGian: '22/10/2026 11:05', tenSanPham: layTenSanPham('cpu-7600'), soLuong: 8, ghiChu: 'Phiếu nhập PN-0229' },
+  { thoiGian: '25/10/2026 09:10', tenSanPham: layTenSanPham(17), soLuong: 10, ghiChu: 'Phiếu nhập PN-0231' },
+  { thoiGian: '24/10/2026 15:42', tenSanPham: layTenSanPham(25), soLuong: 5, ghiChu: 'Phiếu nhập PN-0230' },
+  { thoiGian: '22/10/2026 11:05', tenSanPham: layTenSanPham(3), soLuong: 8, ghiChu: 'Phiếu nhập PN-0229' },
 ]
 
 const SAN_PHAM_MOI = 'moi'
-const TEN_CAC_SAN_PHAM = [...dsSanPham.map((sp) => sp.name), ...dsHangChoMoBan.map((hang) => hang.name)]
+const TEN_CAC_SAN_PHAM = [...dsSanPham.map((sp) => sp.ten), ...dsHangChoMoBan.map((hang) => hang.ten)]
 
 type BieuMauProps = { loai: 'Nhập' | 'Xuất'; lichSu: DongLichSu[]; khiThem: (dong: DongLichSu) => void }
 
@@ -34,8 +34,8 @@ function BieuMauNhapXuat({ loai, lichSu, khiThem }: BieuMauProps) {
 
   const cacLuaChon = [
     ...(laNhap ? [{ value: SAN_PHAM_MOI, label: '＋ Sản phẩm mới', hint: 'Chưa có trong hệ thống' }] : []),
-    ...dsHangChoMoBan.map((hang) => ({ value: hang.id, label: hang.name, hint: `Chờ mở bán · tồn ${hang.soLuongKho}` })),
-    ...dsSanPham.map((sp) => ({ value: sp.id, label: sp.name, hint: `${sp.category} · tồn ${tonKho[sp.id] ?? 0}` })),
+    ...dsHangChoMoBan.map((hang) => ({ value: hang.id, label: hang.ten, hint: `Chờ mở bán · tồn ${hang.soLuongKho}` })),
+    ...dsSanPham.map((sp) => ({ value: String(sp.id), label: sp.ten, hint: `${sp.danhMuc.ten} · tồn ${sp.tonKho}` })),
   ]
 
   const tenDangGo = boDau(tenSanPhamMoi.trim())
@@ -154,20 +154,20 @@ function KiemKe() {
           <tbody>
             {dsSanPham.slice(0, 10).map((sp, viTri) => (
               <tr key={sp.id}>
-                <td className={cx(td, 'min-w-64 font-medium')}>{sp.name}</td>
-                <td className={cx(td, 'tabular-nums')}>{tonKho[sp.id] ?? 0}</td>
+                <td className={cx(td, 'min-w-64 font-medium')}>{sp.ten}</td>
+                <td className={cx(td, 'tabular-nums')}>{sp.tonKho}</td>
                 <td className={td}>
                   <input
                     type="number"
                     min={0}
-                    defaultValue={viTri === 2 ? (tonKho[sp.id] ?? 0) - 1 : ''}
-                    aria-label={`Số lượng thực tế của ${sp.name}`}
+                    defaultValue={viTri === 2 ? sp.tonKho - 1 : ''}
+                    aria-label={`Số lượng thực tế của ${sp.ten}`}
                     className="h-9 w-24 rounded-md bg-surface px-2 focus:bg-white focus:outline-2 focus:outline-brand"
                   />
                 </td>
                 <td className={td}>{viTri === 2 ? <Nhan tone="red">−1</Nhan> : '—'}</td>
                 <td className={td}>
-                  <NhanTonKho n={tonKho[sp.id] ?? 0} />
+                  <NhanTonKho n={sp.tonKho} />
                 </td>
               </tr>
             ))}

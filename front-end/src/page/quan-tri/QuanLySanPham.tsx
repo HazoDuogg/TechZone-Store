@@ -2,20 +2,20 @@ import { useState } from 'react'
 import { TieuDeTrang } from '../../components/BoCuc'
 import { Nut, TruongNhap, VungNhap, HopThoai, OChon, ThanhTab } from '../../components/GiaoDienCoBan'
 import { cx, tableWrap, td, th } from '../../lib/lopCss'
-import { dsDanhMuc, dsHangChoMoBan, dsSanPham, tonKho } from '../../data/duLieuMau'
-import type { ThongTinSanPham } from '../../types'
+import { dsDanhMuc, dsHangChoMoBan, dsSanPham } from '../../data/duLieuMau'
 import { tienVND } from '../../lib/dinhDang'
 import { NhanTonKho } from '../nhan-vien/SanPhamVaTonKho'
 import VungTaiAnh from '../../components/VungTaiAnh'
 import OChonTimKiem from '../../components/OChonTimKiem'
 import { AnhSanPham } from '../../components/SanPham'
 import { duongDanAnhDanhMuc } from '../../lib/duongDanAnh'
+import type { SanPham } from '../../types'
 
 const CAC_TAB = ['Sản phẩm', 'Danh mục'] as const
 
 function TabSanPham() {
-  const [dangSua, setDangSua] = useState<ThongTinSanPham | 'moi' | null>(null)
-  const [sanPhamCanXoa, setSanPhamCanXoa] = useState<ThongTinSanPham | null>(null)
+  const [dangSua, setDangSua] = useState<SanPham | 'moi' | null>(null)
+  const [sanPhamCanXoa, setSanPhamCanXoa] = useState<SanPham | null>(null)
   const [hangDuocChonId, setHangDuocChonId] = useState<string | null>(null)
   const [daMoBan, setDaMoBan] = useState<string[]>([])
   const sanPhamDangSua = dangSua && dangSua !== 'moi' ? dangSua : undefined
@@ -58,19 +58,19 @@ function TabSanPham() {
                   <div className="flex items-center gap-3">
                     <AnhSanPham product={sp} className="size-12 shrink-0 rounded-md p-1 [&_span]:hidden" />
                     <div>
-                      <div className="font-semibold">{sp.name}</div>
-                      <div className="text-sm text-muted">{sp.brand}</div>
+                      <div className="font-semibold">{sp.ten}</div>
+                      <div className="text-sm text-muted">{sp.thuongHieu}</div>
                     </div>
                   </div>
                 </td>
-                <td className={td}>{sp.category}</td>
+                <td className={td}>{sp.danhMuc.ten}</td>
                 <td className={cx(td, 'whitespace-nowrap')}>
-                  {tienVND(sp.price)}
-                  {sp.oldPrice && <div className="text-sm text-muted line-through">{tienVND(sp.oldPrice)}</div>}
+                  {tienVND(sp.gia)}
+                  {sp.giaNiemYet && <div className="text-sm text-muted line-through">{tienVND(sp.giaNiemYet)}</div>}
                 </td>
                 <td className={td}>
-                  <span className="mr-2 font-bold tabular-nums">{tonKho[sp.id] ?? 0}</span>
-                  <NhanTonKho n={tonKho[sp.id] ?? 0} />
+                  <span className="mr-2 font-bold tabular-nums">{sp.tonKho}</span>
+                  <NhanTonKho n={sp.tonKho} />
                 </td>
                 <td className={cx(td, 'whitespace-nowrap')}>
                   <Nut size="sm" variant="soft" onClick={() => setDangSua(sp)}>
@@ -97,11 +97,11 @@ function TabSanPham() {
             className="space-y-4"
           >
             {sanPhamDangSua ? (
-              <TruongNhap label="Tên sản phẩm" defaultValue={sanPhamDangSua.name} />
+              <TruongNhap label="Tên sản phẩm" defaultValue={sanPhamDangSua.ten} />
             ) : (
               <OChonTimKiem
                 label="Sản phẩm đã nhập kho"
-                options={hangChoMoBan.map((hang) => ({ value: hang.id, label: hang.name, hint: `${hang.brand} · ${hang.category} · ${hang.soLuongKho} chiếc trong kho` }))}
+                options={hangChoMoBan.map((hang) => ({ value: hang.id, label: hang.ten, hint: `${hang.thuongHieu} · ${hang.danhMuc} · ${hang.soLuongKho} chiếc trong kho` }))}
                 value={hangDuocChonId}
                 onChange={setHangDuocChonId}
                 placeholder="Gõ tên để tìm sản phẩm"
@@ -112,8 +112,8 @@ function TabSanPham() {
             <div className="grid gap-4 sm:grid-cols-2">
               {sanPhamDangSua ? (
                 <>
-                  <TruongNhap label="Thương hiệu" defaultValue={sanPhamDangSua.brand} />
-                  <OChon label="Danh mục" defaultValue={sanPhamDangSua.category}>
+                  <TruongNhap label="Thương hiệu" defaultValue={sanPhamDangSua.thuongHieu ?? ''} />
+                  <OChon label="Danh mục" defaultValue={sanPhamDangSua.danhMuc.ten}>
                     {dsDanhMuc.map((danhMuc) => (
                       <option key={danhMuc}>{danhMuc}</option>
                     ))}
@@ -121,12 +121,12 @@ function TabSanPham() {
                 </>
               ) : (
                 <>
-                  <TruongNhap label="Thương hiệu" value={hangDangChon?.brand ?? ''} disabled placeholder="Tự điền khi chọn sản phẩm" />
-                  <TruongNhap label="Danh mục" value={hangDangChon?.category ?? ''} disabled placeholder="Tự điền khi chọn sản phẩm" />
+                  <TruongNhap label="Thương hiệu" value={hangDangChon?.thuongHieu ?? ''} disabled placeholder="Tự điền khi chọn sản phẩm" />
+                  <TruongNhap label="Danh mục" value={hangDangChon?.danhMuc ?? ''} disabled placeholder="Tự điền khi chọn sản phẩm" />
                 </>
               )}
-              <TruongNhap type="number" label="Giá bán (₫)" defaultValue={sanPhamDangSua?.price} />
-              <TruongNhap type="number" label="Giá niêm yết (₫)" defaultValue={sanPhamDangSua?.oldPrice} hint="Để trống nếu không giảm giá" />
+              <TruongNhap type="number" label="Giá bán (₫)" defaultValue={sanPhamDangSua?.gia} />
+              <TruongNhap type="number" label="Giá niêm yết (₫)" defaultValue={sanPhamDangSua?.giaNiemYet ?? undefined} hint="Để trống nếu không giảm giá" />
               <TruongNhap type="number" min={0} label="Bảo hành (tháng)" defaultValue={sanPhamDangSua ? 36 : undefined} />
               <TruongNhap type="number" min={0} label="Ngưỡng cảnh báo sắp hết" defaultValue={sanPhamDangSua ? 5 : undefined} hint="Cảnh báo khi tồn kho thấp hơn số này" />
               <OChon label="Trạng thái">
@@ -140,7 +140,7 @@ function TabSanPham() {
               placeholder="Mỗi dòng một thông số, ví dụ: Socket: AM5"
               defaultValue={
                 sanPhamDangSua
-                  ? Object.entries(sanPhamDangSua.specs)
+                  ? Object.entries(sanPhamDangSua.thongSo ?? {})
                       .map(([ten, giaTri]) => `${ten}: ${giaTri}`)
                       .join('\n')
                   : undefined
@@ -159,7 +159,7 @@ function TabSanPham() {
       {sanPhamCanXoa && (
         <HopThoai title="Xóa sản phẩm" onClose={() => setSanPhamCanXoa(null)}>
           <p>
-            Xóa <b>{sanPhamCanXoa.name}</b> khỏi cửa hàng? Thao tác này không thể hoàn tác.
+            Xóa <b>{sanPhamCanXoa.ten}</b> khỏi cửa hàng? Thao tác này không thể hoàn tác.
           </p>
           <div className="mt-6 flex justify-end gap-2">
             <Nut variant="soft" onClick={() => setSanPhamCanXoa(null)}>
@@ -190,7 +190,7 @@ function TabDanhMuc() {
             <span className="flex min-w-0 items-center gap-3">
               <img src={duongDanAnhDanhMuc(danhMuc)} alt="" className="size-12 shrink-0 rounded-md bg-surface object-cover" />
               <span className="font-semibold">
-                {danhMuc} <span className="font-normal text-muted">· {dsSanPham.filter((sp) => sp.category === danhMuc).length} sản phẩm</span>
+                {danhMuc} <span className="font-normal text-muted">· {dsSanPham.filter((sp) => sp.danhMuc.ten === danhMuc).length} sản phẩm</span>
               </span>
             </span>
             <span className="flex gap-1">

@@ -10,14 +10,9 @@ export class VaiTroGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const vaiTroDuocPhep = this.reflector.getAllAndOverride(CanVaiTro, [context.getHandler(), context.getClass()])
-    if (!vaiTroDuocPhep || vaiTroDuocPhep.length === 0) {
-      return true
-    }
+    const vaiTro = context.switchToHttp().getRequest<YeuCauDaXacThuc>().user?.vaiTro
 
-    const yeuCau = context.switchToHttp().getRequest<YeuCauDaXacThuc>()
-    const vaiTro = yeuCau.user?.vaiTro
-
-    if (!vaiTro || !vaiTroDuocPhep.includes(vaiTro)) {
+    if (!vaiTroDuocPhep?.length || !vaiTro || !vaiTroDuocPhep.includes(vaiTro)) {
       throw new ForbiddenException('Bạn không có quyền thực hiện thao tác này')
     }
     return true

@@ -11,6 +11,7 @@ import { KhachHangModule } from './modules/khach-hang/khach-hang.module';
 import { NhanVienModule } from './modules/nhan-vien/nhan-vien.module';
 import { PhieuKhoModule } from './modules/phieu-kho/phieu-kho.module';
 import { SanPhamModule } from './modules/san-pham/san-pham.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { SanPhamModule } from './modules/san-pham/san-pham.module';
     KhachHangModule,
     NhanVienModule,
     PhieuKhoModule,
-    SanPhamModule
+    SanPhamModule,
+    MailModule
   ],
 })
 

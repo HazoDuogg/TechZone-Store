@@ -1,10 +1,13 @@
-export type ThongTinNhanVien = {
+import type { ViTri } from '../constants'
+
+export type NhanVien = {
   id: number
-  name: string
+  hoTen: string
+  soDienThoai: string
+  viTri: ViTri
+  trangThai: 'hoat_dong' | 'nghi_viec'
+  ngayTao: string
   email: string
-  password: number
-  role: string
-  locked: boolean
 }
 
 export type ThongTinKhachHang = {

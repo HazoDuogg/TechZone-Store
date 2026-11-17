@@ -1,8 +1,8 @@
-import type { ThongTinSanPham } from '../types'
+import type { SanPham } from '../types'
 
 export const SO_GOC_ANH = 4
 
-const thuMuc: Record<string, string> = {
+export const THU_MUC_ANH: Record<string, string> = {
   CPU: 'cpu',
   Mainboard: 'mainboard',
   RAM: 'ram',
@@ -30,8 +30,8 @@ const tim = (duong: string, duoi?: 'webp' | 'png') => {
 
 export const anhTheoDuongDan = (duongDan: string) => tim(duongDan)
 
-export const duongDanAnhSanPham = (p: ThongTinSanPham, goc: number, duoiFile?: 'webp' | 'png') => p.anh?.[goc - 1] ? tim(p.anh?.[goc - 1], duoiFile) : tim(`san-pham/${thuMuc[p.category]}/${p.id}-${goc}`, duoiFile)
+export const duongDanAnhSanPham = (p: SanPham, goc: number, duoiFile?: 'webp' | 'png') => tim(p.anh[goc - 1]?.duongDan ?? '', duoiFile)
 
-export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') => tim(`danh-muc/cat-${thuMuc[ten]}`, duoiFile)
+export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') => tim(`danh-muc/cat-${THU_MUC_ANH[ten]}`, duoiFile)
 
 export const ANH_BANNER = tim('banner/cat-chu')

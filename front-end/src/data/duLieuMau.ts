@@ -1,18 +1,29 @@
-import type { HangChoMoBan, PhieuBaoHanh, PhieuGiamGia, ThongTinDonHang, ThongTinKhachHang, ThongTinNhanVien, ThongTinSanPham, ThongTinSerial } from '../types'
+import type { HangChoMoBan, PhieuBaoHanh, SanPham, ThongTinDonHang, ThongTinKhachHang } from '../types'
+import { SO_GOC_ANH, THU_MUC_ANH } from '../lib/duongDanAnh'
 
 export const dsDanhMuc = ['CPU', 'Mainboard', 'RAM', 'VGA', 'SSD', 'Nguồn', 'Case', 'Màn hình', 'Chuột']
 
-const p = (id: string, name: string, brand: string, category: string, price: number, oldPrice: number, specs: Record<string, string>): ThongTinSanPham => ({
-  id,
-  name,
-  brand,
-  category,
-  price,
-  oldPrice: oldPrice || undefined,
-  specs,
+const TON_KHO_MAU = [14, 3, 22, 0, 9, 31, 4, 18, 2]
+
+const p = (
+  slug: string,
+  ten: string,
+  thuongHieu: string,
+  tenDanhMuc: string,
+  gia: number,
+  giaNiemYet: number,
+  thongSo: Record<string, string>,
+): Omit<SanPham, 'id' | 'tonKho'> => ({
+  ten,
+  thuongHieu,
+  gia,
+  giaNiemYet: giaNiemYet || null,
+  thongSo,
+  danhMuc: { id: dsDanhMuc.indexOf(tenDanhMuc) + 1, ten: tenDanhMuc },
+  anh: Array.from({ length: SO_GOC_ANH }, (_, i) => ({ duongDan: `san-pham/${THU_MUC_ANH[tenDanhMuc]}/${slug}-${i + 1}` })),
 })
 
-export const dsSanPham: ThongTinSanPham[] = [
+export const dsSanPham: SanPham[] = [
   p('cpu-5600', 'AMD Ryzen 5 5600', 'AMD', 'CPU', 2890000, 3290000, { Socket: 'AM4', 'Nhân / luồng': '6 / 12', 'Xung nhịp': '3.5 - 4.4 GHz', 'Đồ họa tích hợp': 'Không' }),
   p('cpu-5600g', 'AMD Ryzen 5 5600G', 'AMD', 'CPU', 3190000, 0, { Socket: 'AM4', 'Nhân / luồng': '6 / 12', 'Xung nhịp': '3.9 - 4.4 GHz', 'Đồ họa tích hợp': 'Có' }),
   p('cpu-7600', 'AMD Ryzen 5 7600', 'AMD', 'CPU', 5190000, 5690000, { Socket: 'AM5', 'Nhân / luồng': '6 / 12', 'Xung nhịp': '3.8 - 5.1 GHz', 'Đồ họa tích hợp': 'Có' }),
@@ -85,22 +96,14 @@ export const dsSanPham: ThongTinSanPham[] = [
 
   p('mouse-g102', 'Logitech G102 Lightsync', 'Logitech', 'Chuột', 390000, 450000, { 'Kết nối': 'Có dây', DPI: '8000', 'Số nút': '6' }),
   p('mouse-da3', 'Razer DeathAdder V3', 'Razer', 'Chuột', 1790000, 0, { 'Kết nối': 'Có dây', DPI: '30000', 'Số nút': '6' }),
-]
-
-export const tonKho: Record<string, number> = Object.fromEntries(dsSanPham.map((x, i) => [x.id, [14, 3, 22, 0, 9, 31, 4, 18, 2][i % 9]]))
+].map((sp, i) => ({ ...sp, id: i + 1, tonKho: TON_KHO_MAU[i % TON_KHO_MAU.length] }))
 
 export const dsHangChoMoBan: HangChoMoBan[] = [
-  { id: 'cho-4070tis', name: 'ASUS TUF Gaming GeForce RTX 4070 Ti SUPER 16GB', brand: 'ASUS', category: 'VGA', soLuongKho: 6 },
-  { id: 'cho-14900k', name: 'Intel Core i9-14900K', brand: 'Intel', category: 'CPU', soLuongKho: 4 },
-  { id: 'cho-990evo', name: 'Samsung 990 EVO 1TB NVMe', brand: 'Samsung', category: 'SSD', soLuongKho: 12 },
-  { id: 'cho-d5-32r', name: 'Kingston Fury Renegade 32GB (2x16GB) DDR5 6000', brand: 'Kingston', category: 'RAM', soLuongKho: 8 },
-  { id: 'cho-4000d', name: 'Corsair 4000D Airflow', brand: 'Corsair', category: 'Case', soLuongKho: 5 },
-]
-
-export const dsMaGiamGia: PhieuGiamGia[] = [
-  { code: 'TECH10', kind: 'percent', value: 10, minOrder: 2000000, expires: '2026-12-31', active: true },
-  { code: 'GIAM200K', kind: 'amount', value: 200000, minOrder: 3000000, expires: '2026-11-30', active: true },
-  { code: 'NEWUSER', kind: 'percent', value: 5, minOrder: 0, expires: '2026-09-30', active: false },
+  { id: 'cho-4070tis', ten: 'ASUS TUF Gaming GeForce RTX 4070 Ti SUPER 16GB', thuongHieu: 'ASUS', danhMuc: 'VGA', soLuongKho: 6 },
+  { id: 'cho-14900k', ten: 'Intel Core i9-14900K', thuongHieu: 'Intel', danhMuc: 'CPU', soLuongKho: 4 },
+  { id: 'cho-990evo', ten: 'Samsung 990 EVO 1TB NVMe', thuongHieu: 'Samsung', danhMuc: 'SSD', soLuongKho: 12 },
+  { id: 'cho-d5-32r', ten: 'Kingston Fury Renegade 32GB (2x16GB) DDR5 6000', thuongHieu: 'Kingston', danhMuc: 'RAM', soLuongKho: 8 },
+  { id: 'cho-4000d', ten: 'Corsair 4000D Airflow', thuongHieu: 'Corsair', danhMuc: 'Case', soLuongKho: 5 },
 ]
 
 export const dsDonHang: ThongTinDonHang[] = [
@@ -111,9 +114,9 @@ export const dsDonHang: ThongTinDonHang[] = [
     email: 'khachhang@techzone.vn',
     address: '12 Lê Lợi, Quận 1, TP.HCM',
     items: [
-      { id: 'cpu-7600', qty: 1, serials: ['SN-R57600-10211'] },
-      { id: 'mb-b650m', qty: 1, serials: ['SN-B650MK-44021'] },
-      { id: 'ram-d5-32', qty: 1, serials: ['SN-CVD532-90871'] },
+      { id: 3, qty: 1, serials: ['SN-R57600-10211'] },
+      { id: 9, qty: 1, serials: ['SN-B650MK-44021'] },
+      { id: 17, qty: 1, serials: ['SN-CVD532-90871'] },
     ],
     discount: 0,
     shipping: 0,
@@ -128,8 +131,8 @@ export const dsDonHang: ThongTinDonHang[] = [
     email: 'ha.tran@mail.com',
     address: '45 Nguyễn Trãi, Thanh Xuân, Hà Nội',
     items: [
-      { id: 'vga-4060', qty: 1, serials: ['SN-RTX4060-77120'] },
-      { id: 'psu-rm750', qty: 1, serials: ['SN-RM750E-23318'] },
+      { id: 21, qty: 1, serials: ['SN-RTX4060-77120'] },
+      { id: 27, qty: 1, serials: ['SN-RM750E-23318'] },
     ],
     discount: 200000,
     shipping: 0,
@@ -144,8 +147,8 @@ export const dsDonHang: ThongTinDonHang[] = [
     email: 'bao.le@mail.com',
     address: '7 Hai Bà Trưng, Hải Châu, Đà Nẵng',
     items: [
-      { id: 'mon-lg24', qty: 2, serials: [] },
-      { id: 'mouse-g102', qty: 2, serials: [] },
+      { id: 31, qty: 2, serials: [] },
+      { id: 33, qty: 2, serials: [] },
     ],
     discount: 0,
     shipping: 30000,
@@ -159,7 +162,7 @@ export const dsDonHang: ThongTinDonHang[] = [
     phone: '0933222111',
     email: 'han.pham@mail.com',
     address: '88 Cách Mạng Tháng 8, Quận 3, TP.HCM',
-    items: [{ id: 'ssd-980pro', qty: 1, serials: [] }],
+    items: [{ id: 25, qty: 1, serials: [] }],
     discount: 0,
     shipping: 30000,
     payment: 'COD',
@@ -172,7 +175,7 @@ export const dsDonHang: ThongTinDonHang[] = [
     phone: '0901234567',
     email: 'khachhang@techzone.vn',
     address: '12 Lê Lợi, Quận 1, TP.HCM',
-    items: [{ id: 'mouse-da3', qty: 1, serials: ['SN-DA3-88114'] }],
+    items: [{ id: 34, qty: 1, serials: ['SN-DA3-88114'] }],
     discount: 0,
     shipping: 30000,
     payment: 'COD',
@@ -186,8 +189,8 @@ export const dsDonHang: ThongTinDonHang[] = [
     email: 'tung.vo@mail.com',
     address: '21 Trần Phú, Nha Trang, Khánh Hòa',
     items: [
-      { id: 'cpu-13400f', qty: 1, serials: [] },
-      { id: 'mb-b760m', qty: 1, serials: [] },
+      { id: 6, qty: 1, serials: [] },
+      { id: 12, qty: 1, serials: [] },
     ],
     discount: 0,
     shipping: 0,
@@ -203,60 +206,6 @@ export const dsKhachHang: ThongTinKhachHang[] = [
   { id: 3, name: 'Lê Quốc Bảo', phone: '0987654321', email: 'bao.le@mail.com', address: '7 Hai Bà Trưng, Hải Châu, Đà Nẵng', note: 'Mua số lượng cho văn phòng' },
   { id: 4, name: 'Phạm Gia Hân', phone: '0933222111', email: 'han.pham@mail.com', address: '88 Cách Mạng Tháng 8, Quận 3, TP.HCM', note: '' },
   { id: 5, name: 'Võ Thanh Tùng', phone: '0977000111', email: 'tung.vo@mail.com', address: '21 Trần Phú, Nha Trang, Khánh Hòa', note: 'Hay hỏi về bảo hành' },
-]
-
-export const dsSerial: ThongTinSerial[] = [
-  // Đã bán và đã có phiếu bảo hành
-  {
-    serial: 'SN-RTX4060-77120',
-    productId: 'vga-4060',
-    status: 'da_ban',
-    importedAt: '2026-09-28',
-    orderCode: 'TZ240002',
-    customer: 'Trần Thu Hà',
-    purchasedAt: '2026-10-19',
-    warrantyUntil: '2029-10-19',
-  },
-  {
-    serial: 'SN-SSD980-30415',
-    productId: 'ssd-980pro',
-    status: 'da_ban',
-    importedAt: '2023-02-20',
-    customer: 'Phạm Gia Hân',
-    purchasedAt: '2023-03-08',
-    warrantyUntil: '2026-03-08',
-  },
-  { serial: 'SN-LG24-55091', productId: 'mon-lg24', status: 'da_ban', importedAt: '2025-05-30', customer: 'Lê Quốc Bảo', purchasedAt: '2025-06-14', warrantyUntil: '2028-06-14' },
-  {
-    serial: 'SN-DA3-88002',
-    productId: 'mouse-da3',
-    status: 'da_ban',
-    importedAt: '2025-11-18',
-    customer: 'Nguyễn Minh Khoa',
-    purchasedAt: '2025-12-01',
-    warrantyUntil: '2027-12-01',
-  },
-
-  // Đã gán cho các đơn hiện có
-  { serial: 'SN-R57600-10211', productId: 'cpu-7600', status: 'da_ban', importedAt: '2026-09-15', orderCode: 'TZ240001', customer: 'Nguyễn Minh Khoa', purchasedAt: '2026-10-05' },
-  { serial: 'SN-B650MK-44021', productId: 'mb-b650m', status: 'da_ban', importedAt: '2026-09-15', orderCode: 'TZ240001', customer: 'Nguyễn Minh Khoa', purchasedAt: '2026-10-05' },
-  { serial: 'SN-CVD532-90871', productId: 'ram-d5-32', status: 'da_ban', importedAt: '2026-09-20', orderCode: 'TZ240001', customer: 'Nguyễn Minh Khoa', purchasedAt: '2026-10-05' },
-  { serial: 'SN-RM750E-23318', productId: 'psu-rm750', status: 'da_ban', importedAt: '2026-09-28', orderCode: 'TZ240002', customer: 'Trần Thu Hà', purchasedAt: '2026-10-19' },
-  { serial: 'SN-DA3-88114', productId: 'mouse-da3', status: 'da_ban', importedAt: '2026-10-10', orderCode: 'TZ240005', customer: 'Nguyễn Minh Khoa' },
-
-  // Còn trong kho, hệ thống chọn từ đây khi xác nhận đơn
-  { serial: 'SN-LG24-55231', productId: 'mon-lg24', status: 'trong_kho', importedAt: '2026-10-01' },
-  { serial: 'SN-LG24-55232', productId: 'mon-lg24', status: 'trong_kho', importedAt: '2026-10-01' },
-  { serial: 'SN-LG24-55233', productId: 'mon-lg24', status: 'trong_kho', importedAt: '2026-10-12' },
-  { serial: 'SN-G102-70011', productId: 'mouse-g102', status: 'trong_kho', importedAt: '2026-10-03' },
-  { serial: 'SN-G102-70012', productId: 'mouse-g102', status: 'trong_kho', importedAt: '2026-10-03' },
-  { serial: 'SN-G102-70013', productId: 'mouse-g102', status: 'trong_kho', importedAt: '2026-10-03' },
-  { serial: 'SN-SSD980-30502', productId: 'ssd-980pro', status: 'trong_kho', importedAt: '2026-10-08' },
-  { serial: 'SN-SSD980-30503', productId: 'ssd-980pro', status: 'trong_kho', importedAt: '2026-10-08' },
-  { serial: 'SN-RTX4060-77125', productId: 'vga-4060', status: 'trong_kho', importedAt: '2026-10-14' },
-  { serial: 'SN-RTX4060-77126', productId: 'vga-4060', status: 'trong_kho', importedAt: '2026-10-14' },
-  { serial: 'SN-R57600-10305', productId: 'cpu-7600', status: 'trong_kho', importedAt: '2026-10-16' },
-  { serial: 'SN-CVD532-90902', productId: 'ram-d5-32', status: 'trong_kho', importedAt: '2026-10-16' },
 ]
 
 export const dsPhieuBaoHanh: PhieuBaoHanh[] = [
@@ -290,14 +239,6 @@ export const dsPhieuBaoHanh: PhieuBaoHanh[] = [
   },
 ]
 
-export const dsNhanVien: ThongTinNhanVien[] = [
-  { id: 1, name: 'Đặng Hoàng Nam', email: 'nam.dang@techzone.vn', password: 123, role: 'Quản lý', locked: false },
-  { id: 2, name: 'Bùi Thị Lan', email: 'lan.bui@techzone.vn', password: 123, role: 'Bán hàng', locked: false },
-  { id: 3, name: 'Hồ Minh Tuấn', email: 'tuan.ho@techzone.vn', password: 123, role: 'Kỹ thuật', locked: false },
-  { id: 4, name: 'Ngô Thị Mai', email: 'mai.ngo@techzone.vn', password: 123, role: 'Kho', locked: false },
-  { id: 5, name: 'Đinh Văn Hải', email: 'hai.dinh@techzone.vn', password: 123, role: 'Bán hàng', locked: true },
-]
-
 export const doanhThu12Thang = [
   ['11/25', 412],
   ['12/25', 598],
@@ -314,9 +255,9 @@ export const doanhThu12Thang = [
 ] as [string, number][]
 
 export const gioHangMau = [
-  { id: 'vga-4060', qty: 1 },
-  { id: 'ram-d5-32', qty: 2 },
-  { id: 'ssd-980pro', qty: 1 },
+  { id: 21, qty: 1 },
+  { id: 17, qty: 2 },
+  { id: 25, qty: 1 },
 ]
 
-export const cauHinhMau = ['cpu-5600g', 'mb-b550m', 'ram-d4-16', 'vga-7600', 'ssd-sn580', 'psu-mwe550', 'case-xig']
+export const cauHinhMau = [2, 8, 14, 20, 23, 26, 29]

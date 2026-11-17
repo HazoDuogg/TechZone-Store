@@ -15,7 +15,7 @@ function GanSerial({ cacDong }: { cacDong: DongDonHang[] }) {
   const [daLuu, setDaLuu] = useState(chuanHoa)
   const [cacDongDangSua, setCacDongDangSua] = useState(daLuu)
 
-  const capNhatSerial = (id: string, viTri: number, serial: string) =>
+  const capNhatSerial = (id: number, viTri: number, serial: string) =>
     setCacDongDangSua((truoc) => truoc.map((dong) => (dong.id === id ? { ...dong, serials: dong.serials.map((soSerial, k) => (k === viTri ? serial : soSerial)) } : dong)))
 
   const daDoi = JSON.stringify(cacDongDangSua) !== JSON.stringify(daLuu)
@@ -59,7 +59,7 @@ function GanSerial({ cacDong }: { cacDong: DongDonHang[] }) {
         {cacDongDangSua.map((dong) => (
           <div key={dong.id}>
             <div className="mb-2 font-semibold">
-              {timSanPham(dong.id)?.name} <span className="font-normal text-muted">× {dong.qty}</span>
+              {timSanPham(dong.id)?.ten} <span className="font-normal text-muted">× {dong.qty}</span>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {dong.serials.map((soSerial, viTri) => (

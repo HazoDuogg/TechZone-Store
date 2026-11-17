@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { tonKho } from '../data/duLieuMau'
-import type { ThongTinSanPham } from '../types'
+import type { SanPham } from '../types'
 import { duongDanAnhSanPham } from '../lib/duongDanAnh'
 import { cx } from '../lib/lopCss'
 import { tienVND } from '../lib/dinhDang'
+import { useGioHang } from '../store/gioHang'
+import { useThongBao } from '../store/thongBao'
 
 const tints: Record<string, string> = {
   CPU: 'bg-[#dbe8fb] text-[#0a3f91]',
@@ -18,12 +19,12 @@ const tints: Record<string, string> = {
   Chuột: 'bg-[#f2dfe9] text-[#7a1f4d]',
 }
 
-const shortName = (p: ThongTinSanPham) => {
-  const m = p.name.match(/(Ryzen \d \w+|i\d-\w+|RTX \d+\s?\w*|RX \d+|B\d{3}\w*|Z\d{3}|H\d{3}|DDR\d [\d]+|\d+(GB|TB)|\d+W|G\d+|H5|DeathAdder V3|\d+")/i)
-  return m ? m[0] : p.brand
+const shortName = (p: SanPham) => {
+  const m = p.ten.match(/(Ryzen \d \w+|i\d-\w+|RTX \d+\s?\w*|RX \d+|B\d{3}\w*|Z\d{3}|H\d{3}|DDR\d [\d]+|\d+(GB|TB)|\d+W|G\d+|H5|DeathAdder V3|\d+")/i)
+  return m ? m[0] : (p.thuongHieu ?? '')
 }
 
-export function AnhSanPham({ product, className }: { product: ThongTinSanPham; className?: string }) {
+export function AnhSanPham({ product, className }: { product: SanPham; className?: string }) {
   const [loi, setLoi] = useState(false)
   if (loi) return <KhungSanPham product={product} className={className} />
   return (
@@ -38,7 +39,7 @@ export function AnhSanPham({ product, className }: { product: ThongTinSanPham; c
             setLoi(true)
           }
         }}
-        alt={product.name}
+        alt={product.ten}
         loading="lazy"
         className="h-full w-full object-contain"
       />
@@ -46,34 +47,41 @@ export function AnhSanPham({ product, className }: { product: ThongTinSanPham; c
   )
 }
 
-export function KhungSanPham({ product, className }: { product: ThongTinSanPham; className?: string }) {
+export function KhungSanPham({ product, className }: { product: SanPham; className?: string }) {
   return (
-    <div className={cx('flex aspect-square flex-col justify-between p-5', tints[product.category] ?? 'bg-surface', className)} aria-hidden="true">
-      <span className="text-sm font-semibold opacity-80">{product.category}</span>
+    <div className={cx('flex aspect-square flex-col justify-between p-5', tints[product.danhMuc.ten] ?? 'bg-surface', className)} aria-hidden="true">
+      <span className="text-sm font-semibold opacity-80">{product.danhMuc.ten}</span>
       <span className="text-[clamp(1.5rem,4.2vw,2.6rem)] leading-[0.95] font-extrabold tracking-tight">{shortName(product)}</span>
-      <span className="text-sm font-semibold opacity-80">{product.brand}</span>
+      <span className="text-sm font-semibold opacity-80">{product.thuongHieu}</span>
     </div>
   )
 }
 
-export function GiaSanPham({ product, big }: { product: ThongTinSanPham; big?: boolean }) {
+export function GiaSanPham({ product, big }: { product: SanPham; big?: boolean }) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-2">
-      <span className={cx('font-bold text-brand', big ? 'text-3xl' : 'text-lg')}>{tienVND(product.price)}</span>
-      {product.oldPrice && <span className="text-sm text-muted line-through">{tienVND(product.oldPrice)}</span>}
+      <span className={cx('font-bold text-brand', big ? 'text-3xl' : 'text-lg')}>{tienVND(product.gia)}</span>
+      {product.giaNiemYet && <span className="text-sm text-muted line-through">{tienVND(product.giaNiemYet)}</span>}
     </div>
   )
 }
 
-export function GhiChuTonKho({ id, soLuong, className }: { id: string; soLuong?: number, className?: string }) {
-  const n = soLuong ?? tonKho[id] ?? 0
-  if (n === 0) return <span className={cx('text-sm font-semibold text-danger', className)}>Hết hàng</span>
-  if (n < 5) return <span className={cx('text-sm font-semibold text-warn', className)}>Chỉ còn {n} sản phẩm</span>
+export function GhiChuTonKho({ soLuong, className }: { soLuong: number; className?: string }) {
+  if (soLuong === 0) return <span className={cx('text-sm font-semibold text-danger', className)}>Hết hàng</span>
+  if (soLuong < 5) return <span className={cx('text-sm font-semibold text-warn', className)}>Chỉ còn {soLuong} sản phẩm</span>
   return <span className={cx('text-sm font-semibold text-ok', className)}>Còn hàng</span>
 }
 
-export function TheSanPham({ product }: { product: ThongTinSanPham }) {
-  const off = product.oldPrice ? Math.round((1 - product.price / product.oldPrice) * 100) : 0
+export function TheSanPham({ product }: { product: SanPham }) {
+  const off = product.giaNiemYet ? Math.round((1 - product.gia / product.giaNiemYet) * 100) : 0
+  const them = useGioHang((s) => s.them)
+  const thongBao = useThongBao((s) => s.hien)
+
+  function themVaoGio() {
+    them(product)
+    thongBao('Đã thêm vào giỏ hàng', product.ten)
+  }
+
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg bg-surface transition-transform duration-200 hover:-translate-y-1">
       <Link to={`/san-pham/${product.id}`} className="relative block">
@@ -82,14 +90,19 @@ export function TheSanPham({ product }: { product: ThongTinSanPham }) {
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <Link to={`/san-pham/${product.id}`} className="line-clamp-2 min-h-[3rem] text-[15px] leading-snug font-semibold hover:text-brand">
-          {product.name}
+          {product.ten}
         </Link>
         <GiaSanPham product={product} />
-        <GhiChuTonKho id={product.id} soLuong={product.tonKho} />
-        <button type="button" className="mt-auto h-10 rounded-md bg-white text-sm font-semibold transition-colors hover:bg-brand hover:text-white">
+        <GhiChuTonKho soLuong={product.tonKho} />
+        <button
+          type="button"
+          className="mt-auto h-10 rounded-md bg-white text-sm font-semibold transition-colors hover:bg-brand hover:text-white disabled:pointer-events-none disabled:opacity-50"
+          onClick={themVaoGio}
+          disabled={product.tonKho === 0}
+        >
           Thêm vào giỏ
         </button>
       </div>
-    </article>
+    </article >
   )
 }
