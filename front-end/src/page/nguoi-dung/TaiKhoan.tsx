@@ -1,10 +1,10 @@
 import { useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Nut, TruongNhap } from '../../components/GiaoDienCoBan'
-import { useAuthStore } from '../../auth/auth';
-import { useThongBao } from '../../store/thongBao';
-import api from '../../lib/api';
-import { layThongBaoLoi } from '../../lib/thongBaoLoi';
+import { useAuthStore } from '../../auth/auth'
+import { useThongBao } from '../../store/thongBao'
+import api from '../../lib/api'
+import { layThongBaoLoi } from '../../lib/thongBaoLoi'
 
 function KhungXacThuc({ title, desc, children, foot }: { title: string; desc?: string; children: ReactNode; foot?: ReactNode }) {
   return (
@@ -68,7 +68,14 @@ export function DangNhap() {
       <form onSubmit={onSubmit} className="space-y-4">
         {error && <p className="text-sm font-semibold text-danger">{error}</p>}
         <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
-        <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
+        <TruongNhap
+          type="password"
+          label="Mật khẩu"
+          placeholder="*********"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.currentTarget.value)}
+        />
         <div className="text-right">
           <Link to="/quen-mat-khau" className="text-sm font-semibold text-brand">
             Quên mật khẩu?
@@ -107,7 +114,7 @@ export function DangKy() {
         hoTen: name,
         email,
         password,
-        soDienThoai: phone
+        soDienThoai: phone,
       })
       chuyenTrang('/dang-nhap')
     } catch (err) {
@@ -134,8 +141,23 @@ export function DangKy() {
         <TruongNhap label="Họ và tên" placeholder="Nguyễn Văn A" autoComplete="name" value={name} onChange={(e) => setName(e.currentTarget.value)} />
         <TruongNhap label="Số điện thoại" placeholder="0812312312" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.currentTarget.value)} />
         <TruongNhap type="email" label="Email" placeholder="abc@gmail.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
-        <TruongNhap type="password" label="Mật khẩu" placeholder="*********" autoComplete="new-password" hint="Tối thiểu 6 ký tự" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
-        <TruongNhap type="password" label="Nhập lại mật khẩu" placeholder="*********" autoComplete="new-password" value={confirmPass} onChange={(e) => setConfirmPass(e.currentTarget.value)} />
+        <TruongNhap
+          type="password"
+          label="Mật khẩu"
+          placeholder="*********"
+          autoComplete="new-password"
+          hint="Tối thiểu 6 ký tự"
+          value={password}
+          onChange={(e) => setPassword(e.currentTarget.value)}
+        />
+        <TruongNhap
+          type="password"
+          label="Nhập lại mật khẩu"
+          placeholder="*********"
+          autoComplete="new-password"
+          value={confirmPass}
+          onChange={(e) => setConfirmPass(e.currentTarget.value)}
+        />
         <Nut size="lg" className="w-full" disabled={loading}>
           {loading ? 'Đang đăng ký...' : 'Đăng ký'}
         </Nut>

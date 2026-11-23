@@ -6,7 +6,7 @@ import { GiaSanPham, TheSanPham, GhiChuTonKho } from '../../components/SanPham'
 import ThuVienAnh from '../../components/ThuVienAnh'
 import { useTroLy } from '../../store/troLy'
 import { useTaiDuLieu } from '../../hooks/useTaiDuLieu'
-import type { KetQuaDanhSachSanPham, SanPhamChiTiet } from '../../types'
+import type { KetQuaPhanTrang, SanPham, SanPhamChiTiet } from '../../types'
 import { useGioHang } from '../../store/gioHang'
 import { useThongBao } from '../../store/thongBao'
 
@@ -22,7 +22,7 @@ function NoiDungChiTiet({ id }: { id?: string }) {
   const them = useGioHang((s) => s.them)
   const thongBao = useThongBao((s) => s.hien)
   const { duLieu: sanPhamChiTiet, loi } = useTaiDuLieu<SanPhamChiTiet>(`/san-pham/${id}`)
-  const { duLieu: cungLoai } = useTaiDuLieu<KetQuaDanhSachSanPham>(sanPhamChiTiet ? '/san-pham' : null, { danhMuc: sanPhamChiTiet?.danhMuc.id, soLuong: 12 })
+  const { duLieu: cungLoai } = useTaiDuLieu<KetQuaPhanTrang<SanPham>>(sanPhamChiTiet ? '/san-pham' : null, { danhMuc: sanPhamChiTiet?.danhMuc.id, soLuong: 12 })
   const sanPhamCungLoai = (cungLoai?.duLieu ?? []).filter((x) => x.id !== sanPhamChiTiet?.id)
 
   const dsRef = useRef<HTMLDivElement>(null)
@@ -85,7 +85,11 @@ function NoiDungChiTiet({ id }: { id?: string }) {
               <span className="w-10 text-center font-semibold" aria-live="polite">
                 {soLuong}
               </span>
-              <button aria-label="Tăng số lượng" onClick={() => setSoLuong((truoc) => Math.min(sanPhamChiTiet.tonKho, truoc + 1))} className="h-full w-12 text-xl hover:bg-surface-2">
+              <button
+                aria-label="Tăng số lượng"
+                onClick={() => setSoLuong((truoc) => Math.min(sanPhamChiTiet.tonKho, truoc + 1))}
+                className="h-full w-12 text-xl hover:bg-surface-2"
+              >
                 +
               </button>
             </div>
@@ -132,8 +136,12 @@ function NoiDungChiTiet({ id }: { id?: string }) {
             Sản phẩm cùng loại
           </h2>
           <div className="relative">
-            <button type='button' aria-label='Trước' onClick={() => cuonDanhSach(-1)}
-              className="absolute top-1/2 -left-7 z-10 hidden h-10 w-10 -translate-y-1/2 rounded-full bg-white shadow md:block">
+            <button
+              type="button"
+              aria-label="Trước"
+              onClick={() => cuonDanhSach(-1)}
+              className="absolute top-1/2 -left-7 z-10 hidden h-10 w-10 -translate-y-1/2 rounded-full bg-white shadow md:block"
+            >
               ‹
             </button>
             <div ref={dsRef} className="mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2 sm:gap-5">
@@ -143,8 +151,12 @@ function NoiDungChiTiet({ id }: { id?: string }) {
                 </div>
               ))}
             </div>
-            <button type='button' aria-label='Sau' onClick={() => cuonDanhSach(1)}
-              className="absolute top-1/2 -right-7 z-10 hidden h-10 w-10 -translate-y-1/2 rounded-full bg-white shadow md:block">
+            <button
+              type="button"
+              aria-label="Sau"
+              onClick={() => cuonDanhSach(1)}
+              className="absolute top-1/2 -right-7 z-10 hidden h-10 w-10 -translate-y-1/2 rounded-full bg-white shadow md:block"
+            >
               ›
             </button>
           </div>

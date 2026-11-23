@@ -7,22 +7,22 @@ import { ngayVN, tienVND } from '../../lib/dinhDang'
 import api from '../../lib/api'
 import { layThongBaoLoi } from '../../lib/thongBaoLoi'
 import { useTaiDuLieu } from '../../hooks/useTaiDuLieu'
+import { useGuiForm } from '../../hooks/useGuiForm'
 import { useThongBao } from '../../store/thongBao'
 
 export default function QuanLyMaGiamGia() {
   const { duLieu: dsMa = [], dangTai, loi: loiTai, taiLai } = useTaiDuLieu<MaGiamGia[]>('/ma-giam-gia')
   const [dangSua, setDangSua] = useState<MaGiamGia | 'moi' | null>(null)
-  const [loiForm, setLoiForm] = useState<string | null>(null)
-  const [dangLuu, setDangLuu] = useState(false)
+  const { dangGui, loi: loiForm, xoaLoi, gui } = useGuiForm()
   const hienThongBao = useThongBao((s) => s.hien)
   const maDangSua = dangSua && dangSua !== 'moi' ? dangSua : undefined
 
   const moForm = (ma: MaGiamGia | 'moi') => {
-    setLoiForm(null)
+    xoaLoi()
     setDangSua(ma)
   }
 
-  async function luu(e: React.SubmitEvent<HTMLFormElement>) {
+  function luu(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = new FormData(e.currentTarget)
     const duLieu = {
@@ -33,18 +33,13 @@ export default function QuanLyMaGiamGia() {
       ngayHetHan: String(form.get('ngayHetHan')),
     }
 
-    setDangLuu(true)
-    setLoiForm(null)
-    try {
-      if (maDangSua) await api.patch(`/ma-giam-gia/${maDangSua.id}`, duLieu)
-      else await api.post('/ma-giam-gia', duLieu)
-      setDangSua(null)
-      taiLai()
-    } catch (err) {
-      setLoiForm(layThongBaoLoi(err))
-    } finally {
-      setDangLuu(false)
-    }
+    gui(
+      () => (maDangSua ? api.patch(`/ma-giam-gia/${maDangSua.id}`, duLieu) : api.post('/ma-giam-gia', duLieu)),
+      () => {
+        setDangSua(null)
+        taiLai()
+      },
+    )
   }
 
   async function doiHoatDong(ma: MaGiamGia) {
@@ -68,7 +63,7 @@ export default function QuanLyMaGiamGia() {
 
   return (
     <>
-      <TieuDeTrang title="Mã giảm giá" desc="Tạo mã, đặt điều kiện áp dụng và bật hoặc tắt khi cần." action={<Nut onClick={() => setDangSua('moi')}>Tạo mã mới</Nut>} />
+      <TieuDeTrang title="Mã giảm giá" desc="Tạo mã, đặt điều kiện áp dụng và bật hoặc tắt khi cần." action={<Nut onClick={() => moForm('moi')}>Tạo mã mới</Nut>} />
       {dangTai ? (
         <TrangTrong>Đang tải...</TrangTrong>
       ) : loiTai ? (
@@ -141,7 +136,7 @@ export default function QuanLyMaGiamGia() {
               <Nut type="button" variant="soft" onClick={() => setDangSua(null)}>
                 Hủy
               </Nut>
-              <Nut disabled={dangLuu}>{dangLuu ? 'Đang lưu...' : 'Lưu'}</Nut>
+              <Nut disabled={dangGui}>{dangGui ? 'Đang lưu...' : 'Lưu'}</Nut>
             </div>
           </form>
         </HopThoai>

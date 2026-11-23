@@ -58,9 +58,14 @@ export default function MenuNguoiDung() {
           </div>
           <div className="py-1.5" onClick={() => setDangMo(false)}>
             {user.vaiTro === 'khach_hang' && (
-              <Link to="/don-hang" role="menuitem" className={mucMenu}>
-                Đơn hàng của tôi
-              </Link>
+              <>
+                <Link to="/tai-khoan" role="menuitem" className={mucMenu}>
+                  Tài khoản của tôi
+                </Link>
+                <Link to="/don-hang" role="menuitem" className={mucMenu}>
+                  Đơn hàng của tôi
+                </Link>
+              </>
             )}
             {user.vaiTro === 'nhan_vien' && (
               <Link to="/nhan-vien" role="menuitem" className={mucMenu}>

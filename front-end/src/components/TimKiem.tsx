@@ -57,7 +57,7 @@ export default function TimKiem() {
 
   function resetTimKiem() {
     setDangMo(false)
-    setTuKhoa("")
+    setTuKhoa('')
   }
 
   return (
@@ -88,7 +88,7 @@ export default function TimKiem() {
       {hienKhung && (
         <ul role="listbox" className="absolute top-full left-0 z-40 mt-2 w-full max-w-xl overflow-hidden rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-black/10">
           {dangTai ? (
-            <li className='px-3 py-3 text-sm text-muted'>Đang tìm kiếm...</li>
+            <li className="px-3 py-3 text-sm text-muted">Đang tìm kiếm...</li>
           ) : (
             <>
               {dsGoiY.map((sp, i) => (

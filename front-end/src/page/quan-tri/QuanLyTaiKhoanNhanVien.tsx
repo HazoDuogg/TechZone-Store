@@ -5,6 +5,7 @@ import { cx, tableWrap, td, th } from '../../lib/lopCss'
 import api from '../../lib/api'
 import { layThongBaoLoi } from '../../lib/thongBaoLoi'
 import { useTaiDuLieu } from '../../hooks/useTaiDuLieu'
+import { useGuiForm } from '../../hooks/useGuiForm'
 import { useThongBao } from '../../store/thongBao'
 import { CAC_CHUC_NANG, CAC_VI_TRI, NHAN_VI_TRI, QUYEN_MAC_DINH } from '../../constants'
 import type { NhanVien } from '../../types'
@@ -15,33 +16,18 @@ function TabNhanVien() {
   const { duLieu: dsNhanVien = [], dangTai, loi: loiTai, taiLai } = useTaiDuLieu<NhanVien[]>('/nhan-vien')
   const [dangSua, setDangSua] = useState<NhanVien | 'moi' | null>(null)
   const [dangDatLai, setDangDatLai] = useState<NhanVien | null>(null)
-  const [loiForm, setLoiForm] = useState<string | null>(null)
-  const [dangLuu, setDangLuu] = useState(false)
+  const { dangGui, loi: loiForm, xoaLoi, gui } = useGuiForm()
   const hienThongBao = useThongBao((s) => s.hien)
   const nhanVienDangSua = dangSua && dangSua !== 'moi' ? dangSua : undefined
 
   const moSua = (nhanVien: NhanVien | 'moi') => {
-    setLoiForm(null)
+    xoaLoi()
     setDangSua(nhanVien)
   }
 
   const moDatLai = (nhanVien: NhanVien) => {
-    setLoiForm(null)
+    xoaLoi()
     setDangDatLai(nhanVien)
-  }
-
-  async function guiForm(yeuCau: () => Promise<unknown>, khiXong: () => void) {
-    setDangLuu(true)
-    setLoiForm(null)
-    try {
-      await yeuCau()
-      khiXong()
-      taiLai()
-    } catch (err) {
-      setLoiForm(layThongBaoLoi(err))
-    } finally {
-      setDangLuu(false)
-    }
   }
 
   function luu(e: React.SubmitEvent<HTMLFormElement>) {
@@ -53,16 +39,19 @@ function TabNhanVien() {
       soDienThoai: String(form.get('soDienThoai')),
       viTri: String(form.get('viTri')),
     }
-    guiForm(
+    gui(
       () => (nhanVienDangSua ? api.patch(`/nhan-vien/${nhanVienDangSua.id}`, thongTin) : api.post('/nhan-vien', { ...thongTin, password: String(form.get('password')) })),
-      () => setDangSua(null),
+      () => {
+        setDangSua(null)
+        taiLai()
+      },
     )
   }
 
   function datLaiMatKhau(e: React.SubmitEvent<HTMLFormElement>, nhanVien: NhanVien) {
     e.preventDefault()
     const password = String(new FormData(e.currentTarget).get('password'))
-    guiForm(
+    gui(
       () => api.post(`/nhan-vien/${nhanVien.id}/dat-lai-mat-khau`, { password }),
       () => {
         setDangDatLai(null)
@@ -154,7 +143,7 @@ function TabNhanVien() {
               <Nut type="button" variant="soft" onClick={() => setDangSua(null)}>
                 Hủy
               </Nut>
-              <Nut disabled={dangLuu}>{dangLuu ? 'Đang lưu...' : 'Lưu'}</Nut>
+              <Nut disabled={dangGui}>{dangGui ? 'Đang lưu...' : 'Lưu'}</Nut>
             </div>
           </form>
         </HopThoai>
@@ -164,12 +153,20 @@ function TabNhanVien() {
         <HopThoai title={`Đặt lại mật khẩu cho ${dangDatLai.hoTen}`} onClose={() => setDangDatLai(null)}>
           <form onSubmit={(e) => datLaiMatKhau(e, dangDatLai)} className="space-y-4">
             {loiForm && <p className="text-sm font-semibold text-danger">{loiForm}</p>}
-            <TruongNhap name="password" type="password" label="Mật khẩu mới" required minLength={6} autoComplete="new-password" hint="Tối thiểu 6 ký tự. Hãy báo mật khẩu này cho nhân viên." />
+            <TruongNhap
+              name="password"
+              type="password"
+              label="Mật khẩu mới"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              hint="Tối thiểu 6 ký tự. Hãy báo mật khẩu này cho nhân viên."
+            />
             <div className="flex justify-end gap-2 pt-2">
               <Nut type="button" variant="soft" onClick={() => setDangDatLai(null)}>
                 Hủy
               </Nut>
-              <Nut disabled={dangLuu}>{dangLuu ? 'Đang lưu...' : 'Cập nhật mật khẩu'}</Nut>
+              <Nut disabled={dangGui}>{dangGui ? 'Đang lưu...' : 'Cập nhật mật khẩu'}</Nut>
             </div>
           </form>
         </HopThoai>
@@ -200,7 +197,14 @@ function TabPhanQuyen() {
                 <td className={cx(td, 'font-medium')}>{chucNang}</td>
                 {CAC_VI_TRI.map((viTri) => (
                   <td key={viTri} className={cx(td, 'text-center')}>
-                    <input type="checkbox" checked={QUYEN_MAC_DINH[viTri].includes(chucNang)} disabled readOnly aria-label={`${NHAN_VI_TRI[viTri]} - ${chucNang}`} className="size-5 accent-brand" />
+                    <input
+                      type="checkbox"
+                      checked={QUYEN_MAC_DINH[viTri].includes(chucNang)}
+                      disabled
+                      readOnly
+                      aria-label={`${NHAN_VI_TRI[viTri]} - ${chucNang}`}
+                      className="size-5 accent-brand"
+                    />
                   </td>
                 ))}
               </tr>

@@ -80,9 +80,7 @@ const statusTone: Record<string, keyof typeof tones> = {
   'Hoàn tất': 'green',
   'Đã hủy': 'red',
   'Tiếp nhận': 'gray',
-  'Đang kiểm tra': 'blue',
-  'Đang sửa': 'blue',
-  'Chờ linh kiện': 'amber',
+  'Đang xử lý': 'blue',
   'Từ chối': 'red',
 }
 

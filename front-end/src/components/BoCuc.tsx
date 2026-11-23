@@ -6,6 +6,8 @@ import NutGioHang from './NutGioHang'
 import MenuNguoiDung from './MenuNguoiDung'
 import TimKiem from './TimKiem'
 import { useAuthStore } from '../auth/auth'
+import { NHAN_VI_TRI } from '../constants'
+import { coQuyen } from '../lib/quyen'
 
 const Logo = ({ light }: { light?: boolean }) => (
   <Link to="/" className={cx('text-2xl font-extrabold tracking-tight', light ? 'text-white' : 'text-ink')}>
@@ -125,7 +127,7 @@ export function BoCucCuaHang() {
   )
 }
 
-export type MucMenu = { to: string; label: string; group?: string }
+export type MucMenu = { to: string; label: string; group?: string; chucNang?: string }
 
 export function BoCucQuanLy({ title, items }: { title: string; items: MucMenu[] }) {
   const chuyenTrang = useNavigate()
@@ -138,11 +140,13 @@ export function BoCucQuanLy({ title, items }: { title: string; items: MucMenu[] 
     chuyenTrang('/dang-nhap')
   }
 
-  const groups = items.reduce<Record<string, MucMenu[]>>((acc, it) => {
-    const g = it.group ?? ''
-      ; (acc[g] ??= []).push(it)
-    return acc
-  }, {})
+  const groups = items
+    .filter((it) => !it.chucNang || coQuyen(user, it.chucNang))
+    .reduce<Record<string, MucMenu[]>>((acc, it) => {
+      const g = it.group ?? ''
+      ;(acc[g] ??= []).push(it)
+      return acc
+    }, {})
 
   const side: ReactNode = (
     <nav className="flex flex-col gap-5" onClick={() => setDangMoMenu(false)}>
@@ -194,7 +198,9 @@ export function BoCucQuanLy({ title, items }: { title: string; items: MucMenu[] 
         {dangMoMenu && <div className="bg-ink px-4 pb-4 lg:hidden">{side}</div>}
         <div className="hidden items-center justify-end gap-3 bg-white px-8 py-3 lg:flex">
           <span className="text-[15px] text-muted">{user?.hoTen ?? user?.email}</span>
-          <span className="rounded bg-brand-soft px-2 py-0.5 text-sm font-semibold text-brand-dark">{title}</span>
+          <span className="rounded bg-brand-soft px-2 py-0.5 text-sm font-semibold text-brand-dark">
+            {user?.vaiTro === 'nhan_vien' && user.viTri ? `${title} · ${NHAN_VI_TRI[user.viTri]}` : title}
+          </span>
         </div>
         <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
           <Outlet />

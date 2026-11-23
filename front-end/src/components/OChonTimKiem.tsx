@@ -14,22 +14,27 @@ type Props = {
   emptyText?: string
   hint?: string
   className?: string
+  onTim?: (tuKhoa: string) => void
 }
 
-export default function OChonTimKiem({ label, options, value, onChange, placeholder = 'Gõ để tìm', emptyText = 'Không có lựa chọn phù hợp', hint, className }: Props) {
+export default function OChonTimKiem({ label, options, value, onChange, placeholder = 'Gõ để tìm', emptyText = 'Không có lựa chọn phù hợp', hint, className, onTim }: Props) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const datTuKhoa = (tuKhoa: string) => {
+    setQuery(tuKhoa)
+    onTim?.(tuKhoa)
+  }
   const [active, setActive] = useState(0)
   const id = useId()
 
   const chon = options.find((o) => o.value === value)
   const q = boDau(query.trim())
-  const ds = q ? options.filter((o) => boDau(`${o.label} ${o.hint ?? ''}`).includes(q)) : options
+  const ds = q && !onTim ? options.filter((o) => boDau(`${o.label} ${o.hint ?? ''}`).includes(q)) : options
 
   const pick = (o: LuaChon) => {
     onChange(o.value)
     setOpen(false)
-    setQuery('')
+    datTuKhoa('')
   }
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -66,19 +71,19 @@ export default function OChonTimKiem({ label, options, value, onChange, placehol
           value={open ? query : (chon?.label ?? '')}
           onFocus={() => {
             setOpen(true)
-            setQuery('')
+            datTuKhoa('')
             setActive(0)
           }}
           onClick={() => {
             if (!open) {
               setOpen(true)
-              setQuery('')
+              datTuKhoa('')
               setActive(0)
             }
           }}
           onBlur={() => setOpen(false)}
           onChange={(e) => {
-            setQuery(e.target.value)
+            datTuKhoa(e.target.value)
             setOpen(true)
             setActive(0)
           }}

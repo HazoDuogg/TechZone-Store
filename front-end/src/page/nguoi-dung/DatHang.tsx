@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Nut, TruongNhap, NutLienKet } from '../../components/GiaoDienCoBan'
+import { Nut, OChon, TruongNhap, NutLienKet } from '../../components/GiaoDienCoBan'
 import TomTatDonHang from '../../components/TomTatDonHang'
 import api from '../../lib/api'
 import { tienVND } from '../../lib/dinhDang'
 import { layThongBaoLoi } from '../../lib/thongBaoLoi'
 import { useAuthStore } from '../../auth/auth'
+import { useDongBoGioHang } from '../../hooks/useDongBoGioHang'
 import { useGioHang } from '../../store/gioHang'
+import { useTaiDuLieu } from '../../hooks/useTaiDuLieu'
+import type { DiaChiGiaoHang } from '../../types'
 
 type KetQuaDatHang = {
   ma: string
@@ -23,6 +26,12 @@ export default function DatHang() {
   const [ketQua, setKetQua] = useState<KetQuaDatHang | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [dangGui, setDangGui] = useState(false)
+  const [maGiamGia, setMaGiamGia] = useState('')
+  useDongBoGioHang()
+  const [idDiaChiChon, setIdDiaChiChon] = useState<number | null>()
+  const { duLieu: cacDiaChi = [] } = useTaiDuLieu<DiaChiGiaoHang[]>(user?.vaiTro === 'khach_hang' ? '/khach-hang/toi/dia-chi' : null)
+  const diaChiChon = idDiaChiChon === undefined ? cacDiaChi.find((dc) => dc.macDinh) : cacDiaChi.find((dc) => dc.id === idDiaChiChon)
+  const khoaThongTin = diaChiChon?.id ?? 'moi'
 
   async function datHang(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -36,7 +45,7 @@ export default function DatHang() {
         soDienThoai: String(form.get('soDienThoai')),
         email: String(form.get('email')) || undefined,
         diaChi: String(form.get('diaChi')),
-        maGiamGia: String(form.get('maGiamGia')),
+        maGiamGia: maGiamGia.trim() || undefined,
         cacDong: cacMuc.map((muc) => ({ idSanPham: muc.sanPham.id, soLuong: muc.soLuong })),
       })
       setKetQua(res.data)
@@ -91,6 +100,7 @@ export default function DatHang() {
     )
 
   if (cacMuc.length === 0) return <Navigate to="/gio-hang" replace />
+  const coHetHang = cacMuc.some((muc) => muc.sanPham.tonKho === 0)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -104,18 +114,59 @@ export default function DatHang() {
             </h2>
             {loi && <p className="mb-4 font-semibold text-danger">{loi}</p>}
             <div className="grid gap-4 sm:grid-cols-2">
-              <TruongNhap name="tenNguoiNhan" label="Họ và tên" required autoComplete="name" defaultValue={user?.hoTen ?? ''} />
-              <TruongNhap name="soDienThoai" label="Số điện thoại" required inputMode="tel" autoComplete="tel" defaultValue={user?.soDienThoai ?? ''} />
+              {cacDiaChi.length > 0 && (
+                <OChon
+                  label="Địa chỉ đã lưu"
+                  value={diaChiChon?.id ?? ''}
+                  onChange={(e) => setIdDiaChiChon(e.currentTarget.value === '' ? null : Number(e.currentTarget.value))}
+                  className="sm:col-span-2"
+                >
+                  {cacDiaChi.map((dc) => (
+                    <option key={dc.id} value={dc.id}>
+                      {dc.tenNguoiNhan} · {dc.diaChi}
+                      {dc.macDinh ? ' (mặc định)' : ''}
+                    </option>
+                  ))}
+                  <option value="">Nhập địa chỉ khác</option>
+                </OChon>
+              )}
+              <TruongNhap
+                key={'ten' + khoaThongTin}
+                name="tenNguoiNhan"
+                label="Họ và tên"
+                required
+                autoComplete="name"
+                defaultValue={diaChiChon?.tenNguoiNhan ?? user?.hoTen ?? ''}
+              />
+              <TruongNhap
+                key={'sdt' + khoaThongTin}
+                name="soDienThoai"
+                label="Số điện thoại"
+                required
+                inputMode="tel"
+                autoComplete="tel"
+                defaultValue={diaChiChon?.soDienThoai ?? user?.soDienThoai ?? ''}
+              />
               <TruongNhap name="email" label="Email (không bắt buộc)" type="email" autoComplete="email" className="sm:col-span-2" defaultValue={user?.email ?? ''} />
               <TruongNhap
+                key={'dc' + khoaThongTin}
                 name="diaChi"
                 label="Địa chỉ nhận hàng"
                 required
                 placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
                 autoComplete="street-address"
                 className="sm:col-span-2"
+                defaultValue={diaChiChon?.diaChi ?? ''}
               />
-              <TruongNhap name="maGiamGia" label="Mã giảm giá (không bắt buộc)" placeholder="Ví dụ: TECH10" className="sm:col-span-2 [&_input]:uppercase" />
+              <TruongNhap
+                name="maGiamGia"
+                label="Mã giảm giá (không bắt buộc)"
+                placeholder="Ví dụ: TECH10"
+                maxLength={30}
+                value={maGiamGia}
+                onChange={(e) => setMaGiamGia(e.currentTarget.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                className="sm:col-span-2"
+              />
             </div>
           </section>
 
@@ -130,9 +181,10 @@ export default function DatHang() {
           </section>
         </div>
         <TomTatDonHang
+          maGiamGia={maGiamGia}
           cta={
-            <Nut size="lg" className="w-full" disabled={dangGui}>
-              {dangGui ? 'Đang đặt hàng...' : 'Xác nhận đặt hàng'}
+            <Nut size="lg" className="w-full" disabled={dangGui || coHetHang}>
+              {dangGui ? 'Đang đặt hàng...' : coHetHang ? 'Có sản phẩm hết hàng' : 'Xác nhận đặt hàng'}
             </Nut>
           }
         />

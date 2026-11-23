@@ -48,7 +48,7 @@ export class AuthService {
         const hoSo = await hoSoTaiKhoan?.findOne({ where: { taiKhoan: { id: taiKhoan.id } } })
         return {
             accessToken,
-            taiKhoan: { id: taiKhoan.id, email: taiKhoan.email, vaiTro: taiKhoan.vaiTro, hoTen: hoSo?.hoTen, soDienThoai: hoSo?.soDienThoai }
+            taiKhoan: { id: taiKhoan.id, email: taiKhoan.email, vaiTro: taiKhoan.vaiTro, hoTen: hoSo?.hoTen, soDienThoai: hoSo?.soDienThoai, viTri: hoSo && 'viTri' in hoSo ? hoSo.viTri : undefined }
         }
     }
 

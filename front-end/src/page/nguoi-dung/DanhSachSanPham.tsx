@@ -4,15 +4,14 @@ import { cx } from '../../lib/lopCss'
 import { TheSanPham } from '../../components/SanPham'
 import { useTaiDuLieu } from '../../hooks/useTaiDuLieu'
 import { useSearchParams } from 'react-router-dom'
-import type { DanhMuc, KetQuaDanhSachSanPham } from '../../types'
-
+import type { DanhMuc, KetQuaPhanTrang, SanPham } from '../../types'
 
 const KHOANG_GIA = [
   { nhan: 'Tất cả mức giá' },
   { nhan: 'Dưới 2 triệu', giaDen: 1999999 },
   { nhan: '2 - 5 triệu', giaTu: 2000000, giaDen: 4999999 },
   { nhan: '5 - 10 triệu', giaTu: 5000000, giaDen: 9999999 },
-  { nhan: 'Trên 10 triệu', giaTu: 10000000 }
+  { nhan: 'Trên 10 triệu', giaTu: 10000000 },
 ]
 
 export default function DanhSachSanPham() {
@@ -20,13 +19,13 @@ export default function DanhSachSanPham() {
   const tuKhoa = thamSo.get('query') ?? ''
   const [khoangGia, setKhoangGia] = useState(0)
   const [thuongHieu, setThuongHieu] = useState('')
-  const [danhMucDangChon, setDanhMucDangChon] = useState<number | null>(null)
+  const danhMucDangChon = Number(thamSo.get('danhMuc')) || null
   const chip = (active: boolean) => cx('rounded-md px-3 py-2 text-left text-[15px] font-medium transition-colors', active ? 'bg-brand text-white' : 'bg-surface hover:bg-surface-2')
 
   const khoang = KHOANG_GIA[khoangGia]
   const { duLieu: dsDanhMuc = [] } = useTaiDuLieu<DanhMuc[]>('/danh-muc')
   const { duLieu: dsThuongHieu = [] } = useTaiDuLieu<string[]>('/san-pham/thuong-hieu', { danhMuc: danhMucDangChon ?? undefined })
-  const { duLieu: ketQua, loi } = useTaiDuLieu<KetQuaDanhSachSanPham>('/san-pham', {
+  const { duLieu: ketQua, loi } = useTaiDuLieu<KetQuaPhanTrang<SanPham>>('/san-pham', {
     soLuong: 50,
     danhMuc: danhMucDangChon ?? undefined,
     thuongHieu: thuongHieu || undefined,
@@ -60,11 +59,25 @@ export default function DanhSachSanPham() {
           <div>
             <h2 className="mb-2 font-bold">Danh mục</h2>
             <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-              <button className={chip(danhMucDangChon === null)} onClick={() => { setDanhMucDangChon(null); setThuongHieu(''); setKhoangGia(0); setThamSo({}) }}>
+              <button
+                className={chip(danhMucDangChon === null)}
+                onClick={() => {
+                  setThuongHieu('')
+                  setKhoangGia(0)
+                  setThamSo({})
+                }}
+              >
                 Tất cả
               </button>
               {dsDanhMuc.map((c) => (
-                <button key={c.id} className={chip(danhMucDangChon === c.id)} onClick={() => { setDanhMucDangChon(c.id); setThuongHieu(''); setThamSo({}) }}>
+                <button
+                  key={c.id}
+                  className={chip(danhMucDangChon === c.id)}
+                  onClick={() => {
+                    setThuongHieu('')
+                    setThamSo({ danhMuc: String(c.id) })
+                  }}
+                >
                   {c.ten}
                 </button>
               ))}

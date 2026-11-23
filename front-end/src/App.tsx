@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { BoCucQuanLy, BoCucCuaHang, type MucMenu } from './components/BoCuc'
+import { useAuthStore, type NguoiDung } from './auth/auth'
+import { coQuyen } from './lib/quyen'
 import ThongBao from './components/ThongBao'
 import TrangChu from './page/nguoi-dung/TrangChu'
 import DanhSachSanPham from './page/nguoi-dung/DanhSachSanPham'
@@ -8,6 +10,7 @@ import ChiTietSanPham from './page/nguoi-dung/ChiTietSanPham'
 import GioHang from './page/nguoi-dung/GioHang'
 import DatHang from './page/nguoi-dung/DatHang'
 import DonHang from './page/nguoi-dung/DonHang'
+import TaiKhoanCuaToi from './page/nguoi-dung/TaiKhoanCuaToi'
 import ChiTietDonHang from './page/nguoi-dung/ChiTietDonHang'
 import BuildPC from './page/nguoi-dung/BuildPC'
 import { QuenMatKhau, DangNhap, DangKy, DatLaiMatKhau } from './page/nguoi-dung/TaiKhoan'
@@ -24,11 +27,11 @@ import QuanLyTaiKhoanNhanVien from './page/quan-tri/QuanLyTaiKhoanNhanVien'
 import XetVaiTro from './components/XetVaiTro'
 
 const staffNav: MucMenu[] = [
-  { to: '/nhan-vien/don-hang', label: 'Đơn hàng', group: 'Bán hàng' },
-  { to: '/nhan-vien/ton-kho', label: 'Sản phẩm và tồn kho', group: 'Bán hàng' },
-  { to: '/nhan-vien/khach-hang', label: 'Khách hàng', group: 'Bán hàng' },
-  { to: '/nhan-vien/bao-hanh', label: 'Bảo hành', group: 'Kỹ thuật' },
-  { to: '/nhan-vien/kho', label: 'Nhập, xuất, kiểm kê', group: 'Kho' },
+  { to: '/nhan-vien/don-hang', label: 'Đơn hàng', group: 'Bán hàng', chucNang: 'Đơn hàng' },
+  { to: '/nhan-vien/ton-kho', label: 'Sản phẩm và tồn kho', group: 'Bán hàng', chucNang: 'Tồn kho' },
+  { to: '/nhan-vien/khach-hang', label: 'Khách hàng', group: 'Bán hàng', chucNang: 'Khách hàng' },
+  { to: '/nhan-vien/bao-hanh', label: 'Bảo hành', group: 'Kỹ thuật', chucNang: 'Bảo hành' },
+  { to: '/nhan-vien/kho', label: 'Nhập, xuất, kiểm kê', group: 'Kho', chucNang: 'Nhập xuất kho' },
 ]
 
 const adminNav: MucMenu[] = [
@@ -39,6 +42,14 @@ const adminNav: MucMenu[] = [
   { to: '/quan-tri/don-hang', label: 'Đơn hàng', group: 'Vận hành' },
   { to: '/quan-tri/kho', label: 'Kho', group: 'Vận hành' },
 ]
+
+const NHAN_VIEN_VA_ADMIN: NguoiDung['vaiTro'][] = ['nhan_vien', 'admin']
+
+function TrangDauNhanVien() {
+  const user = useAuthStore((s) => s.user)
+  const trang = staffNav.find((muc) => !muc.chucNang || coQuyen(user, muc.chucNang))
+  return <Navigate to={trang?.to ?? '/'} replace />
+}
 
 function CuonLenDau() {
   const { pathname } = useLocation()
@@ -67,17 +78,30 @@ export default function App() {
           <Route path="dang-ky" element={<DangKy />} />
           <Route path="quen-mat-khau" element={<QuenMatKhau />} />
           <Route path="dat-lai-mat-khau" element={<DatLaiMatKhau />} />
+          <Route element={<XetVaiTro vaiTroDuocPhep={['khach_hang']} />}>
+            <Route path="tai-khoan" element={<TaiKhoanCuaToi />} />
+          </Route>
         </Route>
 
-        <Route element={<XetVaiTro vaiTroDuocPhep={['nhan_vien', 'admin']} />}>
+        <Route element={<XetVaiTro vaiTroDuocPhep={NHAN_VIEN_VA_ADMIN} />}>
           <Route path="nhan-vien" element={<BoCucQuanLy title="Nhân viên" items={staffNav} />}>
-            <Route index element={<Navigate to="don-hang" replace />} />
-            <Route path="don-hang" element={<DonHangCanXuLy />} />
-            <Route path="don-hang/:code" element={<ChiTietDonHangNhanVien />} />
-            <Route path="ton-kho" element={<SanPhamVaTonKho />} />
-            <Route path="khach-hang" element={<KhachHang />} />
-            <Route path="bao-hanh" element={<BaoHanh />} />
-            <Route path="kho" element={<QuanLyKho />} />
+            <Route index element={<TrangDauNhanVien />} />
+            <Route element={<XetVaiTro vaiTroDuocPhep={NHAN_VIEN_VA_ADMIN} chucNang="Đơn hàng" />}>
+              <Route path="don-hang" element={<DonHangCanXuLy />} />
+              <Route path="don-hang/:code" element={<ChiTietDonHangNhanVien />} />
+            </Route>
+            <Route element={<XetVaiTro vaiTroDuocPhep={NHAN_VIEN_VA_ADMIN} chucNang="Tồn kho" />}>
+              <Route path="ton-kho" element={<SanPhamVaTonKho />} />
+            </Route>
+            <Route element={<XetVaiTro vaiTroDuocPhep={NHAN_VIEN_VA_ADMIN} chucNang="Khách hàng" />}>
+              <Route path="khach-hang" element={<KhachHang />} />
+            </Route>
+            <Route element={<XetVaiTro vaiTroDuocPhep={NHAN_VIEN_VA_ADMIN} chucNang="Bảo hành" />}>
+              <Route path="bao-hanh" element={<BaoHanh />} />
+            </Route>
+            <Route element={<XetVaiTro vaiTroDuocPhep={NHAN_VIEN_VA_ADMIN} chucNang="Nhập xuất kho" />}>
+              <Route path="kho" element={<QuanLyKho />} />
+            </Route>
           </Route>
         </Route>
 

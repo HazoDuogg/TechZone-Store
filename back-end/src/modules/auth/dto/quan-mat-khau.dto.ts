@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length, Matches } from "class-validator";
+import { IsEmail } from "class-validator";
 
 export class QuenMatKhauDTO {
     @IsEmail()

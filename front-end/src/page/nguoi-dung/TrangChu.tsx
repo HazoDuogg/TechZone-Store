@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 import { NutLienKet } from '../../components/GiaoDienCoBan'
 import { TheSanPham } from '../../components/SanPham'
-import { dsDanhMuc, dsSanPham } from '../../data/duLieuMau'
-import { ANH_BANNER, duongDanAnhDanhMuc } from '../../lib/duongDanAnh'
+import { ANH_BANNER, anhTheoDuongDan } from '../../lib/duongDanAnh'
+import { useTaiDuLieu } from '../../hooks/useTaiDuLieu'
+import type { DanhMucDayDu, KetQuaPhanTrang, SanPham } from '../../types'
 import { useTroLy } from '../../store/troLy'
 
 const policies = [
@@ -14,8 +15,11 @@ const policies = [
 
 export default function TrangChu() {
   const show = useTroLy((s) => s.show)
+  const { duLieu: cacDanhMuc = [] } = useTaiDuLieu<DanhMucDayDu[]>('/danh-muc')
+  const { duLieu: ketQuaSanPham } = useTaiDuLieu<KetQuaPhanTrang<SanPham>>('/san-pham', { soLuong: 50 })
+  const dsSanPham = ketQuaSanPham?.duLieu ?? []
   const sale = dsSanPham.filter((p) => p.giaNiemYet).slice(0, 4)
-  const fresh = dsSanPham.filter((p) => [3, 17, 25, 32].includes(p.id))
+  const fresh = dsSanPham.slice(0, 4)
 
   return (
     <>
@@ -44,44 +48,39 @@ export default function TrangChu() {
           Danh mục
         </h2>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {dsDanhMuc.map((c) => (
-            <Link key={c} to="/san-pham" className="group flex items-center justify-between gap-4 rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white">
+          {cacDanhMuc.map((danhMuc) => (
+            <Link
+              key={danhMuc.id}
+              to={`/san-pham?danhMuc=${danhMuc.id}`}
+              className="group flex items-center justify-between gap-4 rounded-lg bg-surface p-4 transition-colors hover:bg-brand hover:text-white"
+            >
               <span className="flex flex-col">
-                <span className="text-xl font-bold">{c}</span>
-                <span className="text-sm text-muted group-hover:text-white/80">{dsSanPham.filter((p) => p.danhMuc.ten === c).length} sản phẩm</span>
+                <span className="text-xl font-bold">{danhMuc.ten}</span>
+                <span className="text-sm text-muted group-hover:text-white/80">{danhMuc.soSanPham} sản phẩm</span>
               </span>
-              <img
-                src={duongDanAnhDanhMuc(c)}
-                onError={(e) => {
-                  const img = e.currentTarget
-                  if (img.src.endsWith('webp')) {
-                    img.src = duongDanAnhDanhMuc(c, 'png')
-                  }
-                }}
-                alt=""
-                loading="lazy"
-                className="size-20 shrink-0 rounded-md object-cover sm:size-24"
-              />
+              {danhMuc.anhDaiDien && <img src={anhTheoDuongDan(danhMuc.anhDaiDien)} alt="" loading="lazy" className="size-20 shrink-0 rounded-md object-cover sm:size-24" />}
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="sale">
-        <div className="flex items-end justify-between gap-4">
-          <h2 id="sale" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Đang giảm giá
-          </h2>
-          <Link to="/san-pham" className="font-semibold text-brand hover:underline">
-            Xem tất cả
-          </Link>
-        </div>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-          {sale.map((p) => (
-            <TheSanPham key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
+      {sale.length > 0 && (
+        <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="sale">
+          <div className="flex items-end justify-between gap-4">
+            <h2 id="sale" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Đang giảm giá
+            </h2>
+            <Link to="/san-pham" className="font-semibold text-brand hover:underline">
+              Xem tất cả
+            </Link>
+          </div>
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+            {sale.map((p) => (
+              <TheSanPham key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mt-24 bg-brand text-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-20">
@@ -104,16 +103,18 @@ export default function TrangChu() {
         </div>
       </section>
 
-      <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="fresh">
-        <h2 id="fresh" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Được chọn nhiều
-        </h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-          {fresh.map((p) => (
-            <TheSanPham key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
+      {fresh.length > 0 && (
+        <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="fresh">
+          <h2 id="fresh" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Sản phẩm mới
+          </h2>
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+            {fresh.map((p) => (
+              <TheSanPham key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="policy">
         <h2 id="policy" className="text-3xl font-extrabold tracking-tight sm:text-4xl">

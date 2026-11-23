@@ -21,6 +21,7 @@ const anh = import.meta.glob<string>('../assets/images/**/*.{webp,png}', {
 })
 
 const tim = (duong: string, duoi?: 'webp' | 'png') => {
+  if (duong.startsWith('uploads/')) return `${import.meta.env.VITE_API_URL}/${duong}`
   for (const d of duoi ? [duoi] : ['webp', 'png']) {
     const url = anh[`../assets/images/${duong}.${d}`]
     if (url) return url
@@ -31,7 +32,5 @@ const tim = (duong: string, duoi?: 'webp' | 'png') => {
 export const anhTheoDuongDan = (duongDan: string) => tim(duongDan)
 
 export const duongDanAnhSanPham = (p: SanPham, goc: number, duoiFile?: 'webp' | 'png') => tim(p.anh[goc - 1]?.duongDan ?? '', duoiFile)
-
-export const duongDanAnhDanhMuc = (ten: string, duoiFile?: 'webp' | 'png') => tim(`danh-muc/cat-${THU_MUC_ANH[ten]}`, duoiFile)
 
 export const ANH_BANNER = tim('banner/cat-chu')

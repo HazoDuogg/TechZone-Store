@@ -1,11 +1,31 @@
-export type TrangThaiBaoHanh = 'Tiếp nhận' | 'Đang kiểm tra' | 'Đang sửa' | 'Chờ linh kiện' | 'Hoàn tất' | 'Từ chối'
+import type { TrangThaiBaoHanh } from '../constants'
 
 export type PhieuBaoHanh = {
-  id: string
-  serial: string
-  customer: string
-  issue: string
-  status: TrangThaiBaoHanh
-  result: string
-  createdAt: string
+  id: number
+  ma: string
+  soSerial: string
+  tenSanPham: string
+  maDon: string | null
+  tenNguoiNhan: string | null
+  soDienThoai: string | null
+  moTaLoi: string
+  trangThai: TrangThaiBaoHanh
+  ketQua: string | null
+  ngayTiepNhan: string
+  ngayHoanThanh: string | null
+  nhanVien: string | null
 }
+
+export type SerialBaoHanh = {
+  soSerial: string
+  tenSanPham: string
+  maDon: string | null
+  tenNguoiNhan: string | null
+  soDienThoai: string | null
+  ngayMua: string | null
+  hanBaoHanh: string | null
+  duDieuKien: boolean
+  lyDo: string | null
+}
+
+export type KetQuaTraCuuBaoHanh = { cacSerial: SerialBaoHanh[] }

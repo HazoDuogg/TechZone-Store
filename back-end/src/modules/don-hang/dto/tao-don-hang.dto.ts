@@ -12,7 +12,21 @@ export class DonDatHangDTO {
     soLuong: number
 }
 
-export class DatHangDTO {
+export class TamTinhDTO {
+    @IsOptional()
+    @Transform(({ value }) => (typeof value === 'string' ? value.trim().toUpperCase() || undefined : value))
+    @Matches(/^[A-Z0-9]{3,30}$/, { message: 'Mã giảm giá chỉ gồm chữ và số, từ 3 đến 30 ký tự' })
+    maGiamGia?: string
+
+    @IsArray()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(50)
+    @ValidateNested({ each: true })
+    @Type(() => DonDatHangDTO)
+    cacDong: DonDatHangDTO[]
+}
+
+export class DatHangDTO extends TamTinhDTO {
     @IsString()
     @IsNotEmpty()
     @MaxLength(100)
@@ -29,16 +43,4 @@ export class DatHangDTO {
     @IsNotEmpty()
     @MaxLength(255)
     diaChi: string
-
-    @IsOptional()
-    @IsString()
-    @Transform(({ value }) => (typeof value === 'string' && value.trim() === '' ? undefined : value))
-    maGiamGia?: string
-
-    @IsArray()
-    @ArrayMinSize(1)
-    @ArrayMaxSize(50)
-    @ValidateNested({ each: true })
-    @Type(() => DonDatHangDTO)
-    cacDong: DonDatHangDTO[]
 }

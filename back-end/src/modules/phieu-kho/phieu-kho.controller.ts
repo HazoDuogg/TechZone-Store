@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { PhieuKhoService } from './phieu-kho.service';
-import { CreatePhieuKhoDto } from './dto/create-phieu-kho.dto';
-import { UpdatePhieuKhoDto } from './dto/update-phieu-kho.dto';
+import { NhapKhoDTO } from './dto/nhap-kho.dto';
+import { LocPhieuKhoDTO } from './dto/loc-phieu-kho.dto';
+import { XuatKhoDTO } from './dto/xuat-kho.dto';
+import { ChiNhanVien } from '../../common/decorators/nhan-vien-decorator';
+import { ViTri } from '../../common/enums/vi-tri.enum';
+import type { YeuCauDaXacThuc } from '../../common/guards/jwt-auth.guard';
 
 @Controller('phieu-kho')
+@ChiNhanVien(ViTri.KHO)
 export class PhieuKhoController {
-  constructor(private readonly phieuKhoService: PhieuKhoService) {}
-
-  @Post()
-  create(@Body() createPhieuKhoDto: CreatePhieuKhoDto) {
-    return this.phieuKhoService.create(createPhieuKhoDto);
-  }
+  constructor(private readonly phieuKhoService: PhieuKhoService) { }
 
   @Get()
-  findAll() {
-    return this.phieuKhoService.findAll();
+  timTatCa(@Query() loc: LocPhieuKhoDTO) {
+    return this.phieuKhoService.timTatCa(loc)
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.phieuKhoService.findOne(+id);
+  @Get('san-pham')
+  timSanPham(@Query('query') query?: string) {
+    return this.phieuKhoService.timSanPham(query?.trim() || undefined)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePhieuKhoDto: UpdatePhieuKhoDto) {
-    return this.phieuKhoService.update(+id, updatePhieuKhoDto);
+  @Post('nhap')
+  nhapKho(@Body() dto: NhapKhoDTO, @Req() yeuCau: YeuCauDaXacThuc) {
+    return this.phieuKhoService.nhapKho(dto, yeuCau.user!.sub)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.phieuKhoService.remove(+id);
+  @Post('xuat')
+  xuatKho(@Body() dto: XuatKhoDTO, @Req() yeuCau: YeuCauDaXacThuc) {
+    return this.phieuKhoService.xuatKho(dto, yeuCau.user!.sub)
   }
 }

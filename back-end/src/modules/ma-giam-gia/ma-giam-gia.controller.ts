@@ -1,15 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { MaGiamGiaService } from './ma-giam-gia.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { VaiTroGuard } from '../../common/guards/vai-tro.guard';
-import { CanVaiTro } from '../../common/decorators/vai-tro.decorator';
-import { VaiTro } from '../../common/enums/vai-tro.enum';
 import { TaoMaGiamGiaDTO } from './dto/tao-ma-giam-gia.dto';
 import { CapNhatMaGiamGiaDTO } from './dto/cap-nhat-ma-giam-gia.dto';
+import { ChiAdmin } from '../../common/decorators/admin-decorator';
 
 @Controller('ma-giam-gia')
-@UseGuards(JwtAuthGuard, VaiTroGuard)
-@CanVaiTro([VaiTro.ADMIN])
+@ChiAdmin()
 export class MaGiamGiaController {
   constructor(private readonly maGiamGiaService: MaGiamGiaService) { }
 

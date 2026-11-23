@@ -199,3 +199,24 @@ CREATE TABLE ma_dat_lai_mat_khau (
   UNIQUE KEY uq_ma_dat_lai_tai_khoan (id_tai_khoan),
   FOREIGN KEY (id_tai_khoan) REFERENCES tai_khoan(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE phieu_kiem_ke (
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  id_nhan_vien  INT UNSIGNED NOT NULL,
+  ngay_lap      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  ghi_chu       VARCHAR(255) NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id_nhan_vien) REFERENCES nhan_vien(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE chi_tiet_kiem_ke (
+  id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  id_phieu_kiem_ke  INT UNSIGNED NOT NULL,
+  id_san_pham       INT UNSIGNED NOT NULL,
+  ton_he_thong      INT UNSIGNED NOT NULL,
+  ton_thuc_te       INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_ctkk_phieu_sp (id_phieu_kiem_ke, id_san_pham),
+  FOREIGN KEY (id_phieu_kiem_ke) REFERENCES phieu_kiem_ke(id),
+  FOREIGN KEY (id_san_pham) REFERENCES san_pham(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

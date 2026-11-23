@@ -12,6 +12,9 @@ import { NhanVienModule } from './modules/nhan-vien/nhan-vien.module';
 import { PhieuKhoModule } from './modules/phieu-kho/phieu-kho.module';
 import { SanPhamModule } from './modules/san-pham/san-pham.module';
 import { MailModule } from './modules/mail/mail.module';
+import { TaiAnhModule } from './modules/tai-anh/tai-anh.module';
+import { BaoCaoModule } from './modules/bao-cao/bao-cao.module';
+import { BuildPcModule } from './modules/build-pc/build-pc.module';
 
 @Module({
   imports: [
@@ -39,7 +42,10 @@ import { MailModule } from './modules/mail/mail.module';
     NhanVienModule,
     PhieuKhoModule,
     SanPhamModule,
-    MailModule
+    MailModule,
+    TaiAnhModule,
+    BaoCaoModule,
+    BuildPcModule
   ],
 })
 

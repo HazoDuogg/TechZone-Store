@@ -1,6 +1,14 @@
+import type { TrangThaiSanPham } from '../constants'
+
 export type DanhMuc = {
   id: number
   ten: string
+}
+
+export type DanhMucDayDu = DanhMuc & {
+  moTa: string | null
+  anhDaiDien: string | null
+  soSanPham: number
 }
 
 export type SanPham = {
@@ -20,18 +28,10 @@ export type SanPhamChiTiet = SanPham & {
   soThangBaoHanh: number
 }
 
-export type KetQuaDanhSachSanPham = {
-  duLieu: SanPham[]
-  tong: number
-  trang: number
-  soLuong: number
-  tongTrang: number
+export type SanPhamQuanTri = SanPham & {
+  trangThai: TrangThaiSanPham
 }
 
-export type HangChoMoBan = {
-  id: string
-  ten: string
-  thuongHieu: string
-  danhMuc: string
-  soLuongKho: number
+export type SanPhamQuanTriChiTiet = SanPhamChiTiet & {
+  trangThai: TrangThaiSanPham
 }

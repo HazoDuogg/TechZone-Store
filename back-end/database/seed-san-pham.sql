@@ -36,7 +36,6 @@ INSERT INTO san_pham (id_danh_muc, ten, thuong_hieu, gia, gia_niem_yet, thong_so
   ((SELECT id FROM danh_muc WHERE ten = 'Chuột'), 'Logitech G102 Lightsync', 'Logitech', 390000, 450000, '{"Kết nối":"Có dây","DPI":"8000","Số nút":"6"}', 36, 'dang_ban'),
   ((SELECT id FROM danh_muc WHERE ten = 'Chuột'), 'Razer DeathAdder V3', 'Razer', 1790000, NULL, '{"Kết nối":"Có dây","DPI":"30000","Số nút":"6"}', 36, 'dang_ban');
 
--- AMD Ryzen 5 5600
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'AMD Ryzen 5 5600');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-5600-1', 1, 1),
@@ -59,7 +58,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CPU5600-0013', 'trong_kho'),
   (@sp, 'SN-CPU5600-0014', 'trong_kho');
 
--- AMD Ryzen 5 5600G
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'AMD Ryzen 5 5600G');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-5600g-1', 1, 1),
@@ -71,7 +69,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CPU5600G-0002', 'trong_kho'),
   (@sp, 'SN-CPU5600G-0003', 'trong_kho');
 
--- AMD Ryzen 5 7600
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'AMD Ryzen 5 7600');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-7600-1', 1, 1),
@@ -102,7 +99,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CPU7600-0021', 'trong_kho'),
   (@sp, 'SN-CPU7600-0022', 'trong_kho');
 
--- AMD Ryzen 7 7800X3D
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'AMD Ryzen 7 7800X3D');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-7800x3d-1', 1, 1),
@@ -110,7 +106,6 @@ INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-7800x3d-3', 0, 3),
   (@sp, 'san-pham/cpu/cpu-7800x3d-4', 0, 4);
 
--- Intel Core i3-12100
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Intel Core i3-12100');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-12100-1', 1, 1),
@@ -128,7 +123,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CPU12100-0008', 'trong_kho'),
   (@sp, 'SN-CPU12100-0009', 'trong_kho');
 
--- Intel Core i5-13400F
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Intel Core i5-13400F');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-13400f-1', 1, 1),
@@ -168,7 +162,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CPU13400F-0030', 'trong_kho'),
   (@sp, 'SN-CPU13400F-0031', 'trong_kho');
 
--- Intel Core i7-14700K
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Intel Core i7-14700K');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/cpu/cpu-14700k-1', 1, 1),
@@ -181,7 +174,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CPU14700K-0003', 'trong_kho'),
   (@sp, 'SN-CPU14700K-0004', 'trong_kho');
 
--- MSI B550M PRO-VDH WIFI
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'MSI B550M PRO-VDH WIFI');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-b550m-1', 1, 1),
@@ -208,7 +200,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MBB550M-0017', 'trong_kho'),
   (@sp, 'SN-MBB550M-0018', 'trong_kho');
 
--- Gigabyte B650M K
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Gigabyte B650M K');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-b650m-1', 1, 1),
@@ -219,7 +210,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MBB650M-0001', 'trong_kho'),
   (@sp, 'SN-MBB650M-0002', 'trong_kho');
 
--- ASUS ROG STRIX B650-A GAMING WIFI
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'ASUS ROG STRIX B650-A GAMING WIFI');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-b650a-1', 1, 1),
@@ -242,7 +232,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MBB650A-0013', 'trong_kho'),
   (@sp, 'SN-MBB650A-0014', 'trong_kho');
 
--- ASUS PRIME H610M-K D4
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'ASUS PRIME H610M-K D4');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-h610-1', 1, 1),
@@ -254,7 +243,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MBH610-0002', 'trong_kho'),
   (@sp, 'SN-MBH610-0003', 'trong_kho');
 
--- ASUS PRIME B760M-A D4
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'ASUS PRIME B760M-A D4');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-b760m-1', 1, 1),
@@ -285,7 +273,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MBB760M-0021', 'trong_kho'),
   (@sp, 'SN-MBB760M-0022', 'trong_kho');
 
--- MSI MAG Z790 TOMAHAWK WIFI
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'MSI MAG Z790 TOMAHAWK WIFI');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-z790-1', 1, 1),
@@ -293,7 +280,6 @@ INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/mainboard/mb-z790-3', 0, 3),
   (@sp, 'san-pham/mainboard/mb-z790-4', 0, 4);
 
--- Kingston Fury Beast 16GB (2x8GB) DDR4 3200
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Kingston Fury Beast 16GB (2x8GB) DDR4 3200');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ram/ram-d4-16-1', 1, 1),
@@ -311,7 +297,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-RAMD416-0008', 'trong_kho'),
   (@sp, 'SN-RAMD416-0009', 'trong_kho');
 
--- Corsair Vengeance LPX 32GB (2x16GB) DDR4 3200
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Corsair Vengeance LPX 32GB (2x16GB) DDR4 3200');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ram/ram-d4-32-1', 1, 1),
@@ -351,7 +336,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-RAMD432-0030', 'trong_kho'),
   (@sp, 'SN-RAMD432-0031', 'trong_kho');
 
--- Kingston Fury Beast 16GB DDR5 5600
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Kingston Fury Beast 16GB DDR5 5600');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ram/ram-d5-16-1', 1, 1),
@@ -364,7 +348,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-RAMD516-0003', 'trong_kho'),
   (@sp, 'SN-RAMD516-0004', 'trong_kho');
 
--- Corsair Vengeance 32GB (2x16GB) DDR5 5600
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Corsair Vengeance 32GB (2x16GB) DDR5 5600');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ram/ram-d5-32-1', 1, 1),
@@ -391,7 +374,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-RAMD532-0017', 'trong_kho'),
   (@sp, 'SN-RAMD532-0018', 'trong_kho');
 
--- G.Skill Trident Z5 RGB 32GB (2x16GB) DDR5 6000
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'G.Skill Trident Z5 RGB 32GB (2x16GB) DDR5 6000');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ram/ram-d5-32z-1', 1, 1),
@@ -402,7 +384,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-RAMD532Z-0001', 'trong_kho'),
   (@sp, 'SN-RAMD532Z-0002', 'trong_kho');
 
--- ASUS Dual GeForce RTX 3050 6GB
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'ASUS Dual GeForce RTX 3050 6GB');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/vga/vga-3050-1', 1, 1),
@@ -425,7 +406,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-VGA3050-0013', 'trong_kho'),
   (@sp, 'SN-VGA3050-0014', 'trong_kho');
 
--- Sapphire Pulse Radeon RX 7600 8GB
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Sapphire Pulse Radeon RX 7600 8GB');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/vga/vga-7600-1', 1, 1),
@@ -437,7 +417,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-VGA7600-0002', 'trong_kho'),
   (@sp, 'SN-VGA7600-0003', 'trong_kho');
 
--- MSI GeForce RTX 4060 VENTUS 2X 8GB
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'MSI GeForce RTX 4060 VENTUS 2X 8GB');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/vga/vga-4060-1', 1, 1),
@@ -468,7 +447,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-VGA4060-0021', 'trong_kho'),
   (@sp, 'SN-VGA4060-0022', 'trong_kho');
 
--- Gigabyte GeForce RTX 4070 SUPER WINDFORCE 12GB
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Gigabyte GeForce RTX 4070 SUPER WINDFORCE 12GB');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/vga/vga-4070s-1', 1, 1),
@@ -476,7 +454,6 @@ INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/vga/vga-4070s-3', 0, 3),
   (@sp, 'san-pham/vga/vga-4070s-4', 0, 4);
 
--- WD Blue SN580 500GB NVMe
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'WD Blue SN580 500GB NVMe');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ssd/ssd-sn580-1', 1, 1),
@@ -494,7 +471,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-SSDSN580-0008', 'trong_kho'),
   (@sp, 'SN-SSDSN580-0009', 'trong_kho');
 
--- Kingston NV3 1TB NVMe
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Kingston NV3 1TB NVMe');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ssd/ssd-nv3-1', 1, 1),
@@ -534,7 +510,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-SSDNV3-0030', 'trong_kho'),
   (@sp, 'SN-SSDNV3-0031', 'trong_kho');
 
--- Samsung 980 PRO 1TB NVMe
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Samsung 980 PRO 1TB NVMe');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/ssd/ssd-980pro-1', 1, 1),
@@ -547,7 +522,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-SSD980PRO-0003', 'trong_kho'),
   (@sp, 'SN-SSD980PRO-0004', 'trong_kho');
 
--- Cooler Master MWE 550W 80 Plus Bronze
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Cooler Master MWE 550W 80 Plus Bronze');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/nguon/psu-mwe550-1', 1, 1),
@@ -574,7 +548,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-PSUMWE550-0017', 'trong_kho'),
   (@sp, 'SN-PSUMWE550-0018', 'trong_kho');
 
--- Corsair RM750e 750W 80 Plus Gold
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Corsair RM750e 750W 80 Plus Gold');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/nguon/psu-rm750-1', 1, 1),
@@ -585,7 +558,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-PSURM750-0001', 'trong_kho'),
   (@sp, 'SN-PSURM750-0002', 'trong_kho');
 
--- Seasonic Focus GX-850 850W 80 Plus Gold
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Seasonic Focus GX-850 850W 80 Plus Gold');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/nguon/psu-ss850-1', 1, 1),
@@ -608,7 +580,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-PSUSS850-0013', 'trong_kho'),
   (@sp, 'SN-PSUSS850-0014', 'trong_kho');
 
--- Xigmatek Gaming X 3 quạt
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Xigmatek Gaming X 3 quạt');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/case/case-xig-1', 1, 1),
@@ -620,7 +591,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CASEXIG-0002', 'trong_kho'),
   (@sp, 'SN-CASEXIG-0003', 'trong_kho');
 
--- NZXT H5 Flow
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'NZXT H5 Flow');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/case/case-h5-1', 1, 1),
@@ -651,7 +621,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-CASEH5-0021', 'trong_kho'),
   (@sp, 'SN-CASEH5-0022', 'trong_kho');
 
--- LG 24GN600 24" IPS 144Hz
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'LG 24GN600 24" IPS 144Hz');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/man-hinh/mon-lg24-1', 1, 1),
@@ -659,7 +628,6 @@ INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/man-hinh/mon-lg24-3', 0, 3),
   (@sp, 'san-pham/man-hinh/mon-lg24-4', 0, 4);
 
--- Dell S2722DGM 27" VA 165Hz 2K
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Dell S2722DGM 27" VA 165Hz 2K');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/man-hinh/mon-dell27-1', 1, 1),
@@ -677,7 +645,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MONDELL27-0008', 'trong_kho'),
   (@sp, 'SN-MONDELL27-0009', 'trong_kho');
 
--- Logitech G102 Lightsync
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Logitech G102 Lightsync');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/chuot/mouse-g102-1', 1, 1),
@@ -717,7 +684,6 @@ INSERT INTO chi_tiet_san_pham (id_san_pham, so_serial, trang_thai) VALUES
   (@sp, 'SN-MOUSEG102-0030', 'trong_kho'),
   (@sp, 'SN-MOUSEG102-0031', 'trong_kho');
 
--- Razer DeathAdder V3
 SET @sp = (SELECT id FROM san_pham WHERE ten = 'Razer DeathAdder V3');
 INSERT INTO anh_san_pham (id_san_pham, duong_dan, anh_chinh, thu_tu) VALUES
   (@sp, 'san-pham/chuot/mouse-da3-1', 1, 1),

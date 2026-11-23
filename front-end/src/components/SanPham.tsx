@@ -33,8 +33,9 @@ export function AnhSanPham({ product, className }: { product: SanPham; className
         src={duongDanAnhSanPham(product, 1)}
         onError={(e) => {
           const img = e.currentTarget
-          if (img.src.endsWith('.webp')) {
-            img.src = duongDanAnhSanPham(product, 1, 'png')
+          const duongDanPng = duongDanAnhSanPham(product, 1, 'png')
+          if (img.src.endsWith('.webp') && img.src !== duongDanPng) {
+            img.src = duongDanPng
           } else {
             setLoi(true)
           }
@@ -103,6 +104,6 @@ export function TheSanPham({ product }: { product: SanPham }) {
           Thêm vào giỏ
         </button>
       </div>
-    </article >
+    </article>
   )
 }

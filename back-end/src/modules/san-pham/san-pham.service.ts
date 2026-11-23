@@ -1,17 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SanPham } from './entities/san-pham.entities';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { AnhSanPham } from './entities/anh-san-pham.entities';
 import { ChiTietSanPham } from './entities/chi-tiet-san-pham.entities';
 import { LocSanPhamDTO } from './dto/loc-san-pham.dto';
+import { LocSanPhamQuanTriDTO } from './dto/loc-san-pham-quan-tri.dto';
+import { TaoSanPhamDTO } from './dto/tao-san-pham.dto';
+import { boGiaTriUndefined } from '../../common/utils/bo-gia-tri-undefined';
+import { CapNhatSanPhamDTO } from './dto/cap-nhat-san-pham.dto';
 
 @Injectable()
 export class SanPhamService {
   constructor(
     @InjectRepository(SanPham) private readonly sanhPhamRepo: Repository<SanPham>,
     @InjectRepository(AnhSanPham) private readonly anhRepo: Repository<AnhSanPham>,
-    @InjectRepository(ChiTietSanPham) private readonly chiTietSanPhamRepo: Repository<ChiTietSanPham>
+    @InjectRepository(ChiTietSanPham) private readonly chiTietSanPhamRepo: Repository<ChiTietSanPham>,
+    private readonly dataSource: DataSource
+
   ) { }
 
   async timTatCaSanPham(loc: LocSanPhamDTO) {
@@ -37,27 +43,36 @@ export class SanPhamService {
 
     const [dsSanPham, tong] = await query.skip((trang - 1) * soLuong).take(soLuong).getManyAndCount()
 
-    const ids = dsSanPham.map((sp) => sp.id)
-    const anhTheoSp = await this.layAnh(ids)
-    const tonTheoSp = await this.layTonKho(ids)
-
     return {
-      duLieu: dsSanPham.map((sp) => ({
-        id: sp.id,
-        ten: sp.ten,
-        thuongHieu: sp.thuongHieu,
-        gia: sp.gia,
-        giaNiemYet: sp.giaNiemYet,
-        thongSo: sp.thongSo,
-        danhMuc: { id: sp.danhMuc.id, ten: sp.danhMuc.ten },
-        anh: anhTheoSp.get(sp.id) ?? [],
-        tonKho: tonTheoSp.get(sp.id) ?? 0,
-      })),
+      duLieu: await this.dinhDangDanhSach(dsSanPham),
       tong,
       trang,
       soLuong,
       tongTrang: Math.ceil(tong / soLuong),
     }
+  }
+
+  async timTheoIds(ids: number[]) {
+    const dsSanPham = await this.sanhPhamRepo.find({ where: { id: In(ids), trangThai: 'dang_ban' }, relations: { danhMuc: true } })
+    return this.dinhDangDanhSach(dsSanPham)
+  }
+
+  private async dinhDangDanhSach(dsSanPham: SanPham[]) {
+    const ids = dsSanPham.map((sp) => sp.id)
+    const anhTheoSp = await this.layAnh(ids)
+    const tonTheoSp = await this.layTonKho(ids)
+
+    return dsSanPham.map((sp) => ({
+      id: sp.id,
+      ten: sp.ten,
+      thuongHieu: sp.thuongHieu,
+      gia: sp.gia,
+      giaNiemYet: sp.giaNiemYet,
+      thongSo: sp.thongSo,
+      danhMuc: { id: sp.danhMuc.id, ten: sp.danhMuc.ten },
+      anh: anhTheoSp.get(sp.id) ?? [],
+      tonKho: tonTheoSp.get(sp.id) ?? 0,
+    }))
   }
 
   private async layAnh(ids: number[]) {
@@ -156,4 +171,147 @@ export class SanPhamService {
       tonKho: tonKhoTheoSanPham.get(sanPham.id) ?? 0,
     }
   }
+
+  async timTatQuanTri(loc: LocSanPhamQuanTriDTO) {
+    const trang = loc.trang ?? 1
+    const soLuong = loc.soLuong ?? 20
+
+    const query = this.sanhPhamRepo.createQueryBuilder('sp').innerJoinAndSelect('sp.danhMuc', 'dm')
+
+    if (loc.trangThai) query.andWhere('sp.trangThai = :trangThai', { trangThai: loc.trangThai })
+    if (loc.danhMuc) query.andWhere('dm.id = :danhMuc', { danhMuc: loc.danhMuc })
+    if (loc.query) query.andWhere('(sp.ten LIKE :q OR sp.thuongHieu LIKE :q)', { q: `%${loc.query}%` })
+    query.orderBy('sp.id', 'DESC')
+
+    const [dsSanPham, tong] = await query.skip((trang - 1) * soLuong).take(soLuong).getManyAndCount()
+
+    const ids = dsSanPham.map((sp) => sp.id)
+    const anhTheoSp = await this.layAnh(ids)
+    const tonTheoSp = await this.layTonKho(ids)
+
+    return {
+      duLieu: dsSanPham.map((sp) => ({
+        id: sp.id,
+        ten: sp.ten,
+        thuongHieu: sp.thuongHieu,
+        gia: sp.gia,
+        giaNiemYet: sp.giaNiemYet,
+        thongSo: sp.thongSo,
+        trangThai: sp.trangThai,
+        danhMuc: { id: sp.danhMuc.id, ten: sp.danhMuc.ten },
+        anh: anhTheoSp.get(sp.id) ?? [],
+        tonKho: tonTheoSp.get(sp.id) ?? 0,
+      })),
+      tong,
+      trang,
+      soLuong,
+      tongTrang: Math.ceil(tong / soLuong),
+    }
+  }
+
+  async timChiTietQuanTri(id: number) {
+    const sanPham = await this.sanhPhamRepo.findOne({ where: { id }, relations: { danhMuc: true } })
+
+    if (!sanPham) {
+      throw new NotFoundException('Không tìm thấy sản phẩm')
+    }
+
+    const anhTheoSp = await this.layAnh([id])
+    const tonTheoSp = await this.layTonKho([id])
+
+    return {
+      id: sanPham.id,
+      ten: sanPham.ten,
+      thuongHieu: sanPham.thuongHieu,
+      gia: sanPham.gia,
+      giaNiemYet: sanPham.giaNiemYet,
+      moTa: sanPham.moTa,
+      thongSo: sanPham.thongSo,
+      soThangBaoHanh: sanPham.soThangBaoHanh,
+      trangThai: sanPham.trangThai,
+      danhMuc: { id: sanPham.danhMuc.id, ten: sanPham.danhMuc.ten },
+      anh: anhTheoSp.get(id) ?? [],
+      tonKho: tonTheoSp.get(id) ?? 0,
+    }
+  }
+
+  async taoSanPham(dto: TaoSanPhamDTO) {
+    this.kiemTraMoBan(dto.gia, dto.giaNiemYet, dto.trangThai, dto.anh.length)
+
+    try {
+      const id = await this.dataSource.transaction(async (manager) => {
+        const sanPham = await manager.save(SanPham, {
+          danhMuc: { id: dto.idDanhMuc },
+          ten: dto.ten,
+          thuongHieu: dto.thuongHieu ?? null,
+          gia: dto.gia,
+          giaNiemYet: dto.giaNiemYet ?? null,
+          moTa: dto.moTa ?? null,
+          thongSo: dto.thongSo ?? null,
+          soThangBaoHanh: dto.soThangBaoHanh,
+          trangThai: dto.trangThai,
+        })
+        await this.luuAnh(manager, sanPham.id, dto.anh)
+        return sanPham.id
+      })
+      return this.timChiTietQuanTri(id)
+    } catch (error) {
+      this.baoLoiDanhMuc(error)
+      throw error
+    }
+  }
+
+  async capNhatSanPham(id: number, dto: CapNhatSanPhamDTO) {
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        const sanPham = await manager.findOne(SanPham, { where: { id } })
+
+        if (!sanPham) {
+          throw new NotFoundException('Không tìm thấy sản phẩm')
+        }
+
+        const { idDanhMuc, anh, ...thongTin } = boGiaTriUndefined(dto)
+        Object.assign(sanPham, thongTin)
+        if (idDanhMuc) {
+          Object.assign(sanPham, { danhMuc: { id: idDanhMuc } })
+        }
+
+        const soAnh = anh ? anh.length : await manager.count(AnhSanPham, { where: { sanPham: { id } } })
+        this.kiemTraMoBan(sanPham.gia, sanPham.giaNiemYet, sanPham.trangThai, soAnh)
+
+        await manager.save(sanPham)
+        if (anh) {
+          await this.luuAnh(manager, id, anh)
+        }
+      })
+      return this.timChiTietQuanTri(id)
+    } catch (error) {
+      this.baoLoiDanhMuc(error)
+      throw error
+    }
+  }
+
+  private async luuAnh(manager: EntityManager, idSanPham: number, cacAnh: string[]) {
+    await manager.createQueryBuilder().delete().from(AnhSanPham).where('id_san_pham = :idSanPham', { idSanPham }).execute()
+
+    if (cacAnh.length > 0) {
+      await manager.save(AnhSanPham, cacAnh.map((duongDan, i) => ({ sanPham: { id: idSanPham }, duongDan, anhChinh: i === 0, thuTu: i + 1 })))
+    }
+  }
+
+  private kiemTraMoBan(gia: number, giaNiemYet: number | null | undefined, trangThai: string, soAnh: number) {
+    if (giaNiemYet != null && giaNiemYet <= gia) {
+      throw new BadRequestException('Giá niêm yết phải lớn hơn giá bán')
+    }
+    if (trangThai === 'dang_ban' && (gia <= 0 || soAnh === 0)) {
+      throw new BadRequestException('Cần giá bán lớn hơn 0 và ít nhất 1 ảnh để mở bán')
+    }
+  }
+
+  private baoLoiDanhMuc(error: unknown) {
+    if ((error as { code?: string }).code === 'ER_NO_REFERENCED_ROW_2') {
+      throw new BadRequestException('Danh mục không tồn tại')
+    }
+  }
+
 }

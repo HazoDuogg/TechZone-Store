@@ -1,16 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { NhanVienService } from './nhan-vien.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { VaiTroGuard } from '../../common/guards/vai-tro.guard';
-import { CanVaiTro } from '../../common/decorators/vai-tro.decorator';
-import { VaiTro } from '../../common/enums/vai-tro.enum';
 import { TaoNhanVienDTO } from './dto/tao-nhan-vien.dto';
 import { CapNhanNhanVienDTO } from './dto/cap-nhat-nhan-vien.dto';
 import { DatLaiMatKhauDTO } from './dto/dat-lai-mat-khau.dto';
+import { ChiAdmin } from '../../common/decorators/admin-decorator';
 
 @Controller('nhan-vien')
-@UseGuards(JwtAuthGuard, VaiTroGuard)
-@CanVaiTro([VaiTro.ADMIN])
+@ChiAdmin()
 export class NhanVienController {
   constructor(private readonly nhanVienService: NhanVienService) { }
 

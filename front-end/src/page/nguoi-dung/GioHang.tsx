@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom'
-import { NutLienKet } from '../../components/GiaoDienCoBan'
+import { Nhan, Nut, NutLienKet } from '../../components/GiaoDienCoBan'
 import TomTatDonHang from '../../components/TomTatDonHang'
 import { AnhSanPham } from '../../components/SanPham'
 import { tienVND } from '../../lib/dinhDang'
+import { useDongBoGioHang } from '../../hooks/useDongBoGioHang'
 import { useGioHang } from '../../store/gioHang'
 
 export default function GioHang() {
   const cacMuc = useGioHang((s) => s.cacMuc)
   const doiSoLuong = useGioHang((s) => s.doiSoLuong)
   const xoa = useGioHang((s) => s.xoa)
+  useDongBoGioHang()
+  const coHetHang = cacMuc.some((muc) => muc.sanPham.tonKho === 0)
 
   if (cacMuc.length === 0) {
     return (
@@ -54,28 +57,21 @@ export default function GioHang() {
                     <Link to={`/san-pham/${p.id}`} className="font-semibold hover:text-brand">
                       {p.ten}
                     </Link>
-                    <span className="font-bold text-brand">{tienVND(p.gia)}</span>
+                    <span className="flex items-center gap-2">
+                      <span className="font-bold text-brand">{tienVND(p.gia)}</span>
+                      {p.tonKho === 0 && <Nhan tone="red">Hết hàng</Nhan>}
+                    </span>
                     <div className="mt-auto flex items-center justify-between">
                       <div className="flex h-9 items-center rounded-md bg-white">
-                        <button
-                          aria-label="Giảm"
-                          className="h-full w-9 hover:bg-surface-2"
-                          onClick={() => doiSoLuong(p.id, soLuong - 1)}
-                          disabled={soLuong <= 1}>
+                        <button aria-label="Giảm" className="h-full w-9 hover:bg-surface-2" onClick={() => doiSoLuong(p.id, soLuong - 1)} disabled={soLuong <= 1}>
                           −
                         </button>
                         <span className="w-8 text-center text-[15px] font-semibold">{soLuong}</span>
-                        <button
-                          aria-label="Tăng"
-                          className="h-full w-9 hover:bg-surface-2"
-                          onClick={() => doiSoLuong(p.id, soLuong + 1)}
-                          disabled={soLuong >= p.tonKho}>
+                        <button aria-label="Tăng" className="h-full w-9 hover:bg-surface-2" onClick={() => doiSoLuong(p.id, soLuong + 1)} disabled={soLuong >= p.tonKho}>
                           +
                         </button>
                       </div>
-                      <button
-                        className="text-sm font-semibold text-danger hover:underline"
-                        onClick={() => xoa(p.id)}>
+                      <button className="text-sm font-semibold text-danger hover:underline" onClick={() => xoa(p.id)}>
                         Xóa
                       </button>
                     </div>
@@ -86,9 +82,15 @@ export default function GioHang() {
           </div>
           <TomTatDonHang
             cta={
-              <NutLienKet to="/thanh-toan" size="lg" className="w-full">
-                Tiến hành đặt hàng
-              </NutLienKet>
+              coHetHang ? (
+                <Nut size="lg" className="w-full" disabled>
+                  Hãy xóa sản phẩm hết hàng
+                </Nut>
+              ) : (
+                <NutLienKet to="/thanh-toan" size="lg" className="w-full">
+                  Tiến hành đặt hàng
+                </NutLienKet>
+              )
             }
           />
         </div>

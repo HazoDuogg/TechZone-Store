@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
 import { ChiTietSanPham } from "../../san-pham/entities/chi-tiet-san-pham.entities";
 import { NhanVien } from "../../nhan-vien/entities/nhan-vien.entities";
+import { TrangThaiBaoHanh } from "../../../common/enums/trang-thai-bao-hanh.enum";
 
 @Entity('bao_hanh')
 export class BaoHanh {
@@ -20,9 +21,9 @@ export class BaoHanh {
 
     @Column({
         name: 'trang_thai', type: 'enum',
-        enum: ['tiep_nhan', 'dang_xu_ly', 'hoan_tat', 'tu_choi'], default: 'tiep_nhan'
+        enum: TrangThaiBaoHanh, default: TrangThaiBaoHanh.TIEP_NHAN
     })
-    trangThai: 'tiep_nhan' | 'dang_xu_ly' | 'hoan_tat' | 'tu_choi'
+    trangThai: TrangThaiBaoHanh
 
     @Column({ name: 'ket_qua', type: 'varchar', length: 500, nullable: true })
     ketQua: string | null

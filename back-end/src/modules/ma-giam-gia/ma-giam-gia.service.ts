@@ -6,6 +6,9 @@ import { LoaiMaGiamGia } from '../../common/enums/loai-ma-giam-gia.enum';
 import { TaoMaGiamGiaDTO } from './dto/tao-ma-giam-gia.dto';
 import { CapNhatMaGiamGiaDTO } from './dto/cap-nhat-ma-giam-gia.dto';
 import { boGiaTriUndefined } from '../../common/utils/bo-gia-tri-undefined';
+import { DonHang } from '../don-hang/entities/don-hang.entities';
+
+const homNay = () => new Date().toLocaleDateString('sv-SE')
 
 @Injectable()
 export class MaGiamGiaService {
@@ -20,6 +23,7 @@ export class MaGiamGiaService {
 
   async taoMaGiamGia(dto: TaoMaGiamGiaDTO) {
     this.kiemTraGiaTri(dto.loai, dto.giaTri)
+    this.kiemTraHanDung(dto.ngayHetHan)
 
     if (await this.maGiamGiaRepo.existsBy({ ma: dto.ma })) {
       throw new ConflictException('Mã này đã tồn tại')
@@ -34,8 +38,10 @@ export class MaGiamGiaService {
     if (dto.ma && dto.ma !== maGiamGia.ma && (await this.maGiamGiaRepo.existsBy({ ma: dto.ma }))) {
       throw new ConflictException('Mã này đã tồn tại')
     }
+    await this.kiemTraKhongDoiMaDaDung(maGiamGia, capNhat)
     Object.assign(maGiamGia, capNhat)
     this.kiemTraGiaTri(maGiamGia.loai, maGiamGia.giaTri)
+    if (maGiamGia.hoatDong || capNhat.ngayHetHan !== undefined) this.kiemTraHanDung(maGiamGia.ngayHetHan)
     return this.maGiamGiaRepo.save(maGiamGia)
   }
 
@@ -54,9 +60,8 @@ export class MaGiamGiaService {
 
   async tinhGiam(ma: string, tamTinh: number) {
     const maGiamGia = await this.maGiamGiaRepo.findOne({ where: { ma: ma.trim().toUpperCase() } })
-    const homNay = new Date().toLocaleDateString('sv-SE')
 
-    if (!maGiamGia || !maGiamGia.hoatDong || (maGiamGia.ngayHetHan && maGiamGia.ngayHetHan < homNay)) {
+    if (!maGiamGia || !maGiamGia.hoatDong || (maGiamGia.ngayHetHan && maGiamGia.ngayHetHan < homNay())) {
       throw new BadRequestException('Mã giảm giá không hợp lệ hoặc đã hết hạn')
     }
 
@@ -78,6 +83,24 @@ export class MaGiamGiaService {
       throw new NotFoundException('Không tìm thấy mã này')
     }
     return maGiamGia;
+  }
+
+  private kiemTraHanDung(ngayHetHan: string | null | undefined) {
+    if (ngayHetHan && ngayHetHan < homNay()) {
+      throw new BadRequestException('Ngày hết hạn phải từ hôm nay trở đi (mã đã quá hạn thì cần gia hạn mới dùng lại được)')
+    }
+  }
+
+  private async kiemTraKhongDoiMaDaDung(maGiamGia: MaGiamGia, capNhat: Partial<TaoMaGiamGiaDTO>) {
+    const doiMaHoacMucGiam = (capNhat.ma !== undefined && capNhat.ma !== maGiamGia.ma)
+      || (capNhat.loai !== undefined && capNhat.loai !== maGiamGia.loai)
+      || (capNhat.giaTri !== undefined && capNhat.giaTri !== maGiamGia.giaTri)
+    if (!doiMaHoacMucGiam) return
+
+    const soDon = await this.maGiamGiaRepo.manager.count(DonHang, { where: { maGiamGia: { id: maGiamGia.id } } })
+    if (soDon > 0) {
+      throw new ConflictException(`Mã đã được dùng trong ${soDon} đơn hàng nên không đổi được mã hoặc mức giảm, chỉ đổi được hạn dùng, đơn tối thiểu hoặc tắt hoạt động`)
+    }
   }
 
   private kiemTraGiaTri(loai: LoaiMaGiamGia, giaTri: number) {
